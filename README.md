@@ -87,4 +87,3 @@ returning the cached context class.
 
 If the test context implementation is in the same package as the test context interface and the class name
 has "Impl" as a postfix to the interface name, the system property does not have to be set.
-
