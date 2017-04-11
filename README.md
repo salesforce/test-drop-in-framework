@@ -9,7 +9,7 @@ they flip the switch to their test context.
 ## Requirements
 To use this project the following requirements have to be met:
 - Java 1.8
-- TestNG and Selenium 2.x on the class path
+- TestNG and Selenium WebDriver on the class path
 
 ## Recommended
 - Maven to resolve dependencies on TestNG and Selenium
@@ -21,12 +21,12 @@ explicitly add dependencies on JNA and JNA-Platform.
 ## Development
 1. Run "mvn eclipse:eclipse" to generate .project file and download required jars for development in Eclipse.
 2. Run "mvn clean" to install any dependencies.
-3. Start up eclipse, import project cqe-test-container.
-4. Run "mvn compile jar:jar" to compile project and create jar file target/cqe-test-container-1.0.0.jar
-5. Run "mvn install:install-file -Dfile=target/cqe-test-container-1.0.0.jar -DpomFile=pom.xml" to deploy jar file to local repository
+3. Start up eclipse, import project test-drop-in-framework.
+4. Run "mvn compile jar:jar" to compile project and create jar file target/test-drop-in-framework-1.0.0.jar
+5. Run "mvn install:install-file -Dfile=target/test-drop-in-framework-1.0.0.jar -DpomFile=pom.xml" to deploy jar file to local repository
 
 ## Prepare your test project
-1. Add the cqe-test-container-1.0.0.jar to your build path.
+1. Add the test-drop-in-framework-1.0.0.jar to your build path.
 2. In your test project create a package which contains your test context interfaces and the test context implementation class.
    Recommended package name: interchange.custom.<company-name> 
 3. In this package define an interface which describes the context as per your needs.
@@ -46,7 +46,7 @@ explicitly add dependencies on JNA and JNA-Platform.
 
 4. Create the various interfaces, e.g. IData:
 	
-	// BaseData<T> is provided by cqe-test-container
+	// BaseData<T> is provided by test-drop-in-framework
 	public interface IData<T> extends BaseData<T> {
 		T getCommonData(String key);
 		void setCommonData(String key, T value);
