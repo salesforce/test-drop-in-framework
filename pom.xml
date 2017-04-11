@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.salesforce.cqe</groupId>
-	<artifactId>cqe-test-container</artifactId>
+	<artifactId>test-drop-in-framework</artifactId>
 	<version>1.0.0</version>
-	<name>CQE Test Container</name>
-	<description>Provides an interface between the test environment and the test class plus its helpers.
+	<name>Test Drop-in Framework</name>
+	<description>Provides a thin abstraction layer between the test environment and the test class plus its helpers.
 
-This makes the test code independent of the test environment, thus allowing exchange of tests between organizations.</description>
+This makes the test code independent of the test environment, thus allowing exchange of tests between organizations or even companies.</description>
 	<packaging>jar</packaging>
 	<build>
 		<plugins>
