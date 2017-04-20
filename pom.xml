@@ -1,3 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright (c) 2017, Salesforce.com, Inc.
+  ~  All rights reserved.
+  ~  Licensed under the BSD 3-Clause license.
+  ~  For full license text, see the LICENSE.txt file in repo root
+  ~    or https://opensource.org/licenses/BSD-3-Clause
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -9,6 +17,28 @@
 
 This makes the test code independent of the test environment, thus allowing exchange of tests between organizations or even companies.</description>
 	<packaging>jar</packaging>
+    <licenses>
+        <license>
+            <name>BSD 3-Clause</name>
+            <url>file://${basedir}/LICENSE.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Georg Neumann</name>
+            <roles>
+                <role>Member</role>
+            </roles>
+            <email>cqe-us@salesforce.com</email>
+            <organization>Salesforce</organization>
+        </developer>
+    </developers>
+
+    <properties>
+        <jdk.version>1.8</jdk.version>
+    </properties>
+
 	<build>
 		<plugins>
             <plugin>
@@ -20,8 +50,8 @@ This makes the test code independent of the test environment, thus allowing exch
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.6.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -35,7 +65,7 @@ This makes the test code independent of the test environment, thus allowing exch
  		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>2.53.0</version>
+			<version>LATEST</version>
 			<!-- explicitly exclude dependencies on JNA to avoid dependency on a different license type. -->
 			<exclusions>
 				<exclusion>

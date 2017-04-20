@@ -87,3 +87,18 @@ returning the cached context class.
 
 If the test context implementation is in the same package as the test context interface and the class name
 has "Impl" as a postfix to the interface name, the system property does not have to be set.
+
+## Filing bugs
+
+If you find any bugs in *Test Drop-in Framework*, please open a new issue on GitHub and add as many details as possible, but at least the following:
+
+- Expected outcome
+- Actual outcome
+- Is reproducible? (Always, Randomly, etc.)
+- Reproducer scenario
+- Your dev environment (Linux, Mac OS, version, etc.)
+
+## Bug Review SLA
+
+After submitting a bug, you can expect to hear back an answer within the next five working days.
+
