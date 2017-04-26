@@ -28,6 +28,11 @@ explicitly add dependencies on JNA and JNA-Platform.
 4. Run "mvn compile jar:jar" to compile project and create jar file target/test-drop-in-framework-1.0.0.jar
 5. Run "mvn install:install-file -Dfile=target/test-drop-in-framework-1.0.0.jar -DpomFile=pom.xml" to deploy jar file to local repository
 
+Please note: the framework has to prohibit context switching during runtime. Therefore it is not
+possible to run both test classes via "mvn test" and have all tests passing! 
+6. Run "mvn -Dtest=TestDefaultContext test" to run all tests provided for testing default context.
+7. Run "mvn -Dtest=TestCustomContext test" to run all tests provided for testing custom context.
+
 ## Prepare your test project
 1. Add the test-drop-in-framework-1.0.0.jar to your build path.
 2. In your test project create a package which contains your test context interfaces and the test context implementation class.
