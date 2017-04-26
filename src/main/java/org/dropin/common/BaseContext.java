@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package interchange.common;
+package org.dropin.common;
 
 import org.openqa.selenium.WebDriver;
 
@@ -12,21 +12,22 @@ import org.openqa.selenium.WebDriver;
  * Basic interface for matching logging, reporting, and data providing
  * to their real implementations used by the test environment in use.
  * <p>
- * If test cases tapping into {@link BaseTestContext} want to call any other
+ * If test cases tapping into {@link BaseContext} want to call any other
  * environment specific provider, the recommended way to provide those is to extend
- * this interface by the methods needed and provide Salesforce Central QE
- * with this interface in package <pre>interchange.custom.[your-company-name]</pre>
- * and at the same time extend the abstract class {@link AbstractBaseTestContext}.
+ * this interface by the methods needed and provide your partner team or company 
+ * with this interface in package <pre>org.dropin.custom.[your-company-name]</pre>
+ * and at the same time extend the abstract class {@link AbstractBaseContext}.
  * 
  * @author gneumann
  */
-public interface BaseTestContext {
+public interface BaseContext {
 	WebDriver wd();
 	void setWebDriver(WebDriver driver);
 
 	/**
-	 * Salesforce Central QE needs to be able to explicitly set the proxy
-	 * server address during creation of the WebDriver instance.
+	 * If Salesforce is the designated partner company to uptake your test
+	 * project, it needs to be able to explicitly set the proxy server address
+	 * during creation of the WebDriver instance.
 	 * <p>
 	 * If you do not need this information for your WebDriver factory
 	 * method then you can accept the default implementation which returns

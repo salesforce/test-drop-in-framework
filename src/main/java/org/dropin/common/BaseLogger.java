@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package interchange.common;
+package org.dropin.common;
 
 import java.util.logging.Level;
 
@@ -12,10 +12,11 @@ import java.util.logging.Level;
  * Basic interface for mapping logging messages during test runtime
  * to the real logger used by the test environment in use.
  * <p>
- * If test cases tapping into {@link BaseTestContext} want to call any other
+ * If test cases tapping into {@link BaseContext} want to call any other
  * logging methods, the recommended way to provide those is to extend
- * this interface by the methods needed and provide Salesforce Central QE
- * with this interface in package <pre>interchange.custom.[your-company-name]</pre>
+ * this interface by the methods needed and provide your partner team or
+ * company with this interface in package
+ * <pre>org.dropin.custom.[your-company-name]</pre>
  * 
  * @author gneumann
  */

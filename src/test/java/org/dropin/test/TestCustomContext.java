@@ -4,38 +4,38 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package interchange.test;
-
-import org.testng.annotations.Test;
-
-import interchange.common.TestContextProvider;
-import interchange.test.customcontext.TestContextImpl;
-import interchange.test.customcontext.TestData;
-import interchange.test.customcontext.TestLogger;
-import interchange.test.customcontext.TestReport;
-import interchange.test.defaultcontext.TestContext;
-
-import org.testng.annotations.BeforeClass;
+package org.dropin.test;
 
 import java.util.logging.Level;
 
+import org.dropin.common.ContextProvider;
+import org.dropin.test.customcontext.TestContextForFailure;
+import org.dropin.test.customcontext.TestContextImpl;
+import org.dropin.test.customcontext.TestData;
+import org.dropin.test.customcontext.TestLogger;
+import org.dropin.test.customcontext.TestReport;
+import org.dropin.test.defaultcontext.TestContext;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 
 /**
- * Tests using the custom context which is injected via the System property "testcontext.implclassname".
+ * Tests using the custom context which is injected via the
+ * System property "org.dropin.context.implclassname".
  * @author gneumann
  */
 public class TestCustomContext {
 	@Test(groups = "beforeCustomInstantiation")
 	public void testContextWithoutInitializing() {
-		TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+		TestContext tc = ContextProvider.getTestContext(TestContext.class);
 		Assert.assertNull(tc.data(), "Context is already instantiated");
 	}
 
 	@Test(dependsOnGroups = "beforeCustomInstantiation", groups = "afterCustomInstantiation")
 	public void testContextAfterInitializing() {
-		TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+		TestContext tc = ContextProvider.getTestContext(TestContext.class);
 		tc.initialize();
 		Assert.assertNotNull(tc.data(), "Context is not yet instantiated");
 		
@@ -45,9 +45,23 @@ public class TestCustomContext {
 		tc.report().fail("foo");
 	}
 
+	@Test(dependsOnGroups = "beforeCustomInstantiation", groups = "switchingContextProhibited",
+		  expectedExceptions = IllegalStateException.class)
+	public void testTrySwitchingContext() {
+		ContextProvider.getTestContext(TestContextForFailure.class);
+	}
+
+	@Test(dependsOnGroups = "beforeCustomInstantiation", groups = "switchingContextProhibited",
+		  expectedExceptions = IllegalStateException.class)
+	public void testTrySwitchingContextViaSystemProperty() {
+		// set System property setting to refer to custom context implementation
+		System.setProperty("org.dropin.context.implclassname", "foo");
+		ContextProvider.getTestContext(TestContext.class);
+	}
+
 	@Test(dependsOnGroups = "afterCustomInstantiation")
 	public void testTestDataUsingCustomContext() {
-		TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+		TestContext tc = ContextProvider.getTestContext(TestContext.class);
 		TestData data = (TestData) tc.data();
 		Assert.assertNotNull(data.getData("foo"), "Have to get a value for previously set key/value pair");
 		Assert.assertEquals(data.getData("foo"), "custom bar");
@@ -55,7 +69,7 @@ public class TestCustomContext {
 
 	@Test(dependsOnGroups = "afterCustomInstantiation")
 	public void testLoggerUsingCustomContext() {
-		TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+		TestContext tc = ContextProvider.getTestContext(TestContext.class);
 		TestLogger logger = (TestLogger) tc.logger();
 		Assert.assertEquals(logger.getLastMsg(), "custom message");
 		Assert.assertEquals(logger.formattedLogging("blah"), "custom blah");
@@ -66,20 +80,20 @@ public class TestCustomContext {
 
 	@Test(dependsOnGroups = "afterCustomInstantiation")
 	public void testReportUsingCustomContext() {
-		TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+		TestContext tc = ContextProvider.getTestContext(TestContext.class);
 		TestReport report = (TestReport) tc.report();
 		Assert.assertEquals(report.getFailMsg(), "custom foo");
 	}
 
-	@BeforeClass
-	public void beforeClass() {
+	@BeforeMethod
+	public void beforeMethod() {
 		// set System property setting to refer to custom context implementation
-		System.setProperty("testcontext.implclassname", TestContextImpl.class.getName());
+		System.setProperty("org.dropin.context.implclassname", TestContextImpl.class.getName());
 	}
 
-	@AfterClass
-	public void afterClass() {
+	@AfterMethod
+	public void afterMethod() {
 		// remove System property setting
-		System.setProperty("testcontext.implclassname", "");
+		System.setProperty("org.dropin.context.implclassname", "");
 	}
 }

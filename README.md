@@ -1,10 +1,13 @@
 # test-drop-in-framework
-By using this project a customer can define a test context and SFDC can define a second context. In essence,
-it allows SFDC to make sure that the code gets run in a proper context with the proper test cases without
-having to modify or rewrite any customer code or test cases, etc.
+The ContextProvider helps the owner of a test project and her partner teams,
+be them either inside or outside the company, to run the very same tests
+provided by the owner in every team's test environment. In essence, it allows
+to make sure that the code gets run in a proper context with the proper test
+cases without having to modify or rewrite any customer code or test cases, etc.
 
-When the customer runs her tests, the customer leaves the switch in "customer mode". If SFDC runs the tests,
-they flip the switch to their test context.
+When the owner runs her tests, the owner leaves the switch in "owner mode" aka
+"default mode". If a partner team runs the tests, they flip the switch to their
+test context.
 
 ## Requirements
 To use this project the following requirements have to be met:
@@ -28,11 +31,11 @@ explicitly add dependencies on JNA and JNA-Platform.
 ## Prepare your test project
 1. Add the test-drop-in-framework-1.0.0.jar to your build path.
 2. In your test project create a package which contains your test context interfaces and the test context implementation class.
-   Recommended package name: interchange.custom.<company-name> 
+   Recommended package name: org.dropin.custom.<company-name> 
 3. In this package define an interface which describes the context as per your needs.
 
 	// Example context interface:
-	public interface TestContext extends BaseTestContext {
+	public interface TestContext extends BaseContext {
 		IData<String> data();
 		ILogger logger();
 		IReport report();
@@ -57,15 +60,15 @@ explicitly add dependencies on JNA and JNA-Platform.
 
 ## Initialization of the TestContext
 
-The TestContext interface requires implementation of then initialize(testCase) method, where the objects
-stored in the context get initialized. A good place is in a method run during initialization of a test class
-or in methods annotated with @BeforeClass if you are using TestNG or JUnit.  
+The TestContext interface (see example above) requires implementation of then initialize(testCase) method,
+where the objects stored in the context get initialized. A good place is in a method run during
+initialization of a test class or in methods annotated with @BeforeClass if you are using TestNG or JUnit.  
 
 ## Use the test context in your test project
 1. Where-ever in your test project you need to access something stored in the test context, first get the handle
-   to the TestContext this way: 
+   to the TestContext (see interface example above) this way: 
 
-	TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+	TestContext tc = ContextProvider.getTestContext(TestContext.class);
 
 2. Access the data in the context:
 
@@ -75,18 +78,23 @@ or in methods annotated with @BeforeClass if you are using TestNG or JUnit.
 
 The first call of method
 
-	TestContextProvider.getTestContext(final Class<T> type)
+	ContextProvider.getTestContext(final Class<T> type)
 
-will "freeze" the interface type the implementation has to provide, load the context implementation class by
-examining the system property
-
-	-Dtestcontext.implclassname=[your test context impl class]
-
-and cache it. All following calls to that method will verify that the same interface is requested before
-returning the cached context class.
+will "freeze" the interface type and the implementation class.
 
 If the test context implementation is in the same package as the test context interface and the class name
-has "Impl" as a postfix to the interface name, the system property does not have to be set.
+has "Impl" as a postfix to the interface name, the call to getTestContext() will try and instantiate this
+so-called "default context" class unless it is overridden by a "custom context" class. 
+
+To use a so-called "custom context" you have to set the system property
+
+	-Dorg.dropin.custom.implclassname=[your test context impl class]
+
+All following calls to that method will return the very same context class instance.
+
+Please note: switching context during test execution may be fatal if information of previous context has
+been cached in calling classes. Therefore the getTestContext() method will prohibit any attempts to switch
+context.
 
 ## Filing bugs
 

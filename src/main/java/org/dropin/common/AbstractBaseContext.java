@@ -4,16 +4,16 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package interchange.common;
+package org.dropin.common;
 
 import org.openqa.selenium.WebDriver;
 
 /**
- * Abstract test context which assumes that the test is using
+ * Abstract context which assumes that the test is using
  * WebDriver for UI automation.
  * 
  */
-public abstract class AbstractBaseTestContext implements BaseTestContext {
+public abstract class AbstractBaseContext implements BaseContext {
 	private WebDriver webDriver;
 	
 	/**

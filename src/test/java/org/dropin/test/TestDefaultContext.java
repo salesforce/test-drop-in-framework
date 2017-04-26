@@ -4,18 +4,17 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package interchange.test;
+package org.dropin.test;
 
 import org.testng.annotations.Test;
 
-import interchange.common.TestContextProvider;
-import interchange.test.defaultcontext.TestContext;
-import interchange.test.defaultcontext.TestData;
-import interchange.test.defaultcontext.TestLogger;
-import interchange.test.defaultcontext.TestReport;
-
 import java.util.logging.Level;
 
+import org.dropin.common.ContextProvider;
+import org.dropin.test.defaultcontext.TestContext;
+import org.dropin.test.defaultcontext.TestData;
+import org.dropin.test.defaultcontext.TestLogger;
+import org.dropin.test.defaultcontext.TestReport;
 import org.testng.Assert;
 
 /**
@@ -25,13 +24,13 @@ import org.testng.Assert;
 public class TestDefaultContext {
 	@Test(groups = "beforeDefaultInstantiation")
 	public void testContextWithoutInitializing() {
-		TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+		TestContext tc = ContextProvider.getTestContext(TestContext.class);
 		Assert.assertNull(tc.data(), "Context is already instantiated");
 	}
 
 	@Test(dependsOnGroups = "beforeDefaultInstantiation", groups = "afterDefaultInstantiation")
 	public void testContextAfterInitializing() {
-		TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+		TestContext tc = ContextProvider.getTestContext(TestContext.class);
 		tc.initialize();
 		Assert.assertNotNull(tc.data(), "Context is not yet instantiated");
 		
@@ -43,7 +42,7 @@ public class TestDefaultContext {
 
 	@Test(dependsOnGroups = "afterDefaultInstantiation")
 	public void testTestDataUsingDefaultContext() {
-		TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+		TestContext tc = ContextProvider.getTestContext(TestContext.class);
 		TestData data = (TestData) tc.data();
 		Assert.assertNull(data.getData("blah"), "Must not get a value for unset key/value pair");
 		Assert.assertNotNull(data.getData("foo"), "Have to get a value for previously set key/value pair");
@@ -52,7 +51,7 @@ public class TestDefaultContext {
 
 	@Test(dependsOnGroups = "afterDefaultInstantiation")
 	public void testLoggerUsingDefaultContext() {
-		TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+		TestContext tc = ContextProvider.getTestContext(TestContext.class);
 		TestLogger logger = (TestLogger) tc.logger();
 		Assert.assertEquals(logger.getLastMsg(), "fine message");
 		Assert.assertEquals(logger.formattedLogging("blah"), "formatted blah");
@@ -63,7 +62,7 @@ public class TestDefaultContext {
 
 	@Test(dependsOnGroups = "afterDefaultInstantiation")
 	public void testReportUsingDefaultContext() {
-		TestContext tc = (new TestContextProvider()).getTestContext(TestContext.class);
+		TestContext tc = ContextProvider.getTestContext(TestContext.class);
 		TestReport report = (TestReport) tc.report();
 		Assert.assertEquals(report.getFailMsg(), "foo");
 	}

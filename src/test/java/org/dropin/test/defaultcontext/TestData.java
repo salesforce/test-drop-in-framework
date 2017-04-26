@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package interchange.test.defaultcontext;
+package org.dropin.test.defaultcontext;
 
 import java.util.HashMap;
 
-import interchange.common.BaseData;
+import org.dropin.common.BaseData;
 
 /**
  * Default implementation of {@link BaseData} interface.

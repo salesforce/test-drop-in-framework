@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package interchange.test.defaultcontext;
+package org.dropin.test.defaultcontext;
 
-import interchange.common.BaseLogger;
+import org.dropin.common.BaseLogger;
 
 /**
  * Custom interface extending {@link BaseLogger} interface. 
