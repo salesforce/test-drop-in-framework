@@ -48,24 +48,23 @@ and the test context implementation class. Recommended package name:
 org.dropin.custom.<company-name> 
 3. In this package define an interface which describes the context as per your needs.
 
-
 	// Example context interface:
 	public interface TestContext extends BaseContext {
-		IData<String> data();
-		ILogger logger();
-		IReport report();
-		// always provide a custom initialization method
-		void initialize(TestCase testCase);
-		// helper classes
-		WebDriverHelper wh();
+	    IData<String> data();
+	    ILogger logger();
+	    IReport report();
+	    // always provide a custom initialization method
+	    void initialize(TestCase testCase);
+	    // helper classes
+	    WebDriverHelper wh();
 	}
 
 4. Create the various interfaces, e.g. IData:
-	
+
 	// BaseData<T> is provided by test-drop-in-framework
 	public interface IData<T> extends BaseData<T> {
-		T getCommonData(String key);
-		void setCommonData(String key, T value);
+	    T getCommonData(String key);
+	    void setCommonData(String key, T value);
 	}
 
 5. Create classes implementing the various interfaces.
