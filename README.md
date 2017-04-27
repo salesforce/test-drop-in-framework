@@ -23,51 +23,51 @@ Please note: if you want to use Microsoft Internet Explorer for test execution,
 you have to explicitly add dependencies on JNA and JNA-Platform.
 
 ## Development
-1. Run "mvn eclipse:eclipse" to generate .project file and download required jars
+1. Run `mvn eclipse:eclipse` to generate .project file and download required jars
 for development in Eclipse.
-2. Run "mvn clean" to install any dependencies.
+2. Run `mvn clean` to install any dependencies.
 3. Start up eclipse, import project test-drop-in-framework.
-4. Run "mvn compile jar:jar" to compile project and create jar file
+4. Run `mvn compile jar:jar` to compile project and create jar file
 target/test-drop-in-framework-1.0.0.jar
-5. Run "mvn install:install-file -Dfile=target/test-drop-in-framework-1.0.0.jar -DpomFile=pom.xml"
+5. Run `mvn install:install-file -Dfile=target/test-drop-in-framework-1.0.0.jar -DpomFile=pom.xml`
 to deploy jar file to local repository
 
 Please note: the framework has to prohibit context switching during runtime.
 Therefore it is not possible to run both test classes via "mvn test" and have all
 tests passing!
 
-6. Run "mvn -Dtest=TestDefaultContext test" to run all tests provided for testing
+6. Run `mvn -Dtest=TestDefaultContext test` to run all tests provided for testing
 default context.
-7. Run "mvn -Dtest=TestCustomContext test" to run all tests provided for testing
+7. Run `mvn -Dtest=TestCustomContext test` to run all tests provided for testing
 custom context.
 
 ## Prepare your test project
 1. Add the test-drop-in-framework-1.0.0.jar to your build path.
 2. In your test project create a package which contains your test context interfaces
 and the test context implementation class. Recommended package name:
-org.dropin.custom.<company-name> 
+`org.dropin.custom.<company-name>`
 3. In this package define an interface which describes the context as per your needs.
 
-```
+```java
 // Example context interface:
 public interface TestContext extends BaseContext {
-IData<String> data();
-ILogger logger();
-IReport report();
-// always provide a custom initialization method
-void initialize(TestCase testCase);
-// helper classes
-WebDriverHelper wh();
+	IData<String> data();
+	ILogger logger();
+	IReport report();
+	// always provide a custom initialization method
+	void initialize(TestCase testCase);
+	// helper classes
+	WebDriverHelper wh();
 }
 ```
 
 4. Create the various interfaces, e.g. IData:
 
-```
+```java
 // BaseData<T> is provided by test-drop-in-framework
 public interface IData<T> extends BaseData<T> {
-T getCommonData(String key);
-void setCommonData(String key, T value);
+	T getCommonData(String key);
+	void setCommonData(String key, T value);
 }
 ```
 
@@ -85,13 +85,13 @@ annotated with @BeforeClass if you are using TestNG or JUnit.
 1. Where-ever in your test project you need to access something stored in the test
 context, first get the handle to the TestContext (see interface example above) this way: 
 
-```
+```java
 TestContext tc = ContextProvider.getTestContext(TestContext.class);
 ```
 
 2. Access the data in the context:
 
-```
+```java
 String value = tc.data().getCommonData("mykey");
 ```
 
@@ -99,7 +99,7 @@ String value = tc.data().getCommonData("mykey");
 
 The first call of method
 
-```
+```java
 ContextProvider.getTestContext(final Class<T> type)
 ```
 
