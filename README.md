@@ -48,24 +48,28 @@ and the test context implementation class. Recommended package name:
 org.dropin.custom.<company-name> 
 3. In this package define an interface which describes the context as per your needs.
 
-	// Example context interface:
-	public interface TestContext extends BaseContext {
-	    IData<String> data();
-	    ILogger logger();
-	    IReport report();
-	    // always provide a custom initialization method
-	    void initialize(TestCase testCase);
-	    // helper classes
-	    WebDriverHelper wh();
-	}
+```
+// Example context interface:
+public interface TestContext extends BaseContext {
+IData<String> data();
+ILogger logger();
+IReport report();
+// always provide a custom initialization method
+void initialize(TestCase testCase);
+// helper classes
+WebDriverHelper wh();
+}
+```
 
 4. Create the various interfaces, e.g. IData:
 
-	// BaseData<T> is provided by test-drop-in-framework
-	public interface IData<T> extends BaseData<T> {
-	    T getCommonData(String key);
-	    void setCommonData(String key, T value);
-	}
+```
+// BaseData<T> is provided by test-drop-in-framework
+public interface IData<T> extends BaseData<T> {
+T getCommonData(String key);
+void setCommonData(String key, T value);
+}
+```
 
 5. Create classes implementing the various interfaces.
 6. Create the class implementing the test context defined in step 3.
@@ -81,17 +85,23 @@ annotated with @BeforeClass if you are using TestNG or JUnit.
 1. Where-ever in your test project you need to access something stored in the test
 context, first get the handle to the TestContext (see interface example above) this way: 
 
-	TestContext tc = ContextProvider.getTestContext(TestContext.class);
+```
+TestContext tc = ContextProvider.getTestContext(TestContext.class);
+```
 
 2. Access the data in the context:
 
-	String value = tc.data().getCommonData("mykey");
+```
+String value = tc.data().getCommonData("mykey");
+```
 
 ## How to toggle between Test Context implementations?
 
 The first call of method
 
-	ContextProvider.getTestContext(final Class<T> type)
+```
+ContextProvider.getTestContext(final Class<T> type)
+```
 
 will "freeze" the interface type and the implementation class.
 
@@ -102,7 +112,9 @@ class unless it is overridden by a "custom context" class.
 
 To use a so-called "custom context" you have to set the system property
 
-	-Dorg.dropin.custom.implclassname=[your test context impl class]
+```
+-Dorg.dropin.custom.implclassname=[your test context impl class]
+```
 
 All following calls to that method will return the very same context class instance.
 
