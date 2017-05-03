@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package org.dropin.common;
+package com.salesforce.dropin.common;
 
-import org.dropin.common.BaseContext;
+import com.salesforce.dropin.common.BaseContext;
 
 /**
  * The ContextProvider helps the owner of the test project and partner teams,
@@ -19,14 +19,14 @@ public final class ContextProvider {
 	 * of the context interface provided by the owner of the test project.
 	 * <p>
 	 * You can enter this system property along with the run command:
-	 * -Dorg.dropin.context.implclassname=org.dropin.custom.<your company name>.<your impl class name>
+	 * -Ddropin.context.implclassname=dropin.custom.<your company name>.<your impl class name>
 	 * e.g.
-	 * -Dorg.dropin.context.implclassname=org.dropin.custom.acme.TestContextImpl
+	 * -Ddropin.context.implclassname=dropin.custom.acme.TestContextImpl
 	 * <p>
 	 * This mechanism allows you and your partner team(s) inside or outside your company
 	 * to use different implementations to adapt the tests to their test environments.
 	 */
-	public static final String CONTEXT_IMPL_CLASS_NAME = "org.dropin.context.implclassname";
+	public static final String CONTEXT_IMPL_CLASS_NAME = "dropin.context.implclassname";
 	
 	/*
 	 * It is not possible to use type T for a static field
@@ -48,7 +48,7 @@ public final class ContextProvider {
 	 * <p>
 	 * The first call of this method will "freeze" the interface type the implementation
 	 * has to provide, load the context implementation class by examining the System
-	 * property <pre>-Dorg.dropin.context.implclassname=[your test context impl class]</pre>
+	 * property <pre>-Ddropin.context.implclassname=[your test context impl class]</pre>
 	 * and cache it. All following calls verify that the same interface and implementation
 	 * is requested before returning the cached context class.
 	 * <p>

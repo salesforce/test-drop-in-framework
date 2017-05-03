@@ -4,17 +4,17 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package org.dropin.test;
+package com.salesforce.dropin.test;
 
 import java.util.logging.Level;
 
-import org.dropin.common.ContextProvider;
-import org.dropin.test.customcontext.TestContextForFailure;
-import org.dropin.test.customcontext.TestContextImpl;
-import org.dropin.test.customcontext.TestData;
-import org.dropin.test.customcontext.TestLogger;
-import org.dropin.test.customcontext.TestReport;
-import org.dropin.test.defaultcontext.TestContext;
+import com.salesforce.dropin.common.ContextProvider;
+import com.salesforce.dropin.test.customcontext.TestContextForFailure;
+import com.salesforce.dropin.test.customcontext.TestContextImpl;
+import com.salesforce.dropin.test.customcontext.TestData;
+import com.salesforce.dropin.test.customcontext.TestLogger;
+import com.salesforce.dropin.test.customcontext.TestReport;
+import com.salesforce.dropin.test.defaultcontext.TestContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 
 /**
  * Tests using the custom context which is injected via the
- * System property "org.dropin.context.implclassname".
+ * System property "dropin.context.implclassname".
  * @author gneumann
  */
 public class TestCustomContext {
@@ -55,7 +55,7 @@ public class TestCustomContext {
 		  expectedExceptions = IllegalStateException.class)
 	public void testTrySwitchingContextViaSystemProperty() {
 		// set System property setting to refer to custom context implementation
-		System.setProperty("org.dropin.context.implclassname", "foo");
+		System.setProperty("dropin.context.implclassname", "foo");
 		ContextProvider.getTestContext(TestContext.class);
 	}
 
@@ -88,12 +88,12 @@ public class TestCustomContext {
 	@BeforeMethod
 	public void beforeMethod() {
 		// set System property setting to refer to custom context implementation
-		System.setProperty("org.dropin.context.implclassname", TestContextImpl.class.getName());
+		System.setProperty(ContextProvider.CONTEXT_IMPL_CLASS_NAME, TestContextImpl.class.getName());
 	}
 
 	@AfterMethod
 	public void afterMethod() {
 		// remove System property setting
-		System.setProperty("org.dropin.context.implclassname", "");
+		System.setProperty(ContextProvider.CONTEXT_IMPL_CLASS_NAME, "");
 	}
 }

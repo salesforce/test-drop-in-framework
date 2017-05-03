@@ -45,7 +45,7 @@ custom context.
 1. Add the test-drop-in-framework-1.0.0.jar to your build path.
 2. In your test project create a package which contains your test context interfaces
 and the test context implementation class. Recommended package name:
-`org.dropin.custom.<company-name>`
+`dropin.custom.<company-name>`
 3. In this package define an interface which describes the context as per your needs.
 
 ```java
@@ -113,7 +113,7 @@ class unless it is overridden by a "custom context" class.
 To use a so-called "custom context" you have to set the system property
 
 ```
--Dorg.dropin.custom.implclassname=[your test context impl class]
+-Ddropin.context.implclassname=[your test context impl class]
 ```
 
 All following calls to that method will return the very same context class instance.

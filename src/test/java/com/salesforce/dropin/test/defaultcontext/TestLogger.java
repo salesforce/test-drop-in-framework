@@ -4,14 +4,12 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package org.dropin.test.customcontext;
+package com.salesforce.dropin.test.defaultcontext;
 
 import java.util.logging.Level;
 
-import org.dropin.test.defaultcontext.ILogger;
-
 /**
- * Custom implementation of {@link ILogger} interface.
+ * Default implementation of {@link ILogger} interface.
  * @author gneumann
  */
 public class TestLogger implements ILogger {
@@ -20,8 +18,8 @@ public class TestLogger implements ILogger {
 
 	@Override
 	public void log(Level level, String msg) {
-		lastLogLevel = Level.ALL;
-		lastMsg = "custom message";
+		lastLogLevel = level;
+		lastMsg = msg;
 	}
 
 	@Override
@@ -32,7 +30,7 @@ public class TestLogger implements ILogger {
 
 	@Override
 	public String formattedLogging(String msg) {
-		return "custom " + msg;
+		return "formatted " + msg;
 	}
 
 	public Level getLastLogLevel() {

@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package org.dropin.common;
+package com.salesforce.dropin.common;
 
 import org.openqa.selenium.WebDriver;
 
@@ -15,7 +15,7 @@ import org.openqa.selenium.WebDriver;
  * If test cases tapping into {@link BaseContext} want to call any other
  * environment specific provider, the recommended way to provide those is to extend
  * this interface by the methods needed and provide your partner team or company 
- * with this interface in package <pre>org.dropin.custom.[your-company-name]</pre>
+ * with this interface in package <pre>dropin.custom.[your-company-name]</pre>
  * and at the same time extend the abstract class {@link AbstractBaseContext}.
  * 
  * @author gneumann

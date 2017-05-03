@@ -4,17 +4,17 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package org.dropin.test;
+package com.salesforce.dropin.test;
 
 import org.testng.annotations.Test;
 
 import java.util.logging.Level;
 
-import org.dropin.common.ContextProvider;
-import org.dropin.test.defaultcontext.TestContext;
-import org.dropin.test.defaultcontext.TestData;
-import org.dropin.test.defaultcontext.TestLogger;
-import org.dropin.test.defaultcontext.TestReport;
+import com.salesforce.dropin.common.ContextProvider;
+import com.salesforce.dropin.test.defaultcontext.TestContext;
+import com.salesforce.dropin.test.defaultcontext.TestData;
+import com.salesforce.dropin.test.defaultcontext.TestLogger;
+import com.salesforce.dropin.test.defaultcontext.TestReport;
 import org.testng.Assert;
 
 /**

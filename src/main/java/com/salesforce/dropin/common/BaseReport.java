@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package org.dropin.common;
+package com.salesforce.dropin.common;
 
 import org.testng.AssertJUnit;
 
@@ -15,7 +15,7 @@ import org.testng.AssertJUnit;
  * If test cases tapping into {@link AbstractBaseContext} want to call any other
  * report methods, the recommended way to provide those is to extend
  * this interface by the methods needed and provide your partner team or company
- * with this interface in package <pre>org.dropin.custom.[your-company-name]</pre>
+ * with this interface in package <pre>dropin.custom.[your-company-name]</pre>
  * 
  * @author gneumann
  */

@@ -4,13 +4,13 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package org.dropin.test.defaultcontext;
+package com.salesforce.dropin.test.defaultcontext;
 
 import org.openqa.selenium.WebDriver;
 
 /**
  * Default test context implementation providing handles to
- * implementation classes in package org.dropin.test.defaultcontext.
+ * implementation classes in package com.salesforce.dropin.test.defaultcontext.
  * @author gneumann
  */
 public class TestContextImpl implements TestContext {
@@ -43,7 +43,7 @@ public class TestContextImpl implements TestContext {
 	}
 
 	/**
-	 * Instantiates implementation classes in package org.dropin.test.defaultcontext.
+	 * Instantiates implementation classes in package com.salesforce.dropin.test.defaultcontext.
 	 */
 	@Override
 	public void initialize() {

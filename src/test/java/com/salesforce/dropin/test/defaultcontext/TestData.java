@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package org.dropin.test.defaultcontext;
+package com.salesforce.dropin.test.defaultcontext;
 
 import java.util.HashMap;
 
-import org.dropin.common.BaseData;
+import com.salesforce.dropin.common.BaseData;
 
 /**
  * Default implementation of {@link BaseData} interface.

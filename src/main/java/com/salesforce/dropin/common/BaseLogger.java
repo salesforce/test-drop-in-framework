@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package org.dropin.common;
+package com.salesforce.dropin.common;
 
 import java.util.logging.Level;
 
@@ -16,7 +16,7 @@ import java.util.logging.Level;
  * logging methods, the recommended way to provide those is to extend
  * this interface by the methods needed and provide your partner team or
  * company with this interface in package
- * <pre>org.dropin.custom.[your-company-name]</pre>
+ * <pre>dropin.custom.[your-company-name]</pre>
  * 
  * @author gneumann
  */
