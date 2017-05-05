@@ -73,7 +73,13 @@ This makes the test code independent of the test environment, thus allowing exch
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
+                <configuration>
+                    <bottom>Copyright (c) 2017, Salesforce.com, Inc. All rights reserved. Licensed under
+                        the BSD 3-Clause license. For full license text, see the LICENSE.txt file in the
+                        repository.
+                    </bottom>
+                </configuration>
+                <executions>
 					<execution>
 						<id>attach-javadocs</id>
 						<goals>
