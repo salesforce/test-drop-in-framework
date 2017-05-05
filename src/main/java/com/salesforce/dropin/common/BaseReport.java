@@ -22,6 +22,7 @@ import org.testng.AssertJUnit;
 public interface BaseReport {
 	/**
 	 * Fails a test with the given message.
+	 * @param message error message
 	 */
 	default void fail(String message) {
 		AssertJUnit.fail(message);
@@ -40,6 +41,7 @@ public interface BaseReport {
 	 * Although no such call exists in JUnit, some test environments
 	 * are explicitly reporting a <b>PASS</b> for test cases which
 	 * have not failed.
+	 * @param message success message
 	 */
 	default void pass(String message) { /* empty default implementation */ }
 	

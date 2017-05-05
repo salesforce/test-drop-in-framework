@@ -19,7 +19,7 @@ public final class ContextProvider {
 	 * of the context interface provided by the owner of the test project.
 	 * <p>
 	 * You can enter this system property along with the run command:
-	 * -Ddropin.context.implclassname=dropin.custom.<your company name>.<your impl class name>
+	 * -Ddropin.context.implclassname=dropin.custom.[your company name].[your impl class name]
 	 * e.g.
 	 * -Ddropin.context.implclassname=dropin.custom.acme.TestContextImpl
 	 * <p>
@@ -56,11 +56,9 @@ public final class ContextProvider {
 	 * of previous context has been cached in calling classes. Therefore this method will
 	 * prohibit any attempts to switch context.
 	 *
-	 * @param type interface extending from interface {@link BaseContext}
+	 * @param <T> type provided has to extend from interface {@link BaseContext}
+	 * @param type interface defined by the owner of the test project
 	 * @return class implementing the interface defined in parameter <b>type</b>
-	 * @throws InstantiationException implementation class could not be loaded.
-	 * @throws IllegalAccessException implementation class could not be loaded.
-	 * @throws ClassNotFoundException implementation class could not be loaded.
 	 * @throws IllegalStateException an attempt has been detected to switch to
 	 * a different interface or implementation during the lifetime of this class.
 	 */
