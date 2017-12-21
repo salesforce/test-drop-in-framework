@@ -14,7 +14,7 @@ import org.openqa.selenium.WebElement;
  */
 public class StepLogEntry {
 	public enum Step { Before, After }
-	public enum Cmd { click, clear, getText, type }
+	public enum Cmd { click, clear, close, getText, getWindowHandles, getWindowHandle, navigateTo, quit, type }
 
 	private static long timeMarker;
 
@@ -62,12 +62,22 @@ public class StepLogEntry {
 			this.param1 = getLocatorFromWebElement(element);
 			this.returnValue = returnValue;
 			break;
+		case getWindowHandles:
+			if (typeOfLog == Step.After) {
+				this.returnValue = returnValue;
+			}
+			break;
+		case navigateTo:
+			this.param1 = sendValue;
+			break;
 		case type:
 			this.param1 = getLocatorFromWebElement(element);
 			this.param2 = sendValue;
 			break;
+		case close:
+		case quit:
 		default:
-				
+			// do nothing
 		}
 	}
 	
