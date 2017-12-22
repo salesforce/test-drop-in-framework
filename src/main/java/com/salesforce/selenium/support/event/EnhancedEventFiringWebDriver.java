@@ -155,9 +155,9 @@ public class EnhancedEventFiringWebDriver
 	}
 
 	public void get(String url) {
-		dispatcher.beforeNavigateTo(url, driver);
+		dispatcher.beforeTo(url, driver);
 		driver.get(url);
-		dispatcher.afterNavigateTo(url, driver);
+		dispatcher.afterTo(url, driver);
 	}
 
 	public String getCurrentUrl() {
@@ -169,9 +169,9 @@ public class EnhancedEventFiringWebDriver
 	}
 
 	public List<WebElement> findElements(By by) {
-		dispatcher.beforeFindBy(by, null, driver);
+		dispatcher.beforeFindElementByWebDriver(by, driver);
 		List<WebElement> temp = driver.findElements(by);
-		dispatcher.afterFindBy(by, null, driver);
+		dispatcher.afterFindElementByWebDriver(null, by, driver);
 		List<WebElement> result = new ArrayList<>(temp.size());
 		for (WebElement element : temp) {
 			result.add(createWebElement(element));
@@ -180,9 +180,9 @@ public class EnhancedEventFiringWebDriver
 	}
 
 	public WebElement findElement(By by) {
-		dispatcher.beforeFindBy(by, null, driver);
+		dispatcher.beforeFindElementByWebDriver(by, driver);
 		WebElement temp = driver.findElement(by);
-		dispatcher.afterFindBy(by, null, driver);
+		dispatcher.afterFindElementByWebDriver(null, by, driver);
 		return createWebElement(temp);
 	}
 
@@ -218,10 +218,8 @@ public class EnhancedEventFiringWebDriver
 
 	public Object executeScript(String script, Object... args) {
 		if (driver instanceof JavascriptExecutor) {
-			dispatcher.beforeScript(script, driver);
 			Object[] usedArgs = unpackWrappedArgs(args);
 			Object result = ((JavascriptExecutor) driver).executeScript(script, usedArgs);
-			dispatcher.afterScript(script, driver);
 			return result;
 		}
 		throw new UnsupportedOperationException("Underlying driver instance does not support executing javascript");
@@ -229,10 +227,8 @@ public class EnhancedEventFiringWebDriver
 
 	public Object executeAsyncScript(String script, Object... args) {
 		if (driver instanceof JavascriptExecutor) {
-			dispatcher.beforeScript(script, driver);
 			Object[] usedArgs = unpackWrappedArgs(args);
 			Object result = ((JavascriptExecutor) driver).executeAsyncScript(script, usedArgs);
-			dispatcher.afterScript(script, driver);
 			return result;
 		}
 		throw new UnsupportedOperationException("Underlying driver instance does not support executing javascript");
@@ -432,16 +428,16 @@ public class EnhancedEventFiringWebDriver
 		}
 
 		public WebElement findElement(By by) {
-			dispatcher.beforeFindBy(by, element, driver);
+			dispatcher.beforeFindElementByElement(by, element, driver);
 			WebElement temp = element.findElement(by);
-			dispatcher.afterFindBy(by, element, driver);
+			dispatcher.afterFindElementByElement(temp, by, element, driver);
 			return createWebElement(temp);
 		}
 
 		public List<WebElement> findElements(By by) {
-			dispatcher.beforeFindBy(by, element, driver);
+			dispatcher.beforeFindElementByElement(by, element, driver);
 			List<WebElement> temp = element.findElements(by);
-			dispatcher.afterFindBy(by, element, driver);
+			dispatcher.afterFindElementsByElement(temp, by, element, driver);
 			List<WebElement> result = new ArrayList<>(temp.size());
 			for (WebElement element : temp) {
 				result.add(createWebElement(element));
@@ -499,9 +495,9 @@ public class EnhancedEventFiringWebDriver
 		}
 
 		public void to(String url) {
-			dispatcher.beforeNavigateTo(url, driver);
+			dispatcher.beforeTo(url, driver);
 			navigation.to(url);
-			dispatcher.afterNavigateTo(url, driver);
+			dispatcher.afterTo(url, driver);
 		}
 
 		public void to(URL url) {
@@ -509,21 +505,21 @@ public class EnhancedEventFiringWebDriver
 		}
 
 		public void back() {
-			dispatcher.beforeNavigateBack(driver);
+			dispatcher.beforeBack(driver);
 			navigation.back();
-			dispatcher.afterNavigateBack(driver);
+			dispatcher.afterBack(driver);
 		}
 
 		public void forward() {
-			dispatcher.beforeNavigateForward(driver);
+			dispatcher.beforeForward(driver);
 			navigation.forward();
-			dispatcher.afterNavigateForward(driver);
+			dispatcher.afterForward(driver);
 		}
 
 		public void refresh() {
-			dispatcher.beforeNavigateRefresh(driver);
+			dispatcher.beforeRefresh(driver);
 			navigation.refresh();
-			dispatcher.afterNavigateRefresh(driver);
+			dispatcher.afterRefresh(driver);
 		}
 	}
 
@@ -598,9 +594,7 @@ public class EnhancedEventFiringWebDriver
 		}
 
 		public Timeouts pageLoadTimeout(long time, TimeUnit unit) {
-			dispatcher.beforePageLoadTimeout(time, unit, driver);
 			timeouts.pageLoadTimeout(time, unit);
-			dispatcher.afterPageLoadTimeout(time, unit, driver);
 			return this;
 		}
 	}
@@ -614,23 +608,23 @@ public class EnhancedEventFiringWebDriver
 		}
 
 		public WebDriver frame(int frameIndex) {
-			dispatcher.beforeFrame(frameIndex, driver);
+			dispatcher.beforeFrameByIndex(frameIndex, driver);
 			WebDriver frameDriver = targetLocator.frame(frameIndex);
-			dispatcher.afterFrame(frameIndex, driver);
+			dispatcher.afterFrameByIndex(frameIndex, driver);
 			return frameDriver;
 		}
 
 		public WebDriver frame(String frameName) {
-			dispatcher.beforeFrame(frameName, driver);
+			dispatcher.beforeFrameByName(frameName, driver);
 			WebDriver frameDriver = targetLocator.frame(frameName);
-			dispatcher.afterFrame(frameName, driver);
+			dispatcher.afterFrameByName(frameName, driver);
 			return frameDriver;
 		}
 
 		public WebDriver frame(WebElement frameElement) {
-			dispatcher.beforeFrame(frameElement, driver);
+			dispatcher.beforeFrameByElement(frameElement, driver);
 			WebDriver frameDriver = targetLocator.frame(frameElement);
-			dispatcher.afterFrame(frameElement, driver);
+			dispatcher.afterFrameByElement(frameElement, driver);
 			return frameDriver;
 		}
 

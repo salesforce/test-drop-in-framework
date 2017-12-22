@@ -3,6 +3,7 @@
  */
 package com.salesforce.selenium.support.event;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +15,18 @@ import org.openqa.selenium.WebElement;
  */
 public class StepLogEntry {
 	public enum Step { Before, After }
-	public enum Cmd { click, clear, close, getText, getWindowHandles, getWindowHandle, navigateTo, quit, type }
+	public enum Cmd {
+		// commands called directly from WebDriver object
+		close, findElementByWebDriver, findElementsByWebDriver, get, getCurrentUrl, getTitle, getWindowHandle, getWindowHandles, quit,
+		// commands called directly from WebDriver.Navigation object
+		back, forward, refresh, to,
+		// commands called directly from WebDriver.TargetLocator object
+		activeElement, alert, defaultContent, frameByIndex, frameByName, frameByElement, parentFrame, window,
+		// commands called directly from WebDriver.Window object
+		fullscreen, getPosition, getSize, maximize, setPosition, setSize,
+		// commands called directly from WebElement object
+		click, clear, findElementByElement, findElementsByElement, getAttribute, getCssValue, getTagName, getText, isDisplayed, isEnabled, isSelected, sendKeys, submit
+	}
 
 	private static long timeMarker;
 
@@ -62,15 +74,18 @@ public class StepLogEntry {
 			this.param1 = getLocatorFromWebElement(element);
 			this.returnValue = returnValue;
 			break;
+		case getWindowHandle:
 		case getWindowHandles:
 			if (typeOfLog == Step.After) {
 				this.returnValue = returnValue;
 			}
 			break;
-		case navigateTo:
+		case frameByName:
+		case to:
+		case window:
 			this.param1 = sendValue;
 			break;
-		case type:
+		case sendKeys:
 			this.param1 = getLocatorFromWebElement(element);
 			this.param2 = sendValue;
 			break;
@@ -119,6 +134,42 @@ public class StepLogEntry {
 
 	public Throwable getIssue() {
 		return issue;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("stepno:").append(stepNumber).append(",");
+		buffer.append("type:").append(typeOfLog).append(",");
+		buffer.append("timestamp:").append(timeStamp).append(" ms,");
+		buffer.append("cmd:").append(cmd);
+		if (param1 != null) {
+			buffer.append(",").append("param1:").append(param1);
+		}
+		if (param2 != null) {
+			buffer.append(",").append("param2:").append(param2);
+		}
+		if (returnValue != null) {
+			buffer.append(",").append("returned:").append(returnValue).append(",");
+		}
+		if (timeSinceLastStep != -1L) {
+			buffer.append(",").append("since last step:").append(formattedNanoTime(timeSinceLastStep));
+		}
+		if (timeElapsedStep != -1L) {
+			buffer.append(",").append("executed in:").append(formattedNanoTime(timeElapsedStep));
+		}
+		if (issue != null) {
+			buffer.append(",").append("issue:").append(issue.getMessage());
+		}
+		
+		return buffer.toString();
+	}
+
+	public static String formattedNanoTime(long duration) {
+		String timeString = String.format("%d sec %d ms", TimeUnit.NANOSECONDS.toSeconds(duration),
+				TimeUnit.NANOSECONDS.toMillis(duration)
+						- TimeUnit.SECONDS.toMillis(TimeUnit.NANOSECONDS.toSeconds(duration)));
+		return timeString;
 	}
 
 	private void timeStampsForBegin() {
