@@ -33,12 +33,14 @@ public class Step {
 		testFailure
 	}
 
-	private static long timeMarker;
-	private static int recordNumber = -1;
+	private static long timeMarkerElapsedStep;
+	private static long timeMarkerSinceLastStep;
+	private static int lastRecordNumber = 1;
 
+	private int recordNumber = -1;
 	private int stepNumber = -1;
 	private long timeStamp = -1L; // System.currentTimeMillis()
-	private long timeSinceLastStep = -1L; // measured from end of last command to begin of current command
+	private long timeSinceLastAction = -1L; // measured from end of last action to begin of current action
 	private long timeElapsedStep = -1L; // measured from begin of current command to end of current command
 	private Type typeOfLog;
 	private Cmd cmd;
@@ -57,25 +59,37 @@ public class Step {
 	}
 
 	public Step(Type typeOfLog, int stepNumber, Cmd cmd) {
-		Step.recordNumber++;
+		this.recordNumber = Step.lastRecordNumber++;
 		this.typeOfLog = typeOfLog;
 		this.stepNumber = stepNumber;
 		this.cmd = cmd;
 		this.timeStamp = System.currentTimeMillis();
 		
-		if (typeOfLog == Type.BeforeAction) {
-			timeStampsForBegin();
-		} else {
-			timeStampsForEnd();
+		switch(typeOfLog) {
+		case BeforeAction:
+			timeStampsForBeginAction();
+			timeStampsForBeginStep();
+			break;
+		case AfterAction:
+			timeStampsForAfterAction();
+			timeStampsForAfterStep();
+			break;
+		case BeforeGather:
+			timeStampsForBeginStep();
+			break;
+		case AfterGather:
+			timeStampsForAfterStep();
+			break;
+		default:
 		}
 	}
 
 	public int getRecordNumber() {
-		return Step.recordNumber;
+		return recordNumber;
 	}
 
 	public void setRecordNumber(int recordNumber) {
-		Step.recordNumber = recordNumber;
+		this.recordNumber = recordNumber;
 	}
 
 	public int getStepNumber() {
@@ -94,12 +108,12 @@ public class Step {
 		this.timeStamp = timeStamp;
 	}
 
-	public long getTimeSinceLastStep() {
-		return timeSinceLastStep;
+	public long getTimeSinceLastAction() {
+		return timeSinceLastAction;
 	}
 
-	public void setTimeSinceLastStep(long timeSinceLastStep) {
-		this.timeSinceLastStep = timeSinceLastStep;
+	public void setTimeSinceLastAction(long timeSinceLastStep) {
+		this.timeSinceLastAction = timeSinceLastStep;
 	}
 
 	public long getTimeElapsedStep() {
@@ -185,8 +199,8 @@ public class Step {
 		if (returnObject != null) {
 			buffer.append(",").append("returned:").append(returnObject.toString()).append(",");
 		}
-		if (timeSinceLastStep != -1L) {
-			buffer.append(",").append("since last step:").append(formattedNanoTime(timeSinceLastStep));
+		if (timeSinceLastAction != -1L) {
+			buffer.append(",").append("since last step:").append(formattedNanoTime(timeSinceLastAction));
 		}
 		if (timeElapsedStep != -1L) {
 			buffer.append(",").append("executed in:").append(formattedNanoTime(timeElapsedStep));
@@ -205,20 +219,22 @@ public class Step {
 		return timeString;
 	}
 
-	private void timeStampsForBegin() {
+	private void timeStampsForBeginAction() {
 		if (stepNumber > 1) {
-			timeSinceLastStep = System.nanoTime() - timeMarker;
+			timeSinceLastAction = System.nanoTime() - timeMarkerSinceLastStep;
 		}
-		// set time marker for timeElapsedStep
-		timeMarker = System.nanoTime();
 	}
 
-	private void timeStampsForEnd() {
-		if (stepNumber > 1) {
-			timeElapsedStep = System.nanoTime() - timeMarker;
-		}
-		// set time marker for timeSinceLastStep
-		timeMarker = System.nanoTime();
+	private void timeStampsForAfterAction() {
+		timeMarkerSinceLastStep = System.nanoTime();
+	}
+
+	private void timeStampsForBeginStep() {
+		timeMarkerElapsedStep = System.nanoTime();
+	}
+
+	private void timeStampsForAfterStep() {
+		timeElapsedStep = System.nanoTime() - timeMarkerElapsedStep;
 	}
 
 	public static String getLocatorFromWebElement(WebElement elem) {
