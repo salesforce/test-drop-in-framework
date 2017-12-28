@@ -114,5 +114,11 @@ This makes the test code independent of the test environment, thus allowing exch
 				</exclusion>
 			</exclusions>
    		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.3</version>
+		</dependency>
 	</dependencies>
 </project>

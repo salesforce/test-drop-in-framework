@@ -22,18 +22,18 @@ import org.openqa.selenium.interactions.HasTouchScreen;
 import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.interactions.internal.Coordinates;
 
-import com.salesforce.selenium.support.event.EnhancedWebDriverEventListener;
+import com.salesforce.selenium.support.event.WebDriverEventListener;
 
 /**
  * A touch screen that fires events.
  */
-public class EnhancedEventFiringTouch implements TouchScreen {
+public class EventFiringTouch implements TouchScreen {
 
 	private final WebDriver driver;
 //	private final EnhancedWebDriverEventListener dispatcher;
 	private final TouchScreen touchScreen;
 
-	public EnhancedEventFiringTouch(WebDriver driver, EnhancedWebDriverEventListener dispatcher) {
+	public EventFiringTouch(WebDriver driver, WebDriverEventListener dispatcher) {
 		this.driver = driver;
 //		this.dispatcher = dispatcher;
 		this.touchScreen = ((HasTouchScreen) this.driver).getTouch();

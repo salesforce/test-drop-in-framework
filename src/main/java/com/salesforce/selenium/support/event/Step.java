@@ -7,14 +7,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author gneumann
  *
  */
-public class StepLogEntry {
-	public enum Step { Before, After }
+public class Step {
+	public enum Type { BeforeAction, AfterAction, BeforeGather, AfterGather, Exception }
 	public enum Cmd {
 		// commands called directly from WebDriver object
 		close, findElementByWebDriver, findElementsByWebDriver, get, getCurrentUrl, getTitle, getWindowHandle, getWindowHandles, quit,
@@ -25,117 +28,144 @@ public class StepLogEntry {
 		// commands called directly from WebDriver.Window object
 		fullscreen, getPosition, getSize, maximize, setPosition, setSize,
 		// commands called directly from WebElement object
-		click, clear, findElementByElement, findElementsByElement, getAttribute, getCssValue, getTagName, getText, isDisplayed, isEnabled, isSelected, sendKeys, submit
+		click, clear, findElementByElement, findElementsByElement, getAttribute, getCssValue, getTagName, getText, isDisplayed, isEnabled, isSelected, sendKeys, submit,
+		// current command has failed 
+		testFailure
 	}
 
 	private static long timeMarker;
+	private static int recordNumber = -1;
 
 	private int stepNumber = -1;
 	private long timeStamp = -1L; // System.currentTimeMillis()
 	private long timeSinceLastStep = -1L; // measured from end of last command to begin of current command
 	private long timeElapsedStep = -1L; // measured from begin of current command to end of current command
-	private Step typeOfLog;
+	private Type typeOfLog;
 	private Cmd cmd;
 	private String param1;
 	private String param2;
 	private String returnValue;
+	@JsonIgnore
+	private Object returnObject;
 	private Throwable issue;
 
-	public StepLogEntry(Step typeOfLog, int stepNumber, Cmd cmd) {
-		this(typeOfLog, stepNumber, cmd, null, null, null);
+	/**
+	 * Empty Default constructor to be used by de-serialization.
+	 */
+	public Step( ) {
+		// no-op
 	}
-	
-	public StepLogEntry(Step typeOfLog, int stepNumber, Cmd cmd, WebElement element) {
-		this(typeOfLog, stepNumber, cmd, element, null, null);
-	}
-	
-	public StepLogEntry(Step typeOfLog, int stepNumber, Cmd cmd, WebElement element, String value) {
-		this(typeOfLog, stepNumber, cmd, element, value, null);
-	}
-	
-	public StepLogEntry(Step typeOfLog, int stepNumber, Cmd cmd, WebElement element, String sendValue, String returnValue) {
+
+	public Step(Type typeOfLog, int stepNumber, Cmd cmd) {
+		Step.recordNumber++;
 		this.typeOfLog = typeOfLog;
 		this.stepNumber = stepNumber;
 		this.cmd = cmd;
 		this.timeStamp = System.currentTimeMillis();
 		
-		if (typeOfLog == Step.Before) {
+		if (typeOfLog == Type.BeforeAction) {
 			timeStampsForBegin();
 		} else {
 			timeStampsForEnd();
 		}
-		
-		switch (cmd) {
-		case clear:
-		case click:
-			this.param1 = getLocatorFromWebElement(element);
-			break;
-		case getText:
-			this.param1 = getLocatorFromWebElement(element);
-			this.returnValue = returnValue;
-			break;
-		case getWindowHandle:
-		case getWindowHandles:
-			if (typeOfLog == Step.After) {
-				this.returnValue = returnValue;
-			}
-			break;
-		case frameByName:
-		case to:
-		case window:
-			this.param1 = sendValue;
-			break;
-		case sendKeys:
-			this.param1 = getLocatorFromWebElement(element);
-			this.param2 = sendValue;
-			break;
-		case close:
-		case quit:
-		default:
-			// do nothing
-		}
 	}
-	
+
+	public int getRecordNumber() {
+		return Step.recordNumber;
+	}
+
+	public void setRecordNumber(int recordNumber) {
+		Step.recordNumber = recordNumber;
+	}
+
 	public int getStepNumber() {
 		return stepNumber;
+	}
+	
+	public void setStepNumber(int stepNumber) {
+		this.stepNumber = stepNumber;
 	}
 
 	public long getTimeStamp() {
 		return timeStamp;
 	}
 
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
+	}
+
 	public long getTimeSinceLastStep() {
 		return timeSinceLastStep;
+	}
+
+	public void setTimeSinceLastStep(long timeSinceLastStep) {
+		this.timeSinceLastStep = timeSinceLastStep;
 	}
 
 	public long getTimeElapsedStep() {
 		return timeElapsedStep;
 	}
 
-	public Step getTypeOfLog() {
+	public void setTimeElapsedStep(long timeElapsedStep) {
+		this.timeElapsedStep = timeElapsedStep;
+	}
+
+	public Type getTypeOfLog() {
 		return typeOfLog;
+	}
+
+	public void setTypeOfLog(Type typeOfLog) {
+		this.typeOfLog = typeOfLog;
 	}
 
 	public Cmd getCmd() {
 		return cmd;
 	}
 
+	public void setCmd(Cmd cmd) {
+		this.cmd = cmd;
+	}
+
 	public String getParam1() {
 		return param1;
+	}
+
+	public void setParam1(String param1) {
+		this.param1 = param1;
 	}
 
 	public String getParam2() {
 		return param2;
 	}
 
+	public void setParam2(String param2) {
+		this.param2 = param2;
+	}
+
 	public String getReturnValue() {
 		return returnValue;
+	}
+
+	public void setReturnValue(String returnValue) {
+		this.returnValue = returnValue;
+	}
+
+	public Object getReturnObject() {
+		return returnObject;
+	}
+
+	public void setReturnObject(Object returnObject) {
+		this.returnObject = returnObject;
 	}
 
 	public Throwable getIssue() {
 		return issue;
 	}
-	
+
+	public void setIssue(Throwable issue) {
+		this.issue = issue;
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -151,6 +181,9 @@ public class StepLogEntry {
 		}
 		if (returnValue != null) {
 			buffer.append(",").append("returned:").append(returnValue).append(",");
+		}
+		if (returnObject != null) {
+			buffer.append(",").append("returned:").append(returnObject.toString()).append(",");
 		}
 		if (timeSinceLastStep != -1L) {
 			buffer.append(",").append("since last step:").append(formattedNanoTime(timeSinceLastStep));
@@ -188,11 +221,11 @@ public class StepLogEntry {
 		timeMarker = System.nanoTime();
 	}
 
-	private static String getLocatorFromWebElement(WebElement elem) {
+	public static String getLocatorFromWebElement(WebElement elem) {
 		return (elem != null) ? getLocatorFromWebElement(elem.toString()) : null;
 	}
 
-	private static String getLocatorFromWebElement(String locator) {
+	public static String getLocatorFromWebElement(String locator) {
 		if (locator == null)
 			return null;
 
@@ -234,10 +267,40 @@ public class StepLogEntry {
 		return sb.toString();
 	}
 
+	public static String getLocatorFromBy(By by) {
+		return (by != null) ? getLocatorFromBy(by.toString()) : null;
+	}
+
+	public static String getLocatorFromBy(String locator) {
+		if (locator == null)
+			return null;
+		// sample string:
+		// "By.xpath: .//*[@id='thePage:j_id39:searchblock:test:j_id45_lkwgt']/img"
+		Pattern pattern = Pattern.compile("By.(\\S+): (.+)");
+		Matcher matcher = pattern.matcher(locator);
+		if (!matcher.matches()) {
+			// return what we got as-is
+			return locator;
+		}
+
+		// build the @FindBy string
+		StringBuilder sb = new StringBuilder();
+		sb.append("@FindBy(");
+		// append locator type: "xpath"
+		sb.append(locator.substring(matcher.start(1), matcher.end(1))).append("=\"");
+		// append locator itself:
+		// ".//*[@id='thePage:j_id39:searchblock:test:j_id45_lkwgt']/img"
+		sb.append(locator.substring(matcher.start(2), matcher.end(2))).append("\")");
+		return sb.toString();
+	}
+
 	public static void main(String[] args) {
 		String s = getLocatorFromWebElement("[[RemoteWebDriver: firefox on WINDOWS (a66f78e9668e4aa3b066239459f969fe)] -> link text: Amazon - Bangalore - Test Account]");
 //		String s = getLocatorFromWebElement((WebElement) null);
 //		String s = getLocatorFromWebElement((String) null);
-		System.out.println(s);
+//		String s = getLocatorFromBy("By.xpath: .//*[@id='thePage:j_id39:searchblock:test:j_id45_lkwgt']/img");		
+//		String s = getLocatorFromBy((By) null);
+//		String s = getLocatorFromBy((String) null);
+ 		System.out.println(s);
 	}
 }

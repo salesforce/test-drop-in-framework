@@ -22,17 +22,17 @@ import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.interactions.internal.Coordinates;
 
-import com.salesforce.selenium.support.event.EnhancedWebDriverEventListener;
+import com.salesforce.selenium.support.event.WebDriverEventListener;
 
 /**
  * A mouse that fires events.
  */
-public class EnhancedEventFiringMouse implements Mouse {
+public class EventFiringMouse implements Mouse {
 	private final WebDriver driver;
 //	private final EnhancedWebDriverEventListener dispatcher;
 	private final Mouse mouse;
 
-	public EnhancedEventFiringMouse(WebDriver driver, EnhancedWebDriverEventListener dispatcher) {
+	public EventFiringMouse(WebDriver driver, WebDriverEventListener dispatcher) {
 		this.driver = driver;
 //		this.dispatcher = dispatcher;
 		this.mouse = ((HasInputDevices) this.driver).getMouse();
