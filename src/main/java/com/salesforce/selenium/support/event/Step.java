@@ -320,19 +320,4 @@ public class Step {
 		sb.append(locator.substring(matcher.start(2), matcher.end(2))).append("\")");
 		return sb.toString();
 	}
-
-	public static void main(String[] args) {
-		String s1 = getLocatorFromBy("By.xpath: .//*[@id='thePage:j_id39:searchblock:test:j_id45_lkwgt']/img");		
- 		System.out.println(s1);
-		String s2 = getLocatorFromBy((By) null);
- 		System.out.println(s2);
-		String s3 = getLocatorFromBy((String) null);
- 		System.out.println(s3);
-		String s4 = getLocatorFromWebElement("[[RemoteWebDriver: firefox on WINDOWS (a66f78e9668e4aa3b066239459f969fe)] -> link text: Amazon - Bangalore - Test Account]");
- 		System.out.println(s4);
-		String s5 = getLocatorFromWebElement((WebElement) null);
- 		System.out.println(s5);
-		String s6 = getLocatorFromWebElement((String) null);
- 		System.out.println(s6);
-	}
 }
