@@ -1,6 +1,21 @@
+//Licensed to the Software Freedom Conservancy (SFC) under one
+//or more contributor license agreements.  See the NOTICE file
+//distributed with this work for additional information
+//regarding copyright ownership.  The SFC licenses this file
+//to you under the Apache License, Version 2.0 (the
+//"License"); you may not use this file except in compliance
+//with the License.  You may obtain a copy of the License at
+//
+//http://www.apache.org/licenses/LICENSE-2.0
+//
+//Unless required by applicable law or agreed to in writing,
+//software distributed under the License is distributed on an
+//"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//KIND, either express or implied.  See the License for the
+//specific language governing permissions and limitations
+//under the License.
 package com.salesforce.selenium.support.event;
 
-// Licensed to the Software Freedom Conservancy (SFC) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
 // regarding copyright ownership.  The SFC licenses this file
@@ -16,7 +31,6 @@ package com.salesforce.selenium.support.event;
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.Beta;
 import org.openqa.selenium.By;
@@ -65,6 +79,12 @@ import java.util.concurrent.TimeUnit;
  * A wrapper around an arbitrary {@link WebDriver} instance which supports
  * registering of a {@link WebDriverEventListener}, e.g. for logging
  * purposes.
+ * 
+ * This is an extended version of org.openqa.selenium.support.events.EventFiringWebDriver. See
+ * https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/support/events/EventFiringWebDriver.html
+ * for more information.
+ * 
+ * @since 2.0.0
  */
 public class EventFiringWebDriver
 		implements WebDriver, JavascriptExecutor, TakesScreenshot, WrapsDriver, HasInputDevices, HasTouchScreen {
@@ -271,6 +291,12 @@ public class EventFiringWebDriver
 		return handles;
 	}
 
+	/**
+	 * In addition to quitting the wrapped WebDriver instance, this call also will call
+	 * {@link WebDriverEventListener#closeListener()} on all registered listeners.
+	 * 
+	 * @see WebDriver#quit()
+	 */
 	public void quit() {
 		dispatcher.beforeQuit(new Step(Type.BeforeAction, stepNumber, Cmd.quit));
 		driver.quit();

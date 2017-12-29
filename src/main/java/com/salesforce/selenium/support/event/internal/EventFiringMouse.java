@@ -14,7 +14,6 @@
 //KIND, either express or implied.  See the License for the
 //specific language governing permissions and limitations
 //under the License.
-
 package com.salesforce.selenium.support.event.internal;
 
 import org.openqa.selenium.WebDriver;
@@ -26,15 +25,19 @@ import com.salesforce.selenium.support.event.WebDriverEventListener;
 
 /**
  * A mouse that fires events.
+ * 
+ * This is an extended version of org.openqa.selenium.support.events.internal.EventFiringMouse. See
+ * https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/support/events/internal/EventFiringMouse.html
+ * for more information.
  */
 public class EventFiringMouse implements Mouse {
 	private final WebDriver driver;
-//	private final EnhancedWebDriverEventListener dispatcher;
+	private final WebDriverEventListener dispatcher;
 	private final Mouse mouse;
 
 	public EventFiringMouse(WebDriver driver, WebDriverEventListener dispatcher) {
 		this.driver = driver;
-//		this.dispatcher = dispatcher;
+		this.dispatcher = dispatcher;
 		this.mouse = ((HasInputDevices) this.driver).getMouse();
 	}
 

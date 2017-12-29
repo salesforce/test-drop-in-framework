@@ -11,11 +11,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.salesforce.cqe</groupId>
 	<artifactId>test-drop-in-framework</artifactId>
-	<version>1.0.0</version>
+	<version>2.0.0</version>
 	<name>Test Drop-in Framework</name>
 	<description>Provides a thin abstraction layer between the test environment and the test class plus its helpers.
 
-This makes the test code independent of the test environment, thus allowing exchange of tests between organizations or even companies.</description>
+This makes the test code independent of the test environment, thus allowing exchange of tests between organizations or even companies.
+
+Further it comes with an event firing WebDriver wrapper plus corresponding interface. This allows you to implement listeners to arbitrary WebDriver activities for various purposes such as logging. </description>
 	<packaging>jar</packaging>
     <licenses>
         <license>

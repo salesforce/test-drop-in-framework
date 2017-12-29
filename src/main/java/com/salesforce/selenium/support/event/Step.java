@@ -1,5 +1,8 @@
-/**
- * 
+/* 
+ * Copyright (c) 2018, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license. 
+ * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
 package com.salesforce.selenium.support.event;
 
@@ -13,8 +16,16 @@ import org.openqa.selenium.WebElement;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
+ * Records information on a given WebDriver command such as click() or getText().
+ * 
+ * The {@link EventFiringWebDriver} creates such a record before and after each command. The Step object
+ * is then passed on to any listeners implementing the {@link WebDriverEventListener} interface.
+ * 
+ * A special listener is {@link FullJSONLogger} which collects all Step objects and saves the collection
+ * to a JSON file.
+ * 
  * @author gneumann
- *
+ * @since 2.0.0
  */
 public class Step {
 	public enum Type { BeforeAction, AfterAction, BeforeGather, AfterGather, Exception }

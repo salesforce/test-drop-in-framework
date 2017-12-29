@@ -1,3 +1,9 @@
+/* 
+ * Copyright (c) 2018, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license. 
+ * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
+ */
 package com.salesforce.selenium.support.event;
 
 import java.io.FileWriter;
@@ -18,14 +24,27 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.salesforce.selenium.support.event.Step.Cmd;
 
 /**
- * Use this class as base class, if you want to implement a
- * {@link WebDriverEventListener} and are only interested in some events. All
- * methods provided by this class have an empty method body.
+ * Collects information on a given WebDriver command such as click() or getText() and saves this
+ * collection to a JSON file.
+ * 
+ * The {@link EventFiringWebDriver} creates {@link Step} objects before and after each command such as
+ * click() or getText(). This class collects these objects and saves this collection to a JSON file.
+ * 
+ * @author gneumann
+ * @since 2.0.0
  */
 public class FullJSONLogger implements WebDriverEventListener {
 	private String fileName = null;
 	private List<Step> logEntries = new ArrayList<>();
 
+	/**
+	 * Define the file name of the JSON file without the ".json" extension. It will be
+	 * written when the running test calls the {@link EventFiringWebDriver#quit()} command.
+	 * <p>
+	 * The file will be stored under the relative directory "./target".
+	 * 
+	 * @param testName name of the JSON file
+	 */
 	public FullJSONLogger(String testName) {
 		this.fileName = "target/" + testName + ".json";
 	}

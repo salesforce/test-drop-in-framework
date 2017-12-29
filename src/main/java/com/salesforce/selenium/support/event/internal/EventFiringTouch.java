@@ -14,7 +14,6 @@
 //KIND, either express or implied.  See the License for the
 //specific language governing permissions and limitations
 //under the License.
-
 package com.salesforce.selenium.support.event.internal;
 
 import org.openqa.selenium.WebDriver;
@@ -26,16 +25,20 @@ import com.salesforce.selenium.support.event.WebDriverEventListener;
 
 /**
  * A touch screen that fires events.
+ * 
+ * This is an extended version of org.openqa.selenium.support.events.internal.EventFiringTouch. See
+ * https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/support/events/internal/EventFiringTouch.html
+ * for more information.
  */
 public class EventFiringTouch implements TouchScreen {
 
 	private final WebDriver driver;
-//	private final EnhancedWebDriverEventListener dispatcher;
+	private final WebDriverEventListener dispatcher;
 	private final TouchScreen touchScreen;
 
 	public EventFiringTouch(WebDriver driver, WebDriverEventListener dispatcher) {
 		this.driver = driver;
-//		this.dispatcher = dispatcher;
+		this.dispatcher = dispatcher;
 		this.touchScreen = ((HasTouchScreen) this.driver).getTouch();
 	}
 
