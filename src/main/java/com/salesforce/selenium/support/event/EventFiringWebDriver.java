@@ -108,6 +108,7 @@ public class EventFiringWebDriver
 				}
 			});
 
+	private Step currentStep = null;
 	private int stepNumber = 1;
 
 	public EventFiringWebDriver(final WebDriver driver, String testName) {
@@ -123,9 +124,15 @@ public class EventFiringWebDriver
 						try {
 							return method.invoke(driver, args);
 						} catch (InvocationTargetException e) {
-							Step step = new Step(Type.Exception, stepNumber, Cmd.testFailure);
-							step.setIssue(e);
-							dispatcher.onException(step, Cmd.testFailure, e.getTargetException());
+							if (currentStep != null) {
+								currentStep.setIssue(e);
+								dispatcher.onException(currentStep, currentStep.getCmd(), e.getTargetException());
+							} else {
+								// create a dummy step
+								Step step = new Step(Type.Exception, stepNumber, Cmd.testFailure);
+								step.setIssue(e);
+								dispatcher.onException(step, Cmd.testFailure, e.getTargetException());
+							}
 							throw e.getTargetException();
 						}
 					}
@@ -188,15 +195,20 @@ public class EventFiringWebDriver
 	 *--------------------------------------------------------------------*/
 
 	public void close() {
-		dispatcher.beforeClose(new Step(Type.BeforeAction, stepNumber, Cmd.close));
+		Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.close);
+		dispatcher.beforeClose(stepBefore);
+		currentStep = stepBefore;
+
 		driver.close();
-		dispatcher.afterClose(new Step(Type.AfterAction, stepNumber++, Cmd.close));
+		Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.close);
+		dispatcher.afterClose(stepAfter);
 	}
 
 	public WebElement findElement(By by) {
 		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.findElementByWebDriver);
 		stepBefore.setParam1(Step.getLocatorFromBy(by));
 		dispatcher.beforeFindElementByWebDriver(stepBefore, by);
+		currentStep = stepBefore;
 
 		WebElement returnedElement = driver.findElement(by);
 
@@ -211,6 +223,7 @@ public class EventFiringWebDriver
 		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.findElementsByWebDriver);
 		stepBefore.setParam1(Step.getLocatorFromBy(by));
 		dispatcher.beforeFindElementByWebDriver(stepBefore, by);
+		currentStep = stepBefore;
 
 		List<WebElement> returnedElements = driver.findElements(by);
 
@@ -230,6 +243,7 @@ public class EventFiringWebDriver
 		Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.get);
 		stepBefore.setParam1(url);
 		dispatcher.beforeGet(stepBefore, url);
+		currentStep = stepBefore;
 
 		driver.get(url);
 
@@ -239,7 +253,9 @@ public class EventFiringWebDriver
 	}
 
 	public String getCurrentUrl() {
-		dispatcher.beforeGetCurrentUrl(new Step(Type.BeforeGather, stepNumber, Cmd.getCurrentUrl));
+		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getCurrentUrl);
+		dispatcher.beforeGetCurrentUrl(stepBefore);
+		currentStep = stepBefore;
 
 		String url = driver.getCurrentUrl();
 
@@ -250,7 +266,9 @@ public class EventFiringWebDriver
 	}
 
 	public String getTitle() {
-		dispatcher.beforeGetTitle(new Step(Type.BeforeGather, stepNumber, Cmd.getTitle));
+		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getTitle);
+		dispatcher.beforeGetTitle(stepBefore);
+		currentStep = stepBefore;
 
 		String title = driver.getTitle();
 		
@@ -261,7 +279,9 @@ public class EventFiringWebDriver
 	}
 
 	public String getWindowHandle() {
-		dispatcher.beforeGetWindowHandle(new Step(Type.BeforeGather, stepNumber, Cmd.getWindowHandle));
+		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getWindowHandle);
+		dispatcher.beforeGetWindowHandle(stepBefore);
+		currentStep = stepBefore;
 
 		String handle = driver.getWindowHandle();
 
@@ -272,7 +292,9 @@ public class EventFiringWebDriver
 	}
 
 	public Set<String> getWindowHandles() {
-		dispatcher.beforeGetWindowHandles(new Step(Type.BeforeGather, stepNumber, Cmd.getWindowHandles));
+		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getWindowHandles);
+		dispatcher.beforeGetWindowHandles(stepBefore);
+		currentStep = stepBefore;
 
 		Set<String> handles = driver.getWindowHandles();
 
@@ -298,8 +320,12 @@ public class EventFiringWebDriver
 	 * @see WebDriver#quit()
 	 */
 	public void quit() {
-		dispatcher.beforeQuit(new Step(Type.BeforeAction, stepNumber, Cmd.quit));
+		Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.quit);
+		dispatcher.beforeQuit(stepBefore);
+		currentStep = stepBefore;
+
 		driver.quit();
+
 		dispatcher.afterQuit(new Step(Type.AfterAction, stepNumber++, Cmd.quit));
 		closeListeners();
 	}
@@ -443,6 +469,7 @@ public class EventFiringWebDriver
 		public void click() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.click);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
+			currentStep = stepBefore;
 
 			dispatcher.beforeClick(stepBefore, element);
 
@@ -457,6 +484,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.clear);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeClear(stepBefore, element);
+			currentStep = stepBefore;
 
 			element.clear();
 			
@@ -469,6 +497,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.findElementByElement);
 			stepBefore.setParam1(Step.getLocatorFromBy(by));
 			dispatcher.beforeFindElementByElement(stepBefore, by, element);
+			currentStep = stepBefore;
 
 			WebElement returnedElement = element.findElement(by);
 
@@ -483,6 +512,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.findElementsByElement);
 			stepBefore.setParam1(Step.getLocatorFromBy(by));
 			dispatcher.beforeFindElementByElement(stepBefore, by, element);
+			currentStep = stepBefore;
 
 			List<WebElement> returnedElements = element.findElements(by);
 
@@ -502,6 +532,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getAttribute);
 			stepBefore.setParam1(name);
 			dispatcher.beforeGetAttribute(stepBefore, name, element);
+			currentStep = stepBefore;
 
 			String value = element.getAttribute(name);
 			
@@ -516,6 +547,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getCssValue);
 			stepBefore.setParam1(propertyName);
 			dispatcher.beforeGetCssValue(stepBefore, propertyName, element);
+			currentStep = stepBefore;
 
 			String value = element.getCssValue(propertyName);
 			
@@ -530,6 +562,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getTagName);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeGetTagName(stepBefore, element);
+			currentStep = stepBefore;
 
 			String tagName = element.getTagName();
 
@@ -544,6 +577,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getText);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeGetText(stepBefore, element);
+			currentStep = stepBefore;
 
 			String text = element.getText();
 			
@@ -558,6 +592,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.isDisplayed);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeIsDisplayed(stepBefore, element);
+			currentStep = stepBefore;
 
 			boolean isDisplayed = element.isDisplayed();
 
@@ -572,6 +607,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.isEnabled);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeIsEnabled(stepBefore, element);
+			currentStep = stepBefore;
 
 			boolean isEnabled = element.isEnabled();
 
@@ -586,6 +622,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.isSelected);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeIsSelected(stepBefore, element);
+			currentStep = stepBefore;
 
 			boolean isSelected = element.isSelected();
 
@@ -625,6 +662,7 @@ public class EventFiringWebDriver
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			stepBefore.setParam2(buffer.toString());
 			dispatcher.beforeSendKeys(stepBefore, element, keysToSend);
+			currentStep = stepBefore;
 
 			element.sendKeys(keysToSend);
 
@@ -638,6 +676,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.submit);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeSubmit(stepBefore, element);
+			currentStep = stepBefore;
 
 			element.submit();
 
@@ -700,7 +739,9 @@ public class EventFiringWebDriver
 		}
 
 		public void back() {
-			dispatcher.beforeBack(new Step(Type.BeforeAction, stepNumber, Cmd.back));
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.back);
+			dispatcher.beforeBack(stepBefore);
+			currentStep = stepBefore;
 
 			navigation.back();
 
@@ -708,7 +749,9 @@ public class EventFiringWebDriver
 		}
 
 		public void forward() {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.forward);
 			dispatcher.beforeForward(new Step(Type.BeforeAction, stepNumber, Cmd.forward));
+			currentStep = stepBefore;
 
 			navigation.forward();
 
@@ -716,7 +759,9 @@ public class EventFiringWebDriver
 		}
 
 		public void refresh() {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.refresh);
 			dispatcher.beforeRefresh(new Step(Type.BeforeAction, stepNumber, Cmd.refresh));
+			currentStep = stepBefore;
 
 			navigation.refresh();
 
@@ -730,6 +775,7 @@ public class EventFiringWebDriver
 		public void to(String url) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.to);
 			stepBefore.setParam1(url);
+			currentStep = stepBefore;
 
 			navigation.to(url);
 
@@ -828,7 +874,9 @@ public class EventFiringWebDriver
 		}
 
 		public WebElement activeElement() {
-			dispatcher.beforeActiveElement(new Step(Type.BeforeAction, stepNumber, Cmd.activeElement));
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.activeElement);
+			dispatcher.beforeActiveElement(stepBefore);
+			currentStep = stepBefore;
 
 			WebElement activeElement = targetLocator.activeElement();
 
@@ -839,7 +887,9 @@ public class EventFiringWebDriver
 		}
 
 		public Alert alert() {
-			dispatcher.beforeAlert(new Step(Type.BeforeAction, stepNumber, Cmd.alert));
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.alert);
+			dispatcher.beforeAlert(stepBefore);
+			currentStep = stepBefore;
 
 			Alert alert = targetLocator.alert();
 
@@ -850,7 +900,9 @@ public class EventFiringWebDriver
 		}
 
 		public WebDriver defaultContent() {
-			dispatcher.beforeDefaultContent(new Step(Type.BeforeAction, stepNumber, Cmd.defaultContent));
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.defaultContent);
+			dispatcher.beforeDefaultContent(stepBefore);
+			currentStep = stepBefore;
 
 			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.defaultContent();
@@ -863,6 +915,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.frameByIndex);
 			stepBefore.setParam1("" + frameIndex);
 			dispatcher.beforeFrameByIndex(stepBefore, frameIndex);
+			currentStep = stepBefore;
 
 			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.frame(frameIndex);
@@ -877,6 +930,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.frameByName);
 			stepBefore.setParam1(frameName);
 			dispatcher.beforeFrameByName(stepBefore, frameName);
+			currentStep = stepBefore;
 
 			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.frame(frameName);
@@ -891,6 +945,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.frameByElement);
 			stepBefore.setParam1(frameElement.toString());
 			dispatcher.beforeFrameByElement(stepBefore, frameElement);
+			currentStep = stepBefore;
 
 			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.frame(frameElement);
@@ -902,7 +957,9 @@ public class EventFiringWebDriver
 		}
 
 		public WebDriver parentFrame() {
-			dispatcher.beforeParentFrame(new Step(Type.BeforeAction, stepNumber, Cmd.parentFrame));
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.parentFrame);
+			dispatcher.beforeParentFrame(stepBefore);
+			currentStep = stepBefore;
 
 			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.parentFrame();
@@ -915,6 +972,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.window);
 			stepBefore.setParam1(windowName);
 			dispatcher.beforeWindow(stepBefore, windowName);
+			currentStep = stepBefore;
 
 			// TODO is this an EventFiringWebDriver instance?
 			WebDriver windowDriver = targetLocator.window(windowName);
@@ -938,7 +996,9 @@ public class EventFiringWebDriver
 		}
 
 		public void fullscreen() {
-			dispatcher.beforeFullscreen(new Step(Type.BeforeAction, stepNumber, Cmd.fullscreen));
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.fullscreen);
+			dispatcher.beforeFullscreen(stepBefore);
+			currentStep = stepBefore;
 			
 			window.fullscreen();
 			
@@ -946,7 +1006,9 @@ public class EventFiringWebDriver
 		}
 
 		public Point getPosition() {
-			dispatcher.beforeGetPosition(new Step(Type.BeforeGather, stepNumber, Cmd.getPosition));
+			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getPosition);
+			dispatcher.beforeGetPosition(stepBefore);
+			currentStep = stepBefore;
 			
 			Point point = window.getPosition();
 			
@@ -957,7 +1019,9 @@ public class EventFiringWebDriver
 		}
 
 		public Dimension getSize() {
-			dispatcher.beforeGetSize(new Step(Type.BeforeGather, stepNumber, Cmd.getSize));
+			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getSize);
+			dispatcher.beforeGetSize(stepBefore);
+			currentStep = stepBefore;
 			
 			Dimension size = window.getSize();
 			
@@ -968,7 +1032,9 @@ public class EventFiringWebDriver
 		}
 
 		public void maximize() {
-			dispatcher.beforeMaximize(new Step(Type.BeforeAction, stepNumber, Cmd.maximize));
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.maximize);
+			dispatcher.beforeMaximize(stepBefore);
+			currentStep = stepBefore;
 
 			window.maximize();
 
@@ -979,6 +1045,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setPosition);
 			stepBefore.setParam1(targetPosition.toString());
 			dispatcher.beforeSetPosition(stepBefore, targetPosition);
+			currentStep = stepBefore;
 
 			window.setPosition(targetPosition);
 
@@ -991,6 +1058,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setSize);
 			stepBefore.setParam1(targetSize.toString());
 			dispatcher.beforeSetSize(stepBefore, targetSize);
+			currentStep = stepBefore;
 
 			window.setSize(targetSize);
 
