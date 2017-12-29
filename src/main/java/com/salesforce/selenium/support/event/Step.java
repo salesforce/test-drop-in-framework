@@ -312,9 +312,9 @@ public class Step {
 
 		// build the @FindBy string
 		StringBuilder sb = new StringBuilder();
-		sb.append("@FindBy(");
+		sb.append("By.");
 		// append locator type: "xpath"
-		sb.append(locator.substring(matcher.start(1), matcher.end(1))).append("=\"");
+		sb.append(locator.substring(matcher.start(1), matcher.end(1))).append("(\"");
 		// append locator itself:
 		// ".//*[@id='thePage:j_id39:searchblock:test:j_id45_lkwgt']/img"
 		sb.append(locator.substring(matcher.start(2), matcher.end(2))).append("\")");
@@ -322,12 +322,17 @@ public class Step {
 	}
 
 	public static void main(String[] args) {
-		String s = getLocatorFromWebElement("[[RemoteWebDriver: firefox on WINDOWS (a66f78e9668e4aa3b066239459f969fe)] -> link text: Amazon - Bangalore - Test Account]");
-//		String s = getLocatorFromWebElement((WebElement) null);
-//		String s = getLocatorFromWebElement((String) null);
-//		String s = getLocatorFromBy("By.xpath: .//*[@id='thePage:j_id39:searchblock:test:j_id45_lkwgt']/img");		
-//		String s = getLocatorFromBy((By) null);
-//		String s = getLocatorFromBy((String) null);
- 		System.out.println(s);
+		String s1 = getLocatorFromBy("By.xpath: .//*[@id='thePage:j_id39:searchblock:test:j_id45_lkwgt']/img");		
+ 		System.out.println(s1);
+		String s2 = getLocatorFromBy((By) null);
+ 		System.out.println(s2);
+		String s3 = getLocatorFromBy((String) null);
+ 		System.out.println(s3);
+		String s4 = getLocatorFromWebElement("[[RemoteWebDriver: firefox on WINDOWS (a66f78e9668e4aa3b066239459f969fe)] -> link text: Amazon - Bangalore - Test Account]");
+ 		System.out.println(s4);
+		String s5 = getLocatorFromWebElement((WebElement) null);
+ 		System.out.println(s5);
+		String s6 = getLocatorFromWebElement((String) null);
+ 		System.out.println(s6);
 	}
 }
