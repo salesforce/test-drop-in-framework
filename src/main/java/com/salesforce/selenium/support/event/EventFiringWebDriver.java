@@ -32,7 +32,6 @@ package com.salesforce.selenium.support.event;
 // specific language governing permissions and limitations
 // under the License.
 import org.openqa.selenium.Alert;
-import org.openqa.selenium.Beta;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
@@ -194,6 +193,7 @@ public class EventFiringWebDriver
 	 * Section for all commands called directly from WebDriver object.
 	 *--------------------------------------------------------------------*/
 
+	@Override
 	public void close() {
 		Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.close);
 		dispatcher.beforeClose(stepBefore);
@@ -204,6 +204,7 @@ public class EventFiringWebDriver
 		dispatcher.afterClose(stepAfter);
 	}
 
+	@Override
 	public WebElement findElement(By by) {
 		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.findElementByWebDriver);
 		stepBefore.setParam1(Step.getLocatorFromBy(by));
@@ -214,11 +215,13 @@ public class EventFiringWebDriver
 
 		Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.findElementByWebDriver);
 		stepAfter.setParam1(Step.getLocatorFromBy(by));
+		stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElement));
 		stepAfter.setReturnObject(returnedElement);
 		dispatcher.afterFindElementByWebDriver(stepAfter, returnedElement, by);
 		return createWebElement(returnedElement);
 	}
 
+	@Override
 	public List<WebElement> findElements(By by) {
 		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.findElementsByWebDriver);
 		stepBefore.setParam1(Step.getLocatorFromBy(by));
@@ -229,6 +232,9 @@ public class EventFiringWebDriver
 
 		Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.findElementsByWebDriver);
 		stepAfter.setParam1(Step.getLocatorFromBy(by));
+		if (returnedElements.size() > 0) {
+			stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElements.get(0)));
+		}
 		stepAfter.setReturnObject(returnedElements);
 		dispatcher.afterFindElementsByWebDriver(stepAfter, returnedElements, by);
 
@@ -239,6 +245,7 @@ public class EventFiringWebDriver
 		return returnedAndWrappedElements;
 	}
 
+	@Override
 	public void get(String url) {
 		Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.get);
 		stepBefore.setParam1(url);
@@ -252,6 +259,7 @@ public class EventFiringWebDriver
 		dispatcher.afterGet(stepAfter, url);
 	}
 
+	@Override
 	public String getCurrentUrl() {
 		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getCurrentUrl);
 		dispatcher.beforeGetCurrentUrl(stepBefore);
@@ -265,6 +273,7 @@ public class EventFiringWebDriver
 		return url; 
 	}
 
+	@Override
 	public String getTitle() {
 		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getTitle);
 		dispatcher.beforeGetTitle(stepBefore);
@@ -272,12 +281,13 @@ public class EventFiringWebDriver
 
 		String title = driver.getTitle();
 		
-		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getTitle);
-		step.setReturnValue(title);
-		dispatcher.afterGetTitle(step, title);
+		Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getTitle);
+		stepAfter.setReturnValue(title);
+		dispatcher.afterGetTitle(stepAfter, title);
 		return title;
 	}
 
+	@Override
 	public String getWindowHandle() {
 		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getWindowHandle);
 		dispatcher.beforeGetWindowHandle(stepBefore);
@@ -285,30 +295,32 @@ public class EventFiringWebDriver
 
 		String handle = driver.getWindowHandle();
 
-		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getWindowHandle);
-		step.setReturnValue(handle);
-		dispatcher.afterGetWindowHandle(step, handle);
+		Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getWindowHandle);
+		stepAfter.setReturnValue(handle);
+		dispatcher.afterGetWindowHandle(stepAfter, handle);
 		return handle;
 	}
 
+	@Override
 	public Set<String> getWindowHandles() {
 		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getWindowHandles);
 		dispatcher.beforeGetWindowHandles(stepBefore);
 		currentStep = stepBefore;
 
 		Set<String> handles = driver.getWindowHandles();
-
-		String handlesAsOneString = "n/a";
-		StringBuffer sb = new StringBuffer();
-		if (handles != null) {
+		
+		Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getWindowHandles);
+		if ((handles != null) && (handles.size() > 0)) {
+			StringBuffer sb = new StringBuffer();
 			for (String h : handles) {
-				sb.append(h).append(" ");
+				sb.append(h).append(",");
 			}
-			handlesAsOneString = sb.toString();
+			String handlesAsString = sb.toString();
+			// remove the trailing ','
+			handlesAsString.substring(handlesAsString.length()-1);
+			stepAfter.setReturnValue(handlesAsString);
 		}
 
-		Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getWindowHandles);
-		stepAfter.setReturnValue(handlesAsOneString);
 		dispatcher.afterGetWindowHandles(stepAfter, handles);
 		return handles;
 	}
@@ -319,6 +331,7 @@ public class EventFiringWebDriver
 	 * 
 	 * @see WebDriver#quit()
 	 */
+	@Override
 	public void quit() {
 		Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.quit);
 		dispatcher.beforeQuit(stepBefore);
@@ -326,17 +339,20 @@ public class EventFiringWebDriver
 
 		driver.quit();
 
-		dispatcher.afterQuit(new Step(Type.AfterAction, stepNumber++, Cmd.quit));
+		Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.quit);
+		dispatcher.afterQuit(stepAfter);
 		closeListeners();
 	}
 
-	// TODO
+	// TODO add to WebDriverEventListener interface
+	@Override
 	public String getPageSource() {
 		String source = driver.getPageSource();
 		return source;
 	}
 
-	// TODO
+	// TODO add to WebDriverEventListener interface
+	@Override
 	public Object executeScript(String script, Object... args) {
 		if (driver instanceof JavascriptExecutor) {
 			Object[] usedArgs = unpackWrappedArgs(args);
@@ -346,6 +362,8 @@ public class EventFiringWebDriver
 		throw new UnsupportedOperationException("Underlying driver instance does not support executing javascript");
 	}
 
+	// TODO add to WebDriverEventListener interface
+	@Override
 	public Object executeAsyncScript(String script, Object... args) {
 		if (driver instanceof JavascriptExecutor) {
 			Object[] usedArgs = unpackWrappedArgs(args);
@@ -386,6 +404,8 @@ public class EventFiringWebDriver
 		}
 	}
 
+	// TODO add to WebDriverEventListener interface
+	@Override
 	public <X> X getScreenshotAs(OutputType<X> target) throws WebDriverException {
 		if (driver instanceof TakesScreenshot) {
 			return ((TakesScreenshot) driver).getScreenshotAs(target);
@@ -394,14 +414,17 @@ public class EventFiringWebDriver
 		throw new UnsupportedOperationException("Underlying driver instance does not support taking screenshots");
 	}
 
+	@Override
 	public TargetLocator switchTo() {
 		return new EventFiringTargetLocator(driver.switchTo());
 	}
 
+	@Override
 	public Navigation navigate() {
 		return new EventFiringNavigation(driver.navigate());
 	}
 
+	@Override
 	public Options manage() {
 		return new EventFiringOptions(driver.manage());
 	}
@@ -410,6 +433,7 @@ public class EventFiringWebDriver
 		return new EventFiringWebElement(from);
 	}
 
+	@Override
 	public Keyboard getKeyboard() {
 		if (driver instanceof HasInputDevices) {
 			return new EventFiringKeyboard(driver, dispatcher);
@@ -419,6 +443,7 @@ public class EventFiringWebDriver
 		}
 	}
 
+	@Override
 	public Mouse getMouse() {
 		if (driver instanceof HasInputDevices) {
 			return new EventFiringMouse(driver, dispatcher);
@@ -428,6 +453,7 @@ public class EventFiringWebDriver
 		}
 	}
 
+	@Override
 	public TouchScreen getTouch() {
 		if (driver instanceof HasTouchScreen) {
 			return new EventFiringTouch(driver, dispatcher);
@@ -466,6 +492,7 @@ public class EventFiringWebDriver
 			this.underlyingElement = element;
 		}
 
+		@Override
 		public void click() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.click);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
@@ -480,6 +507,7 @@ public class EventFiringWebDriver
 			dispatcher.afterClick(stepAfter, element);
 		}
 
+		@Override
 		public void clear() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.clear);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
@@ -488,11 +516,12 @@ public class EventFiringWebDriver
 
 			element.clear();
 			
-			Step step = new Step(Type.AfterAction, stepNumber++, Cmd.clear);
-			step.setParam1(Step.getLocatorFromWebElement(element));
-			dispatcher.afterClear(step, element);
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.clear);
+			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
+			dispatcher.afterClear(stepAfter, element);
 		}
 
+		@Override
 		public WebElement findElement(By by) {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.findElementByElement);
 			stepBefore.setParam1(Step.getLocatorFromBy(by));
@@ -503,11 +532,13 @@ public class EventFiringWebDriver
 
 			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.findElementByElement);
 			stepAfter.setParam1(Step.getLocatorFromBy(by));
+			stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElement));
 			stepAfter.setReturnObject(returnedElement);
 			dispatcher.afterFindElementByElement(stepAfter, returnedElement, by, element);
 			return createWebElement(returnedElement);
 		}
 
+		@Override
 		public List<WebElement> findElements(By by) {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.findElementsByElement);
 			stepBefore.setParam1(Step.getLocatorFromBy(by));
@@ -518,6 +549,9 @@ public class EventFiringWebDriver
 
 			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.findElementsByElement);
 			stepAfter.setParam1(Step.getLocatorFromBy(by));
+			if (returnedElements.size() > 0) {
+				stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElements.get(0)));
+			}
 			stepAfter.setReturnObject(returnedElements);
 			dispatcher.afterFindElementsByElement(stepAfter, returnedElements, by, element);
 
@@ -528,6 +562,7 @@ public class EventFiringWebDriver
 			return returnedAndWrappedElements;
 		}
 
+		@Override
 		public String getAttribute(String name) {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getAttribute);
 			stepBefore.setParam1(name);
@@ -543,6 +578,7 @@ public class EventFiringWebDriver
 			return value;
 		}
 
+		@Override
 		public String getCssValue(String propertyName) {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getCssValue);
 			stepBefore.setParam1(propertyName);
@@ -558,6 +594,7 @@ public class EventFiringWebDriver
 			return value;
 		}
 
+		@Override
 		public String getTagName() {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getTagName);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
@@ -573,6 +610,7 @@ public class EventFiringWebDriver
 			return tagName;
 		}
 
+		@Override
 		public String getText() {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getText);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
@@ -588,6 +626,7 @@ public class EventFiringWebDriver
 			return text;
 		}
 
+		@Override
 		public boolean isDisplayed() {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.isDisplayed);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
@@ -603,6 +642,7 @@ public class EventFiringWebDriver
 			return isDisplayed;
 		}
 
+		@Override
 		public boolean isEnabled() {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.isEnabled);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
@@ -618,6 +658,7 @@ public class EventFiringWebDriver
 			return isEnabled;
 		}
 
+		@Override
 		public boolean isSelected() {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.isSelected);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
@@ -634,23 +675,27 @@ public class EventFiringWebDriver
 		}
 
 		// TODO add to WebDriverEventListener interface
+		@Override
 		public Point getLocation() {
 			Point point = element.getLocation();
 			return point;
 		}
 
 		// TODO add to WebDriverEventListener interface
+		@Override
 		public Dimension getSize() {
 			Dimension dimension = element.getSize();
 			return dimension;
 		}
 
 		// TODO add to WebDriverEventListener interface
+		@Override
 		public Rectangle getRect() {
 			Rectangle rect = element.getRect();
 			return rect;
 		}
 
+		@Override
 		public void sendKeys(CharSequence... keysToSend) {
 			StringBuffer buffer = new StringBuffer();
 			if ((keysToSend != null) && (keysToSend.length > 0)) {
@@ -672,6 +717,7 @@ public class EventFiringWebDriver
 			dispatcher.afterSendKeys(stepAfter, element, keysToSend);
 		}
 
+		@Override
 		public void submit() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.submit);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
@@ -717,10 +763,12 @@ public class EventFiringWebDriver
 			return driver;
 		}
 
+		@Override
 		public Coordinates getCoordinates() {
 			return ((Locatable) underlyingElement).getCoordinates();
 		}
 
+		@Override
 		public <X> X getScreenshotAs(OutputType<X> outputType) throws WebDriverException {
 			return element.getScreenshotAs(outputType);
 		}
@@ -738,6 +786,7 @@ public class EventFiringWebDriver
 			this.navigation = navigation;
 		}
 
+		@Override
 		public void back() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.back);
 			dispatcher.beforeBack(stepBefore);
@@ -745,33 +794,40 @@ public class EventFiringWebDriver
 
 			navigation.back();
 
-			dispatcher.afterBack(new Step(Type.AfterAction, stepNumber++, Cmd.back));
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.back);
+			dispatcher.afterBack(stepAfter);
 		}
 
+		@Override
 		public void forward() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.forward);
-			dispatcher.beforeForward(new Step(Type.BeforeAction, stepNumber, Cmd.forward));
+			dispatcher.beforeForward(stepBefore);
 			currentStep = stepBefore;
 
 			navigation.forward();
 
-			dispatcher.afterForward(new Step(Type.AfterAction, stepNumber++, Cmd.forward));
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.forward);
+			dispatcher.afterForward(stepAfter);
 		}
 
+		@Override
 		public void refresh() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.refresh);
-			dispatcher.beforeRefresh(new Step(Type.BeforeAction, stepNumber, Cmd.refresh));
+			dispatcher.beforeRefresh(stepBefore);
 			currentStep = stepBefore;
 
 			navigation.refresh();
 
-			dispatcher.afterRefresh(new Step(Type.AfterAction, stepNumber++, Cmd.refresh));
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.refresh);
+			dispatcher.afterRefresh(stepAfter);
 		}
 
+		@Override
 		public void to(URL url) {
 			to(String.valueOf(url));
 		}
 
+		@Override
 		public void to(String url) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.to);
 			stepBefore.setParam1(url);
@@ -779,9 +835,9 @@ public class EventFiringWebDriver
 
 			navigation.to(url);
 
-			Step step = new Step(Type.AfterAction, stepNumber++, Cmd.to);
-			step.setParam1(url);
-			dispatcher.afterTo(step, url);
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.to);
+			stepAfter.setParam1(url);
+			dispatcher.afterTo(stepAfter, url);
 		}
 	}
 
@@ -793,45 +849,54 @@ public class EventFiringWebDriver
 			this.options = options;
 		}
 
+		@Override
 		public Logs logs() {
 			return options.logs();
 		}
 
+		@Override
 		public void addCookie(Cookie cookie) {
 			options.addCookie(cookie);
 		}
 
+		@Override
 		public void deleteCookieNamed(String name) {
 			options.deleteCookieNamed(name);
 		}
 
+		@Override
 		public void deleteCookie(Cookie cookie) {
 			options.deleteCookie(cookie);
 		}
 
+		@Override
 		public void deleteAllCookies() {
 			options.deleteAllCookies();
 		}
 
+		@Override
 		public Set<Cookie> getCookies() {
 			Set<Cookie> cookies = options.getCookies(); 
 			return cookies;
 		}
 
+		@Override
 		public Cookie getCookieNamed(String name) {
 			Cookie cookie = options.getCookieNamed(name); 
 			return cookie;
 		}
 
+		@Override
 		public Timeouts timeouts() {
 			return new EventFiringTimeouts(options.timeouts());
 		}
 
+		@Override
 		public ImeHandler ime() {
 			return options.ime();
 		}
 
-		@Beta
+		@Override
 		public Window window() {
 			return new EventFiringWindow(options.window());
 		}
@@ -845,16 +910,19 @@ public class EventFiringWebDriver
 			this.timeouts = timeouts;
 		}
 
+		@Override
 		public Timeouts implicitlyWait(long time, TimeUnit unit) {
 			timeouts.implicitlyWait(time, unit);
 			return this;
 		}
 
+		@Override
 		public Timeouts setScriptTimeout(long time, TimeUnit unit) {
 			timeouts.setScriptTimeout(time, unit);
 			return this;
 		}
 
+		@Override
 		public Timeouts pageLoadTimeout(long time, TimeUnit unit) {
 			timeouts.pageLoadTimeout(time, unit);
 			return this;
@@ -873,6 +941,7 @@ public class EventFiringWebDriver
 			this.targetLocator = targetLocator;
 		}
 
+		@Override
 		public WebElement activeElement() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.activeElement);
 			dispatcher.beforeActiveElement(stepBefore);
@@ -880,12 +949,14 @@ public class EventFiringWebDriver
 
 			WebElement activeElement = targetLocator.activeElement();
 
-			Step step = new Step(Type.AfterAction, stepNumber++, Cmd.activeElement);
-			step.setReturnObject(activeElement);
-			dispatcher.afterActiveElement(step, activeElement);
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.activeElement);
+			stepAfter.setReturnValue(Step.getLocatorFromWebElement(activeElement));
+			stepAfter.setReturnObject(activeElement);
+			dispatcher.afterActiveElement(stepAfter, activeElement);
 			return createWebElement(activeElement);
 		}
 
+		@Override
 		public Alert alert() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.alert);
 			dispatcher.beforeAlert(stepBefore);
@@ -893,12 +964,14 @@ public class EventFiringWebDriver
 
 			Alert alert = targetLocator.alert();
 
-			Step step = new Step(Type.AfterAction, stepNumber++, Cmd.alert);
-			step.setReturnObject(alert);
-			dispatcher.afterAlert(step, alert);
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.alert);
+			stepAfter.setReturnValue(alert.toString());
+			stepAfter.setReturnObject(alert);
+			dispatcher.afterAlert(stepAfter, alert);
 			return alert;
 		}
 
+		@Override
 		public WebDriver defaultContent() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.defaultContent);
 			dispatcher.beforeDefaultContent(stepBefore);
@@ -907,10 +980,12 @@ public class EventFiringWebDriver
 			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.defaultContent();
 
-			dispatcher.afterDefaultContent(new Step(Type.AfterAction, stepNumber++, Cmd.defaultContent));
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.defaultContent);
+			dispatcher.afterDefaultContent(stepAfter);
 			return frameDriver;
 		}
 
+		@Override
 		public WebDriver frame(int frameIndex) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.frameByIndex);
 			stepBefore.setParam1("" + frameIndex);
@@ -926,6 +1001,7 @@ public class EventFiringWebDriver
 			return frameDriver;
 		}
 
+		@Override
 		public WebDriver frame(String frameName) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.frameByName);
 			stepBefore.setParam1(frameName);
@@ -941,6 +1017,7 @@ public class EventFiringWebDriver
 			return frameDriver;
 		}
 
+		@Override
 		public WebDriver frame(WebElement frameElement) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.frameByElement);
 			stepBefore.setParam1(frameElement.toString());
@@ -956,6 +1033,7 @@ public class EventFiringWebDriver
 			return frameDriver;
 		}
 
+		@Override
 		public WebDriver parentFrame() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.parentFrame);
 			dispatcher.beforeParentFrame(stepBefore);
@@ -964,10 +1042,12 @@ public class EventFiringWebDriver
 			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.parentFrame();
 
-			dispatcher.afterParentFrame(new Step(Type.AfterAction, stepNumber++, Cmd.parentFrame));
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.parentFrame);
+			dispatcher.afterParentFrame(stepAfter);
 			return frameDriver;
 		}
 
+		@Override
 		public WebDriver window(String windowName) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.window);
 			stepBefore.setParam1(windowName);
@@ -995,6 +1075,7 @@ public class EventFiringWebDriver
 			this.window = window;
 		}
 
+		@Override
 		public void fullscreen() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.fullscreen);
 			dispatcher.beforeFullscreen(stepBefore);
@@ -1002,9 +1083,11 @@ public class EventFiringWebDriver
 			
 			window.fullscreen();
 			
-			dispatcher.afterFullscreen(new Step(Type.AfterAction, stepNumber++, Cmd.fullscreen));
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.fullscreen);
+			dispatcher.afterFullscreen(stepAfter);
 		}
 
+		@Override
 		public Point getPosition() {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getPosition);
 			dispatcher.beforeGetPosition(stepBefore);
@@ -1013,11 +1096,13 @@ public class EventFiringWebDriver
 			Point point = window.getPosition();
 			
 			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getPosition);
+			stepAfter.setReturnValue(point.toString());
 			stepAfter.setReturnObject(point);
 			dispatcher.afterGetPosition(stepAfter, point);
 			return point;
 		}
 
+		@Override
 		public Dimension getSize() {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getSize);
 			dispatcher.beforeGetSize(stepBefore);
@@ -1025,12 +1110,14 @@ public class EventFiringWebDriver
 			
 			Dimension size = window.getSize();
 			
-			Step step = new Step(Type.AfterGather, stepNumber, Cmd.getSize);
-			step.setReturnObject(size);
-			dispatcher.afterGetSize(step, size);
+			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getSize);
+			stepAfter.setReturnValue(size.toString());
+			stepAfter.setReturnObject(size);
+			dispatcher.afterGetSize(stepAfter, size);
 			return size;
 		}
 
+		@Override
 		public void maximize() {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.maximize);
 			dispatcher.beforeMaximize(stepBefore);
@@ -1038,9 +1125,11 @@ public class EventFiringWebDriver
 
 			window.maximize();
 
-			dispatcher.afterMaximize(new Step(Type.AfterAction, stepNumber++, Cmd.maximize));
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.maximize);
+			dispatcher.afterMaximize(stepAfter);
 		}
 
+		@Override
 		public void setPosition(Point targetPosition) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setPosition);
 			stepBefore.setParam1(targetPosition.toString());
@@ -1054,6 +1143,7 @@ public class EventFiringWebDriver
 			dispatcher.afterSetPosition(stepAfter, targetPosition);
 		}
 
+		@Override
 		public void setSize(Dimension targetSize) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setSize);
 			stepBefore.setParam1(targetSize.toString());
