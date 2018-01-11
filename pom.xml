@@ -10,10 +10,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.salesforce.cqe</groupId>
-	<artifactId>test-drop-in-framework-selenium-2</artifactId>
+	<artifactId>test-drop-in-framework</artifactId>
 	<version>2.0.0</version>
 	<name>Test Drop-in Framework</name>
-	<description>Test Drop-in Framework for Selenium WebDriver 2.x.
+	<description>Test Drop-in Framework for Selenium WebDriver 3.x.
 	
 Provides a thin abstraction layer between the test environment and the test class plus its helpers.
 
@@ -106,7 +106,7 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
  		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>2.53.1</version>
+			<version>3.8.1</version>
 			<!-- explicitly exclude dependencies on JNA to avoid dependency on a different license type. -->
 			<exclusions>
 				<exclusion>
