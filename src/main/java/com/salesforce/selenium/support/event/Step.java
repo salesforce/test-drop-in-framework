@@ -41,7 +41,137 @@ public class Step {
 		// commands called directly from WebElement object
 		click, clear, findElementByElement, findElementsByElement, getAttribute, getCssValue, getTagName, getText, isDisplayed, isEnabled, isSelected, sendKeys, submit,
 		// current command has failed 
-		testFailure
+		testFailure;
+		
+		@Override
+		public String toString() {
+			String value = null;
+			switch (this) {
+			case close:
+				value = "webDriver.close";
+				break;
+			case findElementByWebDriver:
+				value = "webDriver.findElement";
+				break;
+			case findElementsByWebDriver:
+				value = "webDriver.findElements";
+				break;
+			case get:
+				value = "webDriver.get";
+				break;
+			case getCurrentUrl:
+				value = "webDriver.getCurrentUrl";
+				break;
+			case getTitle:
+				value = "webDriver.getTitle";
+				break;
+			case getWindowHandle:
+				value = "webDriver.getWindowHandle";
+				break;
+			case getWindowHandles:
+				value = "webDriver.getWindowHandles";
+				break;
+			case quit:
+				value = "webDriver.quit";
+				break;
+			case back:
+				value = "webDriver.navigate().back";
+				break;
+			case forward:
+				value = "webDriver.navigate().forward";
+				break;
+			case refresh:
+				value = "webDriver.navigate().refresh";
+				break;
+			case to:
+				value = "webDriver.navigate().to";
+				break;
+			case activeElement:
+				value = "webDriver.switchTo().activeElement";
+				break;
+			case alert:
+				value = "webDriver.switchTo().alert";
+				break;
+			case defaultContent:
+				value = "webDriver.switchTo().defaultContent";
+				break;
+			case frameByIndex:
+				value = "webDriver.switchTo().frame";
+				break;
+			case frameByName:
+				value = "webDriver.switchTo().frame";
+				break;
+			case frameByElement:
+				value = "webDriver.switchTo().frame";
+				break;
+			case parentFrame:
+				value = "webDriver.switchTo().parentFrame";
+				break;
+			case window:
+				value = "webDriver.switchTo().window";
+				break;
+			case fullscreen:
+				value = "webDriver.manage().window().fullscreen";
+				break;
+			case getPosition:
+				value = "webDriver.manage().window().getPosition";
+				break;
+			case getSize:
+				value = "webDriver.manage().window().getSize";
+				break;
+			case maximize:
+				value = "webDriver.manage().window().maximize";
+				break;
+			case setPosition:
+				value = "webDriver.manage().window().setPosition";
+				break;
+			case setSize:
+				value = "webDriver.manage().window().setSize";
+				break;
+			case click:
+				value = "webElement.click";
+				break;
+			case clear:
+				value = "webElement.clear";
+				break;
+			case findElementByElement:
+				value = "webElement.findElement";
+				break;
+			case findElementsByElement:
+				value = "webElement.findElements";
+				break;
+			case getAttribute:
+				value = "webElement.getAttribute";
+				break;
+			case getCssValue:
+				value = "webElement.getCssValue";
+				break;
+			case getTagName:
+				value = "webElement.getTagName";
+				break;
+			case getText:
+				value = "webElement.getText";
+				break;
+			case isDisplayed:
+				value = "webElement.isDisplayed";
+				break;
+			case isEnabled:
+				value = "webElement.isEnabled";
+				break;
+			case isSelected:
+				value = "webElement.isSelected";
+				break;
+			case sendKeys:
+				value = "webElement.sendKeys";
+				break;
+			case submit:
+				value = "webElement.submit";
+				break;
+			default:
+				value = "unknown";
+			}
+			return value;
+		}
 	}
 
 	private static long timeMarkerElapsedStep;
