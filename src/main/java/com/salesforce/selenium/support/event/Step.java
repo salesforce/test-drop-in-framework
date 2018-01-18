@@ -42,130 +42,189 @@ public class Step {
 		click, clear, findElementByElement, findElementsByElement, getAttribute, getCssValue, getTagName, getText, isDisplayed, isEnabled, isSelected, sendKeys, submit,
 		// current command has failed 
 		testFailure;
-		
-		@Override
-		public String toString() {
+
+		public String getShortCmdString() {
 			String value = null;
 			switch (this) {
 			case close:
-				value = "webDriver.close";
+				value = "close";
 				break;
 			case findElementByWebDriver:
-				value = "webDriver.findElement";
+				value = "findElement";
 				break;
 			case findElementsByWebDriver:
-				value = "webDriver.findElements";
+				value = "findElements";
 				break;
 			case get:
-				value = "webDriver.get";
+				value = "get";
 				break;
 			case getCurrentUrl:
-				value = "webDriver.getCurrentUrl";
+				value = "getCurrentUrl";
 				break;
 			case getTitle:
-				value = "webDriver.getTitle";
+				value = "getTitle";
 				break;
 			case getWindowHandle:
-				value = "webDriver.getWindowHandle";
+				value = "getWindowHandle";
 				break;
 			case getWindowHandles:
-				value = "webDriver.getWindowHandles";
+				value = "getWindowHandles";
 				break;
 			case quit:
-				value = "webDriver.quit";
+				value = "quit";
 				break;
 			case back:
-				value = "webDriver.navigate().back";
+				value = "back";
 				break;
 			case forward:
-				value = "webDriver.navigate().forward";
+				value = "forward";
 				break;
 			case refresh:
-				value = "webDriver.navigate().refresh";
+				value = "refresh";
 				break;
 			case to:
-				value = "webDriver.navigate().to";
+				value = "to";
 				break;
 			case activeElement:
-				value = "webDriver.switchTo().activeElement";
+				value = "activeElement";
 				break;
 			case alert:
-				value = "webDriver.switchTo().alert";
+				value = "alert";
 				break;
 			case defaultContent:
-				value = "webDriver.switchTo().defaultContent";
+				value = "defaultContent";
 				break;
 			case frameByIndex:
-				value = "webDriver.switchTo().frame";
+				value = "frame";
 				break;
 			case frameByName:
-				value = "webDriver.switchTo().frame";
+				value = "frame";
 				break;
 			case frameByElement:
-				value = "webDriver.switchTo().frame";
+				value = "frame";
 				break;
 			case parentFrame:
-				value = "webDriver.switchTo().parentFrame";
+				value = "parentFrame";
 				break;
 			case window:
-				value = "webDriver.switchTo().window";
+				value = "window";
 				break;
 			case fullscreen:
-				value = "webDriver.manage().window().fullscreen";
+				value = "fullscreen";
 				break;
 			case getPosition:
-				value = "webDriver.manage().window().getPosition";
+				value = "getPosition";
 				break;
 			case getSize:
-				value = "webDriver.manage().window().getSize";
+				value = "getSize";
 				break;
 			case maximize:
-				value = "webDriver.manage().window().maximize";
+				value = "maximize";
 				break;
 			case setPosition:
-				value = "webDriver.manage().window().setPosition";
+				value = "setPosition";
 				break;
 			case setSize:
-				value = "webDriver.manage().window().setSize";
+				value = "setSize";
 				break;
 			case click:
-				value = "webElement.click";
+				value = "click";
 				break;
 			case clear:
-				value = "webElement.clear";
+				value = "clear";
 				break;
 			case findElementByElement:
-				value = "webElement.findElement";
+				value = "findElement";
 				break;
 			case findElementsByElement:
-				value = "webElement.findElements";
+				value = "findElements";
 				break;
 			case getAttribute:
-				value = "webElement.getAttribute";
+				value = "getAttribute";
 				break;
 			case getCssValue:
-				value = "webElement.getCssValue";
+				value = "getCssValue";
 				break;
 			case getTagName:
-				value = "webElement.getTagName";
+				value = "getTagName";
 				break;
 			case getText:
-				value = "webElement.getText";
+				value = "getText";
 				break;
 			case isDisplayed:
-				value = "webElement.isDisplayed";
+				value = "isDisplayed";
 				break;
 			case isEnabled:
-				value = "webElement.isEnabled";
+				value = "isEnabled";
 				break;
 			case isSelected:
-				value = "webElement.isSelected";
+				value = "isSelected";
 				break;
 			case sendKeys:
-				value = "webElement.sendKeys";
+				value = "sendKeys";
 				break;
 			case submit:
-				value = "webElement.submit";
+				value = "submit";
+				break;
+			default:
+				value = "unknown";
+			}
+			return value;
+		}
+
+		public String getLongCmdString() {
+			String value = null;
+			String shortCmd = getShortCmdString();
+			switch (this) {
+			case close:
+			case findElementByWebDriver:
+			case findElementsByWebDriver:
+			case get:
+			case getCurrentUrl:
+			case getTitle:
+			case getWindowHandle:
+			case getWindowHandles:
+			case quit:
+				value = "webDriver." + shortCmd;
+				break;
+			case back:
+			case forward:
+			case refresh:
+			case to:
+				value = "webDriver.navigate()." + shortCmd;
+				break;
+			case activeElement:
+			case alert:
+			case defaultContent:
+			case frameByIndex:
+			case frameByName:
+			case frameByElement:
+			case parentFrame:
+			case window:
+				value = "webDriver.switchTo()." + shortCmd;
+				break;
+			case fullscreen:
+			case getPosition:
+			case getSize:
+			case maximize:
+			case setPosition:
+			case setSize:
+				value = "webDriver.manage().window()." + shortCmd;
+				break;
+			case click:
+			case clear:
+			case findElementByElement:
+			case findElementsByElement:
+			case getAttribute:
+			case getCssValue:
+			case getTagName:
+			case getText:
+			case isDisplayed:
+			case isEnabled:
+			case isSelected:
+			case sendKeys:
+			case submit:
+				value = "webElement." + shortCmd;
 				break;
 			default:
 				value = "unknown";
