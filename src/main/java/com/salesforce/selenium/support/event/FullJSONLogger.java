@@ -33,7 +33,7 @@ import com.salesforce.selenium.support.event.Step.Cmd;
  * @author gneumann
  * @since 2.0.0
  */
-public class FullJSONLogger implements WebDriverEventListener {
+public class FullJSONLogger extends AbstractWebDriverEventListener {
 	private String fileName = null;
 	private List<Step> logEntries = new ArrayList<>();
 
@@ -46,7 +46,7 @@ public class FullJSONLogger implements WebDriverEventListener {
 	 * @param testName name of the JSON file
 	 */
 	public FullJSONLogger(String testName) {
-		this.fileName = "target/" + testName + ".json";
+		this.fileName = "target/" + convertTestname2FileName(testName) + ".json";
 	}
 
 	/*--------------------------------------------------------------------

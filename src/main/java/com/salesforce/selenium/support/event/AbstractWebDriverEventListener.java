@@ -383,4 +383,14 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 	@Override
 	public void onException(Step step, Cmd cmd, Throwable issue) {
 	}
+
+	/**
+	 * The test name can contain characters which are not supported in a file name. This
+	 * convenience method replaces such characters with underscores.
+	 * @param testName
+	 * @return file name using only characters supported by the OS
+	 */
+	public static String convertTestname2FileName(final String testName) {
+		return testName.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
+	}
 }
