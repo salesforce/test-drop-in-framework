@@ -119,6 +119,21 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
                     <skipStaging>true</skipStaging>
                 </configuration>
             </plugin>
+
+            <!-- Nexus release settings -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <goals>deploy</goals>
+                    <localCheckout>true</localCheckout>
+                    <pushChanges>false</pushChanges>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <arguments>-B</arguments>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -151,7 +166,12 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
 		</dependency>
 	</dependencies>
 
-	 <distributionManagement>
+	<scm>
+        <developerConnection>scm:git:git@github.com:salesforce/test-drop-in-framework.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+	<distributionManagement>
         <repository>
             <id>nexus</id>
             <url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases</url>
