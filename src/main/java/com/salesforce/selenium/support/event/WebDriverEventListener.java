@@ -286,10 +286,8 @@ public interface WebDriverEventListener {
 	/**
 	 * Called after {@link WebDriver.TargetLocator#activeElement() TargetLocator.activeElement()}.
 	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 * @param element
-	 *            the current active WebElement
+	 * @param step step record
+	 * @param activeElement the current active WebElement
 	 */
 	void afterActiveElement(Step step, WebElement activeElement);
 

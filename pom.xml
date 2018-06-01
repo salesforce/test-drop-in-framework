@@ -95,6 +95,30 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Nexus deploy settings: disable standard plugin and use the nexus-staging plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skipStaging>true</skipStaging>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -126,4 +150,15 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
 			<version>2.9.3</version>
 		</dependency>
 	</dependencies>
+
+	 <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus</id>
+            <url>https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
