@@ -23,20 +23,23 @@ Please note: if you want to use Microsoft Internet Explorer for test execution,
 you have to explicitly add dependencies on JNA and JNA-Platform.
 
 ## Development
+0. Pull the right branch of test-drop-in-framework:
+ a. When your project is based on WebDriver 3.x or newer, pull from branch 'master'
+ b. When your project is based on WebDriver 2.x, pull from branch 'selenium2'
 1. Run `mvn eclipse:eclipse` to generate .project file and download required jars
 for development in Eclipse.
 2. Run `mvn clean` to install any dependencies.
 3. Start up eclipse, import project test-drop-in-framework.
 4. Compile project and create jar file:
-a. When your project is based on WebDriver 3.x or newer, run
+ a. When your project is based on WebDriver 3.x or newer, run
 `mvn compile jar:jar` which creates jar file target/test-drop-in-framework-2.0.0.jar
-b. When your project is based on WebDriver 2.x, run
-`mvn compile jar:jar -f pom-selenium2.xml` which creates jar file target/test-drop-in-framework-selenium2-2.0.0.jar
+ b. When your project is based on WebDriver 2.x, run
+`mvn compile jar:jar -f pom.xml` which creates jar file target/test-drop-in-framework-selenium2-2.0.0.jar
 5. Deploy jar file to local repository:
-a. When your project is based on WebDriver 3.x or newer, run
+ a. When your project is based on WebDriver 3.x or newer, run
 `mvn install:install-file -Dfile=target/test-drop-in-framework-2.0.0.jar -DpomFile=pom.xml`
 b. When your project is based on WebDriver 2.x, run
-`mvn install:install-file -Dfile=target/test-drop-in-framework-selenium2-2.0.0.jar -DpomFile=pom-selenium2.xml`
+`mvn install:install-file -Dfile=target/test-drop-in-framework-selenium2-2.0.0.jar -DpomFile=pom.xml`
 
 Please note: the framework has to prohibit context switching during runtime.
 Therefore it is not possible to run both test classes via "mvn test" and have all
