@@ -18,6 +18,7 @@ package com.salesforce.selenium.support.event;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -413,6 +414,79 @@ public interface WebDriverEventListener {
 	 *            name of window
 	 */
 	void afterWindow(Step step, String windowName);
+
+	/*---------------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver.Timeouts object.
+	 *---------------------------------------------------------------------------*/
+
+	/**
+	 * Called before {@link WebDriver.Timeouts#implicitlyWait(long, java.util.concurrent.TimeUnit) Timeouts.implicitlyWait(..)}.
+	 * @param step
+	 *            step record
+	 * @param time
+	 *            time to wait; to be converted using the given time unit
+	 * @param unit
+	 *            time unit to use to convert the given time value
+	 */
+	void beforeImplicitlyWait(Step step, long time, TimeUnit unit);
+
+	/**
+	 * Called after {@link WebDriver.Timeouts#implicitlyWait(long, java.util.concurrent.TimeUnit) Timeouts.implicitlyWait(..)}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param time
+	 *            time to wait; to be converted using the given time unit
+	 * @param unit
+	 *            time unit to use to convert the given time value
+	 */
+	void afterImplicitlyWait(Step step, long time, TimeUnit unit);
+
+	/**
+	 * Called before {@link WebDriver.Timeouts#pageLoadTimeout(long, java.util.concurrent.TimeUnit) Timeouts.pageLoadTimeout(..)}.
+	 * @param step
+	 *            step record
+	 * @param time
+	 *            time to wait; to be converted using the given time unit
+	 * @param unit
+	 *            time unit to use to convert the given time value
+	 */
+	void beforePageLoadTimeout(Step step, long time, TimeUnit unit);
+
+	/**
+	 * Called after {@link WebDriver.Timeouts#pageLoadTimeout(long, java.util.concurrent.TimeUnit) Timeouts.pageLoadTimeout(..)}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param time
+	 *            time to wait; to be converted using the given time unit
+	 * @param unit
+	 *            time unit to use to convert the given time value
+	 */
+	void afterPageLoadTimeout(Step step, long time, TimeUnit unit);
+
+	/**
+	 * Called before {@link WebDriver.Timeouts#setScriptTimeout(long, java.util.concurrent.TimeUnit) Timeouts.setScriptTimeout(..)}.
+	 * @param step
+	 *            step record
+	 * @param time
+	 *            time to wait; to be converted using the given time unit
+	 * @param unit
+	 *            time unit to use to convert the given time value
+	 */
+	void beforeSetScriptTimeout(Step step, long time, TimeUnit unit);
+
+	/**
+	 * Called after {@link WebDriver.Timeouts#setScriptTimeout(long, java.util.concurrent.TimeUnit) Timeouts.setScriptTimeout(..)}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param time
+	 *            time to wait; to be converted using the given time unit
+	 * @param unit
+	 *            time unit to use to convert the given time value
+	 */
+	void afterSetScriptTimeout(Step step, long time, TimeUnit unit);
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Window object.

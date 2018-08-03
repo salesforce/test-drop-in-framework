@@ -18,6 +18,7 @@ package com.salesforce.selenium.support.event;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -218,6 +219,35 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 
 	@Override
 	public void afterWindow(Step step, String windowName) {
+	}
+
+
+	/*---------------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver.Timeouts object.
+	 *---------------------------------------------------------------------------*/
+
+	@Override
+	public void beforeImplicitlyWait(Step step, long time, TimeUnit unit) {
+	}
+
+	@Override
+	public void afterImplicitlyWait(Step step, long time, TimeUnit unit) {
+	}
+
+	@Override
+	public void beforePageLoadTimeout(Step step, long time, TimeUnit unit) {
+	}
+
+	@Override
+	public void afterPageLoadTimeout(Step step, long time, TimeUnit unit) {
+	}
+
+	@Override
+	public void beforeSetScriptTimeout(Step step, long time, TimeUnit unit) {
+	}
+
+	@Override
+	public void afterSetScriptTimeout(Step step, long time, TimeUnit unit) {
 	}
 
 	/*---------------------------------------------------------------------------

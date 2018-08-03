@@ -36,6 +36,8 @@ public class Step {
 		back, forward, refresh, to,
 		// commands called directly from WebDriver.TargetLocator object
 		activeElement, alert, defaultContent, frameByIndex, frameByName, frameByElement, parentFrame, window,
+		// commands called directly from WebDriver.Timeouts object
+		implicitlyWait, pageLoadTimeout, setScriptTimeout,
 		// commands called directly from WebDriver.Window object
 		fullscreen, getPosition, getSize, maximize, setPosition, setSize,
 		// commands called directly from WebElement object
@@ -108,6 +110,15 @@ public class Step {
 				break;
 			case window:
 				value = "window";
+				break;
+			case implicitlyWait:
+				value = "implicitlyWait";
+				break;
+			case pageLoadTimeout:
+				value = "pageLoadTimeout";
+				break;
+			case setScriptTimeout:
+				value = "setScriptTimeout";
 				break;
 			case fullscreen:
 				value = "fullscreen";
@@ -202,6 +213,11 @@ public class Step {
 			case parentFrame:
 			case window:
 				value = "webDriver.switchTo()." + shortCmd;
+				break;
+			case implicitlyWait:
+			case pageLoadTimeout:
+			case setScriptTimeout:
+				value = "webDriver.timeouts()." + shortCmd;
 				break;
 			case fullscreen:
 			case getPosition:

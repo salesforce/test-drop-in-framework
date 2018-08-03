@@ -897,19 +897,51 @@ public class EventFiringWebDriver
 
 		@Override
 		public Timeouts implicitlyWait(long time, TimeUnit unit) {
-			timeouts.implicitlyWait(time, unit);
-			return this;
-		}
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.implicitlyWait);
+			stepBefore.setParam1("" + time);
+			stepBefore.setParam2("" + TimeUnit.MILLISECONDS.convert(time, unit));
+			dispatcher.beforeImplicitlyWait(stepBefore, time, unit);
+			currentStep = stepBefore;
 
-		@Override
-		public Timeouts setScriptTimeout(long time, TimeUnit unit) {
-			timeouts.setScriptTimeout(time, unit);
+			timeouts.implicitlyWait(time, unit);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.implicitlyWait);
+			stepAfter.setParam1("" + time);
+			stepAfter.setParam2("" + TimeUnit.MILLISECONDS.convert(time, unit));
+			dispatcher.afterImplicitlyWait(stepAfter, time, unit);
 			return this;
 		}
 
 		@Override
 		public Timeouts pageLoadTimeout(long time, TimeUnit unit) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.pageLoadTimeout);
+			stepBefore.setParam1("" + time);
+			stepBefore.setParam2("" + TimeUnit.MILLISECONDS.convert(time, unit));
+			dispatcher.beforePageLoadTimeout(stepBefore, time, unit);
+			currentStep = stepBefore;
+
 			timeouts.pageLoadTimeout(time, unit);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.pageLoadTimeout);
+			stepAfter.setParam1("" + time);
+			stepAfter.setParam2("" + TimeUnit.MILLISECONDS.convert(time, unit));
+			dispatcher.afterPageLoadTimeout(stepAfter, time, unit);
+			return this;
+		}
+
+		@Override
+		public Timeouts setScriptTimeout(long time, TimeUnit unit) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setScriptTimeout);
+			stepBefore.setParam1("" + time);
+			stepBefore.setParam2("" + TimeUnit.MILLISECONDS.convert(time, unit));
+			dispatcher.beforeSetScriptTimeout(stepBefore, time, unit);
+
+			timeouts.setScriptTimeout(time, unit);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.pageLoadTimeout);
+			stepAfter.setParam1("" + time);
+			stepAfter.setParam2("" + TimeUnit.MILLISECONDS.convert(time, unit));
+			dispatcher.afterSetScriptTimeout(stepAfter, time, unit);
 			return this;
 		}
 	}
