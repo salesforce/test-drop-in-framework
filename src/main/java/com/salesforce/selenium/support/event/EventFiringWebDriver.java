@@ -329,30 +329,57 @@ public class EventFiringWebDriver
 		closeListeners();
 	}
 
-	// TODO add to WebDriverEventListener interface
 	@Override
 	public String getPageSource() {
+		Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getPageSource);
+		dispatcher.beforeGetPageSource(stepBefore);
+		currentStep = stepBefore;
+
 		String source = driver.getPageSource();
+
+		Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getPageSource);
+		stepAfter.setReturnValue(source);
+		dispatcher.afterGetPageSource(stepAfter, source);
 		return source;
 	}
 
-	// TODO add to WebDriverEventListener interface
 	@Override
 	public Object executeScript(String script, Object... args) {
 		if (driver instanceof JavascriptExecutor) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.executeScript);
+			stepBefore.setParam1(script);
+			// TODO handle args
+			dispatcher.beforeExecuteScript(stepBefore, script, args);
+			currentStep = stepBefore;
+
 			Object[] usedArgs = unpackWrappedArgs(args);
 			Object result = ((JavascriptExecutor) driver).executeScript(script, usedArgs);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.executeScript);
+			stepAfter.setParam1(script);
+			// TODO handle args and returned result
+			dispatcher.afterExecuteScript(stepAfter, script, args);
 			return result;
 		}
 		throw new UnsupportedOperationException("Underlying driver instance does not support executing javascript");
 	}
 
-	// TODO add to WebDriverEventListener interface
 	@Override
 	public Object executeAsyncScript(String script, Object... args) {
 		if (driver instanceof JavascriptExecutor) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.executeAsyncScript);
+			stepBefore.setParam1(script);
+			// TODO handle args
+			dispatcher.beforeExecuteAsyncScript(stepBefore, script, args);
+			currentStep = stepBefore;
+
 			Object[] usedArgs = unpackWrappedArgs(args);
 			Object result = ((JavascriptExecutor) driver).executeAsyncScript(script, usedArgs);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.executeAsyncScript);
+			stepAfter.setParam1(script);
+			// TODO handle args and returned result
+			dispatcher.afterExecuteAsyncScript(stepAfter, script, args);
 			return result;
 		}
 		throw new UnsupportedOperationException("Underlying driver instance does not support executing javascript");
@@ -424,7 +451,7 @@ public class EventFiringWebDriver
 			return new EventFiringKeyboard(driver, dispatcher);
 		} else {
 			throw new UnsupportedOperationException(
-					"Underlying driver does not implement advanced" + " user interactions yet.");
+					"Underlying driver does not implement advanced user interactions yet.");
 		}
 	}
 
@@ -434,7 +461,7 @@ public class EventFiringWebDriver
 			return new EventFiringMouse(driver, dispatcher);
 		} else {
 			throw new UnsupportedOperationException(
-					"Underlying driver does not implement advanced" + " user interactions yet.");
+					"Underlying driver does not implement advanced user interactions yet.");
 		}
 	}
 
@@ -444,7 +471,7 @@ public class EventFiringWebDriver
 			return new EventFiringTouch(driver, dispatcher);
 		} else {
 			throw new UnsupportedOperationException(
-					"Underlying driver does not implement advanced" + " user interactions yet.");
+					"Underlying driver does not implement advanced user interactions yet.");
 		}
 	}
 
@@ -479,7 +506,7 @@ public class EventFiringWebDriver
 
 		@Override
 		public void click() {
-			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.click);
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.clickByElement);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			currentStep = stepBefore;
 
@@ -487,7 +514,7 @@ public class EventFiringWebDriver
 
 			element.click();
 
-			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.click);
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.clickByElement);
 			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
 			dispatcher.afterClick(stepAfter, element);
 		}
@@ -688,7 +715,7 @@ public class EventFiringWebDriver
 					buffer.append(keysToSend[i]);
 				}
 			}
-			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.sendKeys);
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.sendKeysByElement);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			stepBefore.setParam2(buffer.toString());
 			dispatcher.beforeSendKeys(stepBefore, element, keysToSend);
@@ -696,7 +723,7 @@ public class EventFiringWebDriver
 
 			element.sendKeys(keysToSend);
 
-			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeys);
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByElement);
 			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
 			stepAfter.setParam2(buffer.toString());
 			dispatcher.afterSendKeys(stepAfter, element, keysToSend);
@@ -994,7 +1021,6 @@ public class EventFiringWebDriver
 			dispatcher.beforeDefaultContent(stepBefore);
 			currentStep = stepBefore;
 
-			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.defaultContent();
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.defaultContent);
@@ -1009,7 +1035,6 @@ public class EventFiringWebDriver
 			dispatcher.beforeFrameByIndex(stepBefore, frameIndex);
 			currentStep = stepBefore;
 
-			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.frame(frameIndex);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.frameByIndex);
@@ -1025,7 +1050,6 @@ public class EventFiringWebDriver
 			dispatcher.beforeFrameByName(stepBefore, frameName);
 			currentStep = stepBefore;
 
-			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.frame(frameName);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.frameByName);
@@ -1041,7 +1065,6 @@ public class EventFiringWebDriver
 			dispatcher.beforeFrameByElement(stepBefore, frameElement);
 			currentStep = stepBefore;
 
-			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.frame(frameElement);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.frameByElement);
@@ -1056,7 +1079,6 @@ public class EventFiringWebDriver
 			dispatcher.beforeParentFrame(stepBefore);
 			currentStep = stepBefore;
 
-			// TODO is this an EventFiringWebDriver instance?
 			WebDriver frameDriver = targetLocator.parentFrame();
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.parentFrame);
@@ -1071,7 +1093,6 @@ public class EventFiringWebDriver
 			dispatcher.beforeWindow(stepBefore, windowName);
 			currentStep = stepBefore;
 
-			// TODO is this an EventFiringWebDriver instance?
 			WebDriver windowDriver = targetLocator.window(windowName);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.window);

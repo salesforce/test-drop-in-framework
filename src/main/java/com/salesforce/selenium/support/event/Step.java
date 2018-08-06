@@ -31,7 +31,9 @@ public class Step {
 	public enum Type { BeforeAction, AfterAction, BeforeGather, AfterGather, Exception }
 	public enum Cmd {
 		// commands called directly from WebDriver object
-		close, findElementByWebDriver, findElementsByWebDriver, get, getCurrentUrl, getTitle, getWindowHandle, getWindowHandles, quit,
+		close, findElementByWebDriver, findElementsByWebDriver, get, getCurrentUrl, getPageSource, getTitle, getWindowHandle, getWindowHandles, quit,
+		// commands called directly from WebDriver object after casting to JavascriptExecutor
+		executeAsyncScript, executeScript,
 		// commands called directly from WebDriver.Navigation object
 		back, forward, refresh, to,
 		// commands called directly from WebDriver.TargetLocator object
@@ -41,7 +43,7 @@ public class Step {
 		// commands called directly from WebDriver.Window object
 		fullscreen, getPosition, getSize, maximize, setPosition, setSize,
 		// commands called directly from WebElement object
-		click, clear, findElementByElement, findElementsByElement, getAttribute, getCssValue, getTagName, getText, isDisplayed, isEnabled, isSelected, sendKeys, submit,
+		clickByElement, clear, findElementByElement, findElementsByElement, getAttribute, getCssValue, getTagName, getText, isDisplayed, isEnabled, isSelected, sendKeysByElement, submit,
 		// current command has failed 
 		testFailure;
 
@@ -62,6 +64,9 @@ public class Step {
 				break;
 			case getCurrentUrl:
 				value = "getCurrentUrl";
+				break;
+			case getPageSource:
+				value = "getPageSource";
 				break;
 			case getTitle:
 				value = "getTitle";
@@ -138,7 +143,7 @@ public class Step {
 			case setSize:
 				value = "setSize";
 				break;
-			case click:
+			case clickByElement:
 				value = "click";
 				break;
 			case clear:
@@ -171,7 +176,7 @@ public class Step {
 			case isSelected:
 				value = "isSelected";
 				break;
-			case sendKeys:
+			case sendKeysByElement:
 				value = "sendKeys";
 				break;
 			case submit:
@@ -192,11 +197,16 @@ public class Step {
 			case findElementsByWebDriver:
 			case get:
 			case getCurrentUrl:
+			case getPageSource:
 			case getTitle:
 			case getWindowHandle:
 			case getWindowHandles:
 			case quit:
 				value = "webDriver." + shortCmd;
+				break;
+			case executeAsyncScript:
+			case executeScript:
+				value = "(JavascriptExecutor) webDriver." + shortCmd;
 				break;
 			case back:
 			case forward:
@@ -227,7 +237,7 @@ public class Step {
 			case setSize:
 				value = "webDriver.manage().window()." + shortCmd;
 				break;
-			case click:
+			case clickByElement:
 			case clear:
 			case findElementByElement:
 			case findElementsByElement:
@@ -238,7 +248,7 @@ public class Step {
 			case isDisplayed:
 			case isEnabled:
 			case isSelected:
-			case sendKeys:
+			case sendKeysByElement:
 			case submit:
 				value = "webElement." + shortCmd;
 				break;

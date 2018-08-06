@@ -26,14 +26,14 @@ public class TestStep {
 	 */
 	@Test()
 	public void testStepCreation() {
-		Step newStepBeforeAction = new Step(Type.BeforeAction, 1, Cmd.click);
+		Step newStepBeforeAction = new Step(Type.BeforeAction, 1, Cmd.clickByElement);
 		Assert.assertTrue(newStepBeforeAction.getRecordNumber() == 1);
 		Assert.assertTrue(newStepBeforeAction.getTimeStamp() > 1);
 
 		// wait a little so that the time elapsed can be different
 		try { Thread.sleep(10L); } catch (InterruptedException e) {	; /* ignore */ }
 
-		Step newStepAfterAction = new Step(Type.AfterAction, 2, Cmd.click);
+		Step newStepAfterAction = new Step(Type.AfterAction, 2, Cmd.clickByElement);
 		Assert.assertTrue(newStepAfterAction.getRecordNumber() > newStepBeforeAction.getRecordNumber());
 		Assert.assertTrue(newStepAfterAction.getTimeStamp() > newStepBeforeAction.getTimeStamp());
 		Assert.assertTrue(newStepAfterAction.getTimeElapsedStep() > 1);
@@ -44,7 +44,7 @@ public class TestStep {
 	 */
 	@Test()
 	public void testTimeBetweenActions() {
-		Step newStepAfterAction = new Step(Type.AfterAction, 1, Cmd.click);
+		Step newStepAfterAction = new Step(Type.AfterAction, 1, Cmd.clickByElement);
 		Assert.assertTrue(newStepAfterAction.getTimeSinceLastAction() == -1L);
 
 		// wait a little so that the time between actions can be different

@@ -137,6 +137,24 @@ public interface WebDriverEventListener {
 	void afterGetCurrentUrl(Step step, String url);
 
 	/**
+	 * Called before {@link org.openqa.selenium.WebDriver#getPageSource getPageSource()}.
+	 * @param step
+	 *            step record
+	 */
+	void beforeGetPageSource(Step step);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver#getPageSource getPageSource()}.
+	 * Not called, if an exception is thrown.
+	 *
+	 * @param step
+	 *            step record
+	 * @param source
+	 *            returned page source
+	 */
+	void afterGetPageSource(Step step, String source);
+
+	/**
 	 * Called before {@link org.openqa.selenium.WebDriver#getTitle getTitle()}.
 	 * @param step
 	 *            step record
@@ -200,6 +218,39 @@ public interface WebDriverEventListener {
 	 *            step record
 	 */
 	void afterQuit(Step step);
+
+	/*--------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver object
+	 * after casting to JavascriptExecutor.
+	 *--------------------------------------------------------------------*/
+
+	/**
+	 * Called before {@link org.openqa.selenium.JavascriptExecutor#executeAsyncScript(String, Object...) executingAsyncScript(String, Object...)}.
+	 * @param step
+	 *            step record
+	 */
+	void beforeExecuteAsyncScript(Step step, String script, Object... args);
+
+	/**
+	 * Called after {@link org.openqa.selenium.JavascriptExecutor#executeAsyncScript(String, Object...) executingAsyncScript(String, Object...)}.
+	 * @param step
+	 *            step record
+	 */
+	void afterExecuteAsyncScript(Step step, String script, Object... args);
+
+	/**
+	 * Called before {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...) executingScript(String, Object...)}.
+	 * @param step
+	 *            step record
+	 */
+	void beforeExecuteScript(Step step, String script, Object... args);
+
+	/**
+	 * Called after {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...) executingScript(String, Object...)}.
+	 * @param step
+	 *            step record
+	 */
+	void afterExecuteScript(Step step, String script, Object... args);
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Navigation object.
@@ -599,7 +650,7 @@ public interface WebDriverEventListener {
 	 *---------------------------------------------------------------------------*/
 
 	/**
-	 * Called before {@link WebElement#click WebElement.click()}.
+	 * Called before {@link WebElement#clickByElement WebElement.click()}.
 	 * @param step
 	 *            step record
 	 * @param element
@@ -608,7 +659,7 @@ public interface WebDriverEventListener {
 	void beforeClick(Step step, WebElement element);
 
 	/**
-	 * Called after {@link WebElement#click WebElement.click()}. Not called, if an
+	 * Called after {@link WebElement#clickByElement WebElement.click()}. Not called, if an
 	 * exception is thrown.
 	 * @param step
 	 *            step record
@@ -846,7 +897,7 @@ public interface WebDriverEventListener {
 	void afterIsSelected(Step step, boolean isSelected, WebElement element);
 	
 	/**
-	 * Called before {@link WebElement#sendKeys WebElement.sendKeys(...)}.
+	 * Called before {@link WebElement#sendKeysByElement WebElement.sendKeys(...)}.
 	 * @param step
 	 *            step record
 	 * @param element
@@ -857,7 +908,7 @@ public interface WebDriverEventListener {
 	void beforeSendKeys(Step step, WebElement element, CharSequence... keysToSend);
 
 	/**
-	 * Called after {@link WebElement#sendKeys WebElement.sendKeys(...)}}. Not called, if an
+	 * Called after {@link WebElement#sendKeysByElement WebElement.sendKeys(...)}}. Not called, if an
 	 * exception is thrown.
 	 * @param step
 	 *            step record

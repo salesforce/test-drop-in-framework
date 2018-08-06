@@ -86,6 +86,14 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 	}
 
 	@Override
+	public void beforeGetPageSource(Step step) {
+	}
+
+	@Override
+	public void afterGetPageSource(Step step, String source) {
+	}
+
+	@Override
 	public void beforeGetTitle(Step step) {
 	}
 
@@ -115,6 +123,27 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 
 	@Override
 	public void afterQuit(Step step) {
+	}
+
+	/*--------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver object
+	 * after casting to JavascriptExecutor.
+	 *--------------------------------------------------------------------*/
+
+	@Override
+	public void beforeExecuteAsyncScript(Step step, String script, Object... args) {
+	}
+
+	@Override
+	public void afterExecuteAsyncScript(Step step, String script, Object... args) {
+	}
+
+	@Override
+	public void beforeExecuteScript(Step step, String script, Object... args) {
+	}
+
+	@Override
+	public void afterExecuteScript(Step step, String script, Object... args) {
 	}
 
 	/*---------------------------------------------------------------------------
