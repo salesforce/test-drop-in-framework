@@ -228,6 +228,10 @@ public interface WebDriverEventListener {
 	 * Called before {@link org.openqa.selenium.JavascriptExecutor#executeAsyncScript(String, Object...) executingAsyncScript(String, Object...)}.
 	 * @param step
 	 *            step record
+	 * @param script
+	 *            JavaScript script to execute
+	 * @param args
+	 *            arguments for script
 	 */
 	void beforeExecuteAsyncScript(Step step, String script, Object... args);
 
@@ -235,6 +239,10 @@ public interface WebDriverEventListener {
 	 * Called after {@link org.openqa.selenium.JavascriptExecutor#executeAsyncScript(String, Object...) executingAsyncScript(String, Object...)}.
 	 * @param step
 	 *            step record
+	 * @param script
+	 *            JavaScript script executed
+	 * @param args
+	 *            arguments for script
 	 */
 	void afterExecuteAsyncScript(Step step, String script, Object... args);
 
@@ -242,6 +250,10 @@ public interface WebDriverEventListener {
 	 * Called before {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...) executingScript(String, Object...)}.
 	 * @param step
 	 *            step record
+	 * @param script
+	 *            JavaScript script to execute
+	 * @param args
+	 *            arguments for script
 	 */
 	void beforeExecuteScript(Step step, String script, Object... args);
 
@@ -249,6 +261,10 @@ public interface WebDriverEventListener {
 	 * Called after {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...) executingScript(String, Object...)}.
 	 * @param step
 	 *            step record
+	 * @param script
+	 *            JavaScript script executed
+	 * @param args
+	 *            arguments for script
 	 */
 	void afterExecuteScript(Step step, String script, Object... args);
 
@@ -650,7 +666,7 @@ public interface WebDriverEventListener {
 	 *---------------------------------------------------------------------------*/
 
 	/**
-	 * Called before {@link WebElement#clickByElement WebElement.click()}.
+	 * Called before {@link WebElement#click WebElement.click()}.
 	 * @param step
 	 *            step record
 	 * @param element
@@ -659,7 +675,7 @@ public interface WebDriverEventListener {
 	void beforeClick(Step step, WebElement element);
 
 	/**
-	 * Called after {@link WebElement#clickByElement WebElement.click()}. Not called, if an
+	 * Called after {@link WebElement#click WebElement.click()}. Not called, if an
 	 * exception is thrown.
 	 * @param step
 	 *            step record
@@ -897,7 +913,7 @@ public interface WebDriverEventListener {
 	void afterIsSelected(Step step, boolean isSelected, WebElement element);
 	
 	/**
-	 * Called before {@link WebElement#sendKeysByElement WebElement.sendKeys(...)}.
+	 * Called before {@link WebElement#sendKeys WebElement.sendKeys(...)}.
 	 * @param step
 	 *            step record
 	 * @param element
@@ -908,7 +924,7 @@ public interface WebDriverEventListener {
 	void beforeSendKeys(Step step, WebElement element, CharSequence... keysToSend);
 
 	/**
-	 * Called after {@link WebElement#sendKeysByElement WebElement.sendKeys(...)}}. Not called, if an
+	 * Called after {@link WebElement#sendKeys WebElement.sendKeys(...)}}. Not called, if an
 	 * exception is thrown.
 	 * @param step
 	 *            step record
