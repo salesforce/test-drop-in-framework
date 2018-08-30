@@ -29,232 +29,107 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class Step {
 	public enum Type { BeforeAction, AfterAction, BeforeGather, AfterGather, Exception }
+	public enum WebDriverInterface { WebDriver, JavascriptExecutor, Navigation, TargetLocator, Timeouts, Window, WebElement }
 	public enum Cmd {
 		// commands called directly from WebDriver object
-		close, findElementByWebDriver, findElementsByWebDriver, get, getCurrentUrl, getPageSource, getTitle, getWindowHandle, getWindowHandles, quit,
+		close(WebDriverInterface.WebDriver, "close"),
+		findElementByWebDriver(WebDriverInterface.WebDriver, "findElement"),
+		findElementsByWebDriver(WebDriverInterface.WebDriver, "findElements"),
+		get(WebDriverInterface.WebDriver, "get"),
+		getCurrentUrl(WebDriverInterface.WebDriver, "getCurrentUrl"),
+		getPageSource(WebDriverInterface.WebDriver, "getPageSource"),
+		getTitle(WebDriverInterface.WebDriver, "getTitle"),
+		getWindowHandle(WebDriverInterface.WebDriver, "getWindowHandle"),
+		getWindowHandles(WebDriverInterface.WebDriver, "getWindowHandles"),
+		quit(WebDriverInterface.WebDriver, "quit"),
 		// commands called directly from WebDriver object after casting to JavascriptExecutor
-		executeAsyncScript, executeScript,
+		executeAsyncScript(WebDriverInterface.JavascriptExecutor, "executeAsyncScript"),
+		executeScript(WebDriverInterface.JavascriptExecutor, "executeScript"),
 		// commands called directly from WebDriver.Navigation object
-		back, forward, refresh, to,
+		back(WebDriverInterface.Navigation, "back"),
+		forward(WebDriverInterface.Navigation, "forward"),
+		refresh(WebDriverInterface.Navigation, "refresh"),
+		to(WebDriverInterface.Navigation, "to"),
 		// commands called directly from WebDriver.TargetLocator object
-		activeElement, alert, defaultContent, frameByIndex, frameByName, frameByElement, parentFrame, window,
+		activeElement(WebDriverInterface.TargetLocator, "activeElement"),
+		alert(WebDriverInterface.TargetLocator, "alert"),
+		defaultContent(WebDriverInterface.TargetLocator, "defaultContent"),
+		frameByIndex(WebDriverInterface.TargetLocator, "frame"),
+		frameByName(WebDriverInterface.TargetLocator, "frame"),
+		frameByElement(WebDriverInterface.TargetLocator, "frame"),
+		parentFrame(WebDriverInterface.TargetLocator, "parentFrame"),
+		window(WebDriverInterface.TargetLocator, "window"),
 		// commands called directly from WebDriver.Timeouts object
-		implicitlyWait, pageLoadTimeout, setScriptTimeout,
+		implicitlyWait(WebDriverInterface.Timeouts, "implicitlyWait"),
+		pageLoadTimeout(WebDriverInterface.Timeouts, "pageLoadTimeout"),
+		setScriptTimeout(WebDriverInterface.Timeouts, "setScriptTimeout"),
 		// commands called directly from WebDriver.Window object
-		fullscreen, getPosition, getSize, maximize, setPosition, setSize,
+		fullscreen(WebDriverInterface.Window, "fullscreen"),
+		getPosition(WebDriverInterface.Window, "getPosition"),
+		getSize(WebDriverInterface.Window, "getSize"),
+		maximize(WebDriverInterface.Window, "maximize"),
+		setPosition(WebDriverInterface.Window, "setPosition"),
+		setSize(WebDriverInterface.Window, "setSize"),
 		// commands called directly from WebElement object
-		clickByElement, clear, findElementByElement, findElementsByElement, getAttribute, getCssValue, getTagName, getText, isDisplayed, isEnabled, isSelected, sendKeysByElement, submit,
-		// current command has failed 
-		testFailure;
+		clickByElement(WebDriverInterface.WebElement, "click"),
+		clear(WebDriverInterface.WebElement, "clear"),
+		findElementByElement(WebDriverInterface.WebElement, "findElement"),
+		findElementsByElement(WebDriverInterface.WebElement, "findElements"),
+		getAttribute(WebDriverInterface.WebElement, "getAttribute"),
+		getCssValue(WebDriverInterface.WebElement, "getCssValue"),
+		getTagName(WebDriverInterface.WebElement, "getTagName"),
+		getText(WebDriverInterface.WebElement, "getText"),
+		isDisplayed(WebDriverInterface.WebElement, "isDisplayed"),
+		isEnabled(WebDriverInterface.WebElement, "isEnabled"),
+		isSelected(WebDriverInterface.WebElement, "isSelected"),
+		sendKeysByElement(WebDriverInterface.WebElement, "sendKeys"),
+		submit(WebDriverInterface.WebElement, "submit");
+
+		private Cmd(WebDriverInterface wdIf, String shortCmdString) {
+			this.wdIf = wdIf;
+			this.shortCmdString = shortCmdString;
+		}
+
+		private final WebDriverInterface wdIf;
+		private final String shortCmdString;
 
 		public String getShortCmdString() {
-			String value = null;
-			switch (this) {
-			case close:
-				value = "close";
-				break;
-			case findElementByWebDriver:
-				value = "findElement";
-				break;
-			case findElementsByWebDriver:
-				value = "findElements";
-				break;
-			case get:
-				value = "get";
-				break;
-			case getCurrentUrl:
-				value = "getCurrentUrl";
-				break;
-			case getPageSource:
-				value = "getPageSource";
-				break;
-			case getTitle:
-				value = "getTitle";
-				break;
-			case getWindowHandle:
-				value = "getWindowHandle";
-				break;
-			case getWindowHandles:
-				value = "getWindowHandles";
-				break;
-			case quit:
-				value = "quit";
-				break;
-			case back:
-				value = "back";
-				break;
-			case forward:
-				value = "forward";
-				break;
-			case refresh:
-				value = "refresh";
-				break;
-			case to:
-				value = "to";
-				break;
-			case activeElement:
-				value = "activeElement";
-				break;
-			case alert:
-				value = "alert";
-				break;
-			case defaultContent:
-				value = "defaultContent";
-				break;
-			case frameByIndex:
-				value = "frame";
-				break;
-			case frameByName:
-				value = "frame";
-				break;
-			case frameByElement:
-				value = "frame";
-				break;
-			case parentFrame:
-				value = "parentFrame";
-				break;
-			case window:
-				value = "window";
-				break;
-			case implicitlyWait:
-				value = "implicitlyWait";
-				break;
-			case pageLoadTimeout:
-				value = "pageLoadTimeout";
-				break;
-			case setScriptTimeout:
-				value = "setScriptTimeout";
-				break;
-			case fullscreen:
-				value = "fullscreen";
-				break;
-			case getPosition:
-				value = "getPosition";
-				break;
-			case getSize:
-				value = "getSize";
-				break;
-			case maximize:
-				value = "maximize";
-				break;
-			case setPosition:
-				value = "setPosition";
-				break;
-			case setSize:
-				value = "setSize";
-				break;
-			case clickByElement:
-				value = "click";
-				break;
-			case clear:
-				value = "clear";
-				break;
-			case findElementByElement:
-				value = "findElement";
-				break;
-			case findElementsByElement:
-				value = "findElements";
-				break;
-			case getAttribute:
-				value = "getAttribute";
-				break;
-			case getCssValue:
-				value = "getCssValue";
-				break;
-			case getTagName:
-				value = "getTagName";
-				break;
-			case getText:
-				value = "getText";
-				break;
-			case isDisplayed:
-				value = "isDisplayed";
-				break;
-			case isEnabled:
-				value = "isEnabled";
-				break;
-			case isSelected:
-				value = "isSelected";
-				break;
-			case sendKeysByElement:
-				value = "sendKeys";
-				break;
-			case submit:
-				value = "submit";
-				break;
-			default:
-				value = "unknown";
-			}
-			return value;
+			return this.shortCmdString;
+		}
+
+		public WebDriverInterface getWebDriverInterface() {
+			return this.wdIf;
 		}
 
 		public String getLongCmdString() {
 			String value = null;
 			String shortCmd = getShortCmdString();
-			switch (this) {
-			case close:
-			case findElementByWebDriver:
-			case findElementsByWebDriver:
-			case get:
-			case getCurrentUrl:
-			case getPageSource:
-			case getTitle:
-			case getWindowHandle:
-			case getWindowHandles:
-			case quit:
-				value = "webDriver." + shortCmd;
+			switch(this.wdIf) {
+			case WebDriver:
+				value = "wd." + shortCmd;
 				break;
-			case executeAsyncScript:
-			case executeScript:
-				value = "(JavascriptExecutor) webDriver." + shortCmd;
+			case JavascriptExecutor:
+				value = "(JavascriptExecutor) wd." + shortCmd;
 				break;
-			case back:
-			case forward:
-			case refresh:
-			case to:
-				value = "webDriver.navigate()." + shortCmd;
+			case Navigation:
+				value = "wd.navigate()." + shortCmd;
 				break;
-			case activeElement:
-			case alert:
-			case defaultContent:
-			case frameByIndex:
-			case frameByName:
-			case frameByElement:
-			case parentFrame:
-			case window:
-				value = "webDriver.switchTo()." + shortCmd;
+			case TargetLocator:
+				value = "wd.switchTo()." + shortCmd;
 				break;
-			case implicitlyWait:
-			case pageLoadTimeout:
-			case setScriptTimeout:
-				value = "webDriver.timeouts()." + shortCmd;
+			case Timeouts:
+				value = "wd.timeouts()." + shortCmd;
 				break;
-			case fullscreen:
-			case getPosition:
-			case getSize:
-			case maximize:
-			case setPosition:
-			case setSize:
-				value = "webDriver.manage().window()." + shortCmd;
+			case Window:
+				value = "wd.manage().window()." + shortCmd;
 				break;
-			case clickByElement:
-			case clear:
-			case findElementByElement:
-			case findElementsByElement:
-			case getAttribute:
-			case getCssValue:
-			case getTagName:
-			case getText:
-			case isDisplayed:
-			case isEnabled:
-			case isSelected:
-			case sendKeysByElement:
-			case submit:
+			case WebElement:
 				value = "webElement." + shortCmd;
 				break;
 			default:
-				value = "unknown";
+				value = "Assert.fail";
 			}
+
 			return value;
 		}
 	}

@@ -113,9 +113,9 @@ public class EventFiringWebDriver
 								dispatcher.onException(currentStep, currentStep.getCmd(), e.getTargetException());
 							} else {
 								// create a dummy step
-								Step step = new Step(Type.Exception, stepNumber, Cmd.testFailure);
+								Step step = new Step(Type.Exception, stepNumber, Cmd.quit);
 								step.setIssue(e);
-								dispatcher.onException(step, Cmd.testFailure, e.getTargetException());
+								dispatcher.onException(step, Cmd.quit, e.getTargetException());
 							}
 							throw e.getTargetException();
 						}
@@ -494,9 +494,9 @@ public class EventFiringWebDriver
 							try {
 								return method.invoke(element, args);
 							} catch (InvocationTargetException e) {
-								Step step = new Step(Type.Exception, stepNumber, Cmd.testFailure);
+								Step step = new Step(Type.Exception, stepNumber, Cmd.quit);
 								step.setIssue(e);
-								dispatcher.onException(step, Cmd.testFailure, e.getTargetException());
+								dispatcher.onException(step, Cmd.quit, e.getTargetException());
 								throw e.getTargetException();
 							}
 						}
