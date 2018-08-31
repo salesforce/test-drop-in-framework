@@ -29,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class Step {
 	public enum Type { BeforeAction, AfterAction, BeforeGather, AfterGather, Exception }
+	// TODO add Alert
 	public enum WebDriverInterface { WebDriver, JavascriptExecutor, Navigation, TargetLocator, Timeouts, Window, WebElement }
 	public enum Cmd {
 		// commands called directly from WebDriver object
@@ -102,32 +103,36 @@ public class Step {
 		}
 
 		public String getLongCmdString() {
+			return (this.wdIf == WebDriverInterface.WebElement)
+					? getLongCmdString("webElement")
+					: getLongCmdString("webDriver");
+		}
+
+		public String getLongCmdString(String fieldName) {
 			String value = null;
 			String shortCmd = getShortCmdString();
 			switch(this.wdIf) {
 			case WebDriver:
-				value = "wd." + shortCmd;
+				value = fieldName + "." + shortCmd;
 				break;
 			case JavascriptExecutor:
-				value = "(JavascriptExecutor) wd." + shortCmd;
+				value = "(JavascriptExecutor) " + fieldName + "." + shortCmd;
 				break;
 			case Navigation:
-				value = "wd.navigate()." + shortCmd;
+				value = fieldName + ".navigate()." + shortCmd;
 				break;
 			case TargetLocator:
-				value = "wd.switchTo()." + shortCmd;
+				value = fieldName + ".switchTo()." + shortCmd;
 				break;
 			case Timeouts:
-				value = "wd.timeouts()." + shortCmd;
+				value = fieldName + ".timeouts()." + shortCmd;
 				break;
 			case Window:
-				value = "wd.manage().window()." + shortCmd;
+				value = fieldName + ".manage().window()." + shortCmd;
 				break;
 			case WebElement:
-				value = "webElement." + shortCmd;
+				value = fieldName + "." + shortCmd;
 				break;
-			default:
-				value = "Assert.fail";
 			}
 
 			return value;
@@ -151,6 +156,7 @@ public class Step {
 	@JsonIgnore
 	private Object returnObject;
 	private Throwable issue;
+	private String elementLocator;
 
 	/**
 	 * Empty Default constructor to be used by de-serialization.
@@ -279,6 +285,14 @@ public class Step {
 
 	public void setIssue(Throwable issue) {
 		this.issue = issue;
+	}
+
+	public String getElementLocator() {
+		return elementLocator;
+	}
+
+	public void setElementLocator(String elementLocator) {
+		this.elementLocator = elementLocator;
 	}
 
 	@Override
