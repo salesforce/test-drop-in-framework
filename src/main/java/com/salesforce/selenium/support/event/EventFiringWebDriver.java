@@ -664,7 +664,7 @@ public class EventFiringWebDriver
 
 			boolean isDisplayed = element.isDisplayed();
 
-			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.isDisplayed);
+			Step stepAfter = new Step(Type.AfterGather, stepNumber++, Cmd.isDisplayed);
 			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
 			stepAfter.setReturnValue("" + isDisplayed);
 			stepAfter.setElementLocator(Step.getLocatorFromWebElement(element));
@@ -682,7 +682,7 @@ public class EventFiringWebDriver
 
 			boolean isEnabled = element.isEnabled();
 
-			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.isEnabled);
+			Step stepAfter = new Step(Type.AfterGather, stepNumber++, Cmd.isEnabled);
 			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
 			stepAfter.setReturnValue("" + isEnabled);
 			stepAfter.setElementLocator(Step.getLocatorFromWebElement(element));
@@ -700,7 +700,7 @@ public class EventFiringWebDriver
 
 			boolean isSelected = element.isSelected();
 
-			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.isSelected);
+			Step stepAfter = new Step(Type.AfterGather, stepNumber++, Cmd.isSelected);
 			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
 			stepAfter.setReturnValue("" + isSelected);
 			stepAfter.setElementLocator(Step.getLocatorFromWebElement(element));
