@@ -322,7 +322,12 @@ public class EventFiringWebDriver
 		dispatcher.beforeQuit(stepBefore);
 		currentStep = stepBefore;
 
-		driver.quit();
+		try {
+			driver.quit();
+		} catch (Exception e) {
+			System.err.println("Exception while quitting WebDriver instance: " + e.getMessage());
+			e.printStackTrace();
+		}
 
 		Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.quit);
 		dispatcher.afterQuit(stepAfter);
