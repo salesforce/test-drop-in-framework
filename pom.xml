@@ -130,7 +130,7 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<goals>deploy</goals>
 					<localCheckout>true</localCheckout>
-					<pushChanges>true</pushChanges>
+					<pushChanges>false</pushChanges>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 					<arguments>-B</arguments>
 				</configuration>
