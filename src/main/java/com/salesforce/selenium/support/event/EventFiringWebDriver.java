@@ -323,10 +323,15 @@ public class EventFiringWebDriver
 		currentStep = stepBefore;
 
 		try {
+			// occasionally the driver instance "dies" during quitting,
+			// hence throwing a nasty exception which gets TestNG/JUnit into
+			// limbo mode.
 			driver.quit();
-		} catch (Exception e) {
-			System.err.println("Exception while quitting WebDriver instance: " + e.getMessage());
-			e.printStackTrace();
+		} catch (Throwable t) {
+			// It's benign to catch and swallow here because you can't do anything
+			// useful with this driver instance anyway.
+			System.err.println("Exception while quitting WebDriver instance: " + t.getMessage());
+			t.printStackTrace();
 		}
 
 		Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.quit);
