@@ -80,7 +80,7 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.4</version>
 				<configuration>
-					<bottom>Copyright (c) 2017, Salesforce.com, Inc. All rights
+					<bottom>Copyright (c) 2019, Salesforce.com, Inc. All rights
 						reserved. Licensed under
 						the BSD 3-Clause license. For full license text, see the LICENSE.txt
 						file in the
@@ -121,7 +121,6 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
 					<skipStaging>true</skipStaging>
 				</configuration>
 			</plugin>
-
 			<!-- Nexus release settings -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -131,7 +130,7 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<goals>deploy</goals>
 					<localCheckout>true</localCheckout>
-					<pushChanges>false</pushChanges>
+					<pushChanges>true</pushChanges>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 					<arguments>-B</arguments>
 				</configuration>
@@ -192,6 +191,7 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
 		<snapshotRepository>
 			<id>nexus</id>
 			<url>https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots</url>
+			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
 </project>
