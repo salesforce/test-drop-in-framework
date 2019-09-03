@@ -1,20 +1,21 @@
-/**
- * 
+/* 
+ * Copyright (c) 2019, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license. 
+ * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
 package com.salesforce.selenium.support.findby;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
 
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.DefaultFieldDecorator;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 
 /**
+ * Allows WebDriver to find an element by using the given JavaScript command.
+ * 
  * @author gneumann
- *
+ * @since 2.1
  */
 public class JSFieldDecorator extends DefaultFieldDecorator {
 
@@ -27,27 +28,6 @@ public class JSFieldDecorator extends DefaultFieldDecorator {
 
 	@Override
 	protected boolean isDecoratableList(Field field) {
-		if (!List.class.isAssignableFrom(field.getType())) {
-			return false;
-		}
-
-		// Type erasure in Java isn't complete. Attempt to discover the generic
-		// type of the list.
-		Type genericType = field.getGenericType();
-		if (!(genericType instanceof ParameterizedType)) {
-			return false;
-		}
-
-		Type listType = ((ParameterizedType) genericType).getActualTypeArguments()[0];
-
-		if (!WebElement.class.equals(listType)) {
-			return false;
-		}
-
-		if (field.getAnnotation(FindByJS.class) == null) {
-			return false;
-		}
-
-		return true;
+		return false;
 	}
 }
