@@ -12,7 +12,8 @@ import org.openqa.selenium.support.pagefactory.DefaultFieldDecorator;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 
 /**
- * Allows WebDriver to find an element by using the given JavaScript command.
+ * Allows WebDriver to find an element by using the given JavaScript command
+ * in a {@link FindByJS} annotation.
  * 
  * @author gneumann
  * @since 2.1
@@ -20,12 +21,19 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 public class JSFieldDecorator extends DefaultFieldDecorator {
 
 	/**
-	 * @param factory
+	 * CTOR only delegates to super class.
+	 * @param factory selected ElementLocator factory
 	 */
 	public JSFieldDecorator(ElementLocatorFactory factory) {
 		super(factory);
 	}
 
+	/**
+	 * The {@link FindByJS} annotation on fields of type List is
+	 * not supported.
+	 * @param field currently processed class or instance member
+	 * @return false always
+	 */
 	@Override
 	protected boolean isDecoratableList(Field field) {
 		return false;

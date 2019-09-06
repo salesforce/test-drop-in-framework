@@ -17,7 +17,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
 
 /**
- * Finds an element by using the JavaScript command from its {@literal @FindByJS} annotation.
+ * Finds an element by using the JavaScript command from its {@link FindByJS} annotation.
  * Please note that this annotation does not support lists.
  * 
  * @author gneumann
@@ -28,7 +28,11 @@ public class JSElementLocator implements ElementLocator {
 	private final String script;
 
 	/**
+	 * CTOR gets the JavaScript from {@link FindByJS} annotation if
+	 * defined for the given field.
 	 * 
+	 * @param driver currently active WebDriver instance
+	 * @param field currently processed class or instance member
 	 */
 	public JSElementLocator(WebDriver driver, Field field) {
 	    this.driver = driver;
@@ -37,13 +41,22 @@ public class JSElementLocator implements ElementLocator {
 	}
 
 	/**
-	 * Finds an element by using the JavaScript command from its {@literal @FindByJS} annotation.
+	 * Finds an element by using the JavaScript command from its {@link FindByJS} annotation.
+	 * 
 	 * If no object of type {@link WebElement} is found, this method throws an exception.
+	 * 
+	 * If the JavaScript command does not start with <pre>return document.querySelector</pre>
+	 * this method throws an exception.
 	 * 
 	 * @return object of type {@link WebElement}
 	 * @see org.openqa.selenium.support.pagefactory.ElementLocator#findElement()
-	 * @throws NoSuchElementException if script is empty or the JavaScript code does not return
-	 * an object at all or not an object of type {@link WebElement}.
+	 * @throws NoSuchElementException if
+	 * <ul>
+	 * <li>script is empty</li>
+	 * <li>script does not start with "return document.querySelector"</li>
+	 * <li>the JavaScript code does not return an object at all</li>
+	 * <li>the JavaScript code does not return an object of type {@link WebElement}</li>
+	 * </ul>
 	 */
 	@Override
 	public WebElement findElement() {
@@ -63,7 +76,7 @@ public class JSElementLocator implements ElementLocator {
 	}
 
 	/**
-	 * The {@literal @FindByJS} annotation is not supported for lists and hence this method
+	 * The {@link FindByJS} annotation is not supported for lists and hence this method
 	 * will return an empty list.
 	 * 
 	 * @return empty list

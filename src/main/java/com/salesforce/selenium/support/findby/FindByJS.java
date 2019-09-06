@@ -15,17 +15,24 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(FIELD)
 /**
- * Allows WebDriver to find an element by using the given JavaScript command.
- * 
+ * Allows WebDriver to find an element by using the given JavaScript command
+ * in a {@literal @FindByJS} annotation.
+ * <p>
+ * Example:
+ * <pre>@FindByJS(script = "return document.querySelector(..)...")</pre>
+ * <p>
  * @author gneumann
  * @since 2.1
  */
 public @interface FindByJS {
 	/**
 	 * Name any valid JavaScript which allows to find an element on the current page.
-	 * The script has to begin with "return document.querySelector"
+	 * The script has to begin with "return document.querySelector".
 	 * 
-	 * @return JavaScript command as text
+	 * This annotation does not support fields of type List. It can only be used to
+	 * locate a single web element.
+	 * 
+	 * @return JavaScript command as text or empty text if not set
 	 */
 	String script() default "";
 }

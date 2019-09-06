@@ -12,8 +12,8 @@ import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 
 /**
- * Augments the {@link DefaulPageFactory} by supporting element annotation
- * {@literal @FindByJS}.
+ * Augments the {@link PageFactory} by supporting element annotation
+ * {@link FindByJS}.
  * 
  * @author gneumann
  * @since 2.1
