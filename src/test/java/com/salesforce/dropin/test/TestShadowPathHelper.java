@@ -15,7 +15,7 @@ import com.salesforce.selenium.support.findby.ShadowPathHelper;
  * Tests for Shadow Path Helper functions
  * 
  * @author ytao
- * @since 2.1
+ * @since 3.0.0
  */
 public class TestShadowPathHelper {
 	

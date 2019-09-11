@@ -16,7 +16,7 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
  * Allows WebDriver to find an element by using the given JavaScript command.
  *  
  * @author gneumann
- * @since 2.1
+ * @since 3.0.0
  */
 public class JSElementLocatorFactory implements ElementLocatorFactory {
 	private final WebDriver driver;

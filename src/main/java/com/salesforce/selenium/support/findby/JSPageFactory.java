@@ -16,7 +16,7 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
  * {@link FindByJS}.
  * 
  * @author gneumann
- * @since 2.1
+ * @since 3.0.0
  */
 public class JSPageFactory extends PageFactory {
 

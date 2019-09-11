@@ -16,7 +16,7 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
  * in a {@link FindByJS} annotation.
  * 
  * @author gneumann
- * @since 2.1
+ * @since 3.0.0
  */
 public class JSFieldDecorator extends DefaultFieldDecorator {
 

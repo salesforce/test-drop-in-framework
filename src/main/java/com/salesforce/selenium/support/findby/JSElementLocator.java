@@ -21,7 +21,7 @@ import org.openqa.selenium.support.pagefactory.ElementLocator;
  * Please note that this annotation does not support lists.
  * 
  * @author gneumann
- * @since 2.1
+ * @since 3.0.0
  */
 public class JSElementLocator implements ElementLocator {
 	private final WebDriver driver;

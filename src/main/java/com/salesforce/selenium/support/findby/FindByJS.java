@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * {@code @FindByJS(shadowPath = "flexipage-aura-wrapper[0] => lightning-icon ...")}
  * <p>
  * @author gneumann
- * @since 2.1
+ * @since 3.0.0
  */
 @Retention(RUNTIME)
 @Target(FIELD)
