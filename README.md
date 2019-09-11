@@ -1,4 +1,11 @@
 # test-drop-in-framework
+
+This repository contains two major deliverables:
+a) the Test Drop-in Framework,
+b) a WebDriver implementation offering enhanced logging capabilities, and
+b) the @FindByJS annotation support
+
+## Test Drop-in Framework
 The ContextProvider helps the owner of a test project and her partner teams, be
 them either inside or outside the company, to run the very same tests
 provided by the owner in every team's test environment. In essence, it allows
@@ -8,6 +15,38 @@ cases without having to modify or rewrite any customer code or test cases, etc.
 When the owner runs her tests, the owner leaves the switch in "owner mode" aka
 "default mode". If a partner team runs the tests, they flip the switch to their
 test context.
+
+The main classes are:
+* com.salesforce.dropin.common.BaseContext
+* com.salesforce.dropin.common.ContextProvider
+
+## Enhanced WebDriver
+
+This WebDriver is basically a wrapper around an arbitrary WebDriver instance. It supports
+registering WebDriverEventListener implementations, e.g. for logging purposes.
+
+This is an extended version of org.openqa.selenium.support.events.EventFiringWebDriver.
+
+The main class and interface are:
+* com.salesforce.selenium.support.event.EventFiringWebDriver
+* com.salesforce.selenium.support.event.WebDriverEventListener
+
+## @FindByJS Annotation Support
+
+WebDriver supports three annotations @FindBy, @FindBys, @FindAll which facilitate
+the use of the Page Object model.
+
+Occasionally there is the need to look up WebElement objects using JavaScript, e.g.
+when dealing with UI elements inside shadowDOM. This is particularly the case when
+writing UI test automation for applications using Salesforce Lightning Web Components
+LWC.
+
+Until WebDriver comes up with a solution how to deal with shadowDOM, we recommend to
+use the @FindByJS annotation.
+
+The main class and interface are:
+* com.salesforce.selenium.support.findby.FindByJS
+* com.salesforce.selenium.support.findby.JSPageFactory
 
 ## Requirements
 To use this project the following requirements have to be met:
@@ -50,7 +89,8 @@ default context.
 7. Run `mvn -Dtest=TestCustomContext test` to run all tests provided for testing
 custom context.
 
-## Prepare your test project
+## How to use the Test Drop-in Framework
+### Prepare your test project
 1. Add the test drop-in framework jar created in Development step 5 to your build path.
 2. In your test project create a package which contains your test context interfaces
 and the test context implementation class. Recommended package name:
@@ -83,14 +123,14 @@ public interface IData<T> extends BaseData<T> {
 5. Create classes implementing the various interfaces.
 6. Create the class implementing the test context defined in step 3.
 
-## Initialization of the TestContext
+### Initialization of the TestContext
 
 The TestContext interface (see example above) requires implementation of then
 initialize(testCase) method, where the objects stored in the context get initialized.
 A good place is in a method run during initialization of a test class or in methods
 annotated with @BeforeClass if you are using TestNG or JUnit.  
 
-## Use the test context in your test project
+### Use the test context in your test project
 1. Where-ever in your test project you need to access something stored in the test
 context, first get the handle to the TestContext (see interface example above) this way: 
 
@@ -104,7 +144,7 @@ TestContext tc = ContextProvider.getTestContext(TestContext.class);
 String value = tc.data().getCommonData("mykey");
 ```
 
-## How to toggle between Test Context implementations?
+### How to toggle between Test Context implementations?
 
 The first call of method
 
