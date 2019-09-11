@@ -12,20 +12,20 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-@Retention(RUNTIME)
-@Target(FIELD)
 /**
  * Allows WebDriver to find an element by using the given JavaScript command
  * in a {@literal @FindByJS} annotation.
  * <p>
- * Example:
- * <pre>@FindByJS(script = "return document.querySelector(..)...")</pre>
- * or
- * <pre>@FindByJS(shadowPath = "flexipage-aura-wrapper[0] => lightning-icon...")</pre>
+ * Example:<p>
+ * {@code @FindByJS(script = "return document.querySelector(..) ...")}<p>
+ * or<p>
+ * {@code @FindByJS(shadowPath = "flexipage-aura-wrapper[0] => lightning-icon ...")}
  * <p>
  * @author gneumann
  * @since 2.1
  */
+@Retention(RUNTIME)
+@Target(FIELD)
 public @interface FindByJS {
 	/**
 	 * Name any valid JavaScript which allows to find an element on the current page.
