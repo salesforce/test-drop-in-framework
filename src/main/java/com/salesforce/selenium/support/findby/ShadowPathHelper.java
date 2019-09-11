@@ -17,7 +17,8 @@ public class ShadowPathHelper {
 	/**
 	 * Convert a shadowPath to proper JavaScript code.
 	 * <p>
-	 * A valid shadow path has the format:<p>{@code tag-name ["=>" tag-name]*}
+	 * A valid shadow path has the format:<p>{@code tag-name ["=>" tag-name]*}<p>
+	 * Please note: this method does not perform any format validation check.
 	 * <p>
 	 * Example:<p>
 	 * {@code flexipage-aura-wrapper[0] => lightning-icon[1] => lightning-primitive-icon}
@@ -25,9 +26,9 @@ public class ShadowPathHelper {
 	 * This gets converted into this JavaScript code:<p>
 	 * {@code return document.querySelectorAll('flexipage-aura-wrapper')[0].shadowRoot.querySelectorAll('lightning-icon')[1].shadowRoot.querySelector('lightning-primitive-icon');}
 	 * <p>
-	 * which can then be send to {@link org.openqa.selenium.JavascriptExecutor#executeScript(String)}.
+	 * which can then be send to {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}.
 	 * 
-	 * @param shadowPath
+	 * @param shadowPath a valid shadow path
 	 * @return JavaScript code or empty string
 	 */
 	public static String shadowPath2Script(String shadowPath) {
