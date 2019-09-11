@@ -1,3 +1,9 @@
+/* 
+ * Copyright (c) 2019, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license. 
+ * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
+ */
 package com.salesforce.dropin.test;
 
 import org.testng.Assert;
@@ -9,12 +15,12 @@ import com.salesforce.selenium.support.findby.ShadowPathHelper;
  * Tests for Shadow Path Helper functions
  * 
  * @author ytao
- *
+ * @since 2.1
  */
 public class TestShadowPathHelper {
 	
 	@Test
-	public void testShadowPath() {
+	public void testShadowPathLong() {
 		String shadowPath = "one-record-home-flexipage2"
 							+ "=> forcegenerated-flexipage_v2mom_record_page_v2mom__c"
 							+ "=> flexipage-aura-wrapper[0]"
@@ -26,6 +32,22 @@ public class TestShadowPathHelper {
 							+ ".shadowRoot.querySelectorAll('flexipage-aura-wrapper')[0]"
 							+ ".shadowRoot.querySelectorAll('lightning-icon')[1]"
 							+ ".shadowRoot.querySelector('lightning-primitive-icon')";
+	
+		Assert.assertEquals(ShadowPathHelper.getShadowQueryString(shadowPath), queryString);
+	}
+
+	@Test
+	public void testShadowPathShort() {
+		String shadowPath = "one-record-home-flexipage2";
+		String queryString = "return document.querySelector('one-record-home-flexipage2')";
+	
+		Assert.assertEquals(ShadowPathHelper.getShadowQueryString(shadowPath), queryString);
+	}
+
+	@Test
+	public void testShadowPathEmpty() {
+		String shadowPath = "";
+		String queryString = "";
 	
 		Assert.assertEquals(ShadowPathHelper.getShadowQueryString(shadowPath), queryString);
 	}

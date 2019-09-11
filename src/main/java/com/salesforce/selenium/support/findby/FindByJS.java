@@ -20,6 +20,8 @@ import java.lang.annotation.Target;
  * <p>
  * Example:
  * <pre>@FindByJS(script = "return document.querySelector(..)...")</pre>
+ * or
+ * <pre>@FindByJS(shadowPath = "flexipage-aura-wrapper[0] => lightning-icon...")</pre>
  * <p>
  * @author gneumann
  * @since 2.1
@@ -27,12 +29,27 @@ import java.lang.annotation.Target;
 public @interface FindByJS {
 	/**
 	 * Name any valid JavaScript which allows to find an element on the current page.
-	 * The script has to begin with "return document.querySelector".
-	 * 
+	 * The script has to begin with {@code return document.querySelector}.
+	 * <p>
 	 * This annotation does not support fields of type List. It can only be used to
 	 * locate a single web element.
 	 * 
 	 * @return JavaScript command as text or empty text if not set
 	 */
 	String script() default "";
+	
+	/**
+	 * Name any valid shadow path which allows to find an element on the current page.
+	 * <p>
+	 * A valid shadow path has the format:<p>{@code tag-name ["=>" tag-name]*}
+	 * <p>
+	 * Example:<p>
+	 * {@code flexipage-aura-wrapper[0] => lightning-icon[1] => lightning-primitive-icon}
+	 * <p>
+	 * This annotation does not support fields of type List. It can only be used to
+	 * locate a single web element.
+	 * 
+	 * @return Shadow path as text or empty text if not set
+	 */
+	String shadowPath() default "";
 }

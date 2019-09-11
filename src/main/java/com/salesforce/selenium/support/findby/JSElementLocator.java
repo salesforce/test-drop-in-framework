@@ -26,9 +26,10 @@ import org.openqa.selenium.support.pagefactory.ElementLocator;
 public class JSElementLocator implements ElementLocator {
 	private final WebDriver driver;
 	private final String script;
+	private final String shadowPath;
 
 	/**
-	 * CTOR gets the JavaScript from {@link FindByJS} annotation if
+	 * CTOR gets the locator command from {@link FindByJS} annotation if
 	 * defined for the given field.
 	 * 
 	 * @param driver currently active WebDriver instance
@@ -38,39 +39,58 @@ public class JSElementLocator implements ElementLocator {
 	    this.driver = driver;
 	    FindByJS findByJs = field.getAnnotation(FindByJS.class);
 	    script = (findByJs != null) ? findByJs.script() : "";
+	    shadowPath = (findByJs != null) ? findByJs.shadowPath() : "";
 	}
 
 	/**
-	 * Finds an element by using the JavaScript command from its {@link FindByJS} annotation.
-	 * 
+	 * Finds an element by using either the JavaScript command or the shadow path information
+	 * from its {@link FindByJS} annotation.
+	 * <p>
 	 * If no object of type {@link WebElement} is found, this method throws an exception.
-	 * 
-	 * If the JavaScript command does not start with <pre>return document.querySelector</pre>
+	 * <p>
+	 * The shadow path information will be converted into an equivalent JavaScript command
+	 * by calling {@link ShadowPathHelper#getShadowQueryString(String)}.
+	 * <p>
+	 * If the JavaScript command does not start with {@code return document.querySelector}
 	 * this method throws an exception.
 	 * 
 	 * @return object of type {@link WebElement}
 	 * @see org.openqa.selenium.support.pagefactory.ElementLocator#findElement()
 	 * @throws NoSuchElementException if
 	 * <ul>
-	 * <li>script is empty</li>
+	 * <li>script and shadowPath values are empty</li>
 	 * <li>script does not start with "return document.querySelector"</li>
-	 * <li>the JavaScript code does not return an object at all</li>
-	 * <li>the JavaScript code does not return an object of type {@link WebElement}</li>
+	 * <li>the JavaScript code or the shadow path converted into JavaScript code does not return an object at all</li>
+	 * <li>the JavaScript code or the shadow path converted into JavaScript code does not return an object of type {@link WebElement}</li>
 	 * </ul>
 	 */
 	@Override
 	public WebElement findElement() {
+		if (script.isEmpty() && shadowPath.isEmpty()) {
+			String errMsg = (script.isEmpty()) ? "Cannot find element by calling an empty shadow path"
+					: "Cannot find element by calling an empty JavaScript command";
+			throw new NoSuchElementException(errMsg);
+		}
+
+		// Example script:
+		// "return document.querySelector('lightning-grouped-combobox.slds-form-element').shadowRoot.querySelector('lightning-base-combobox.slds-combobox_container').shadowRoot.querySelector('input.slds-input.slds-combobox__input')";
+
+		String command = script;
 		if (script.isEmpty()) {
-			throw new NoSuchElementException("Cannot find element by calling an empty JavaScript command");
+			// user did not set "script" attribute but "shadowPath"; convert it to proper JavaScript
+			command = ShadowPathHelper.getShadowQueryString(shadowPath);
+		} else {
+			if (!script.startsWith("return document.querySelector")) {
+				// user did set "script" attribute but it's not the supported command
+				throw new NoSuchElementException("Not a valid JavaScript command: " + script + "\nit has to start with \"return document.querySelector\"");
+			}
 		}
-		if (!script.startsWith("return document.querySelector")) {
-			throw new NoSuchElementException("Not a valid JavaScript command: " + script + "\nit has to start with \"return document.querySelector\"");
-		}
-		// Execute JavaScript command and return element found; see Schneider Sales Lightning LexHomePage.getCategory() e.g.
-		// script = "return document.querySelector(\"lightning-grouped-combobox.slds-form-element\").shadowRoot.querySelector(\"lightning-base-combobox.slds-combobox_container\").shadowRoot.querySelector(\"input.slds-input.slds-combobox__input\")";
-		Object obj = ((JavascriptExecutor) driver).executeScript(script);
+		// Execute JavaScript command and return element found
+		Object obj = ((JavascriptExecutor) driver).executeScript(command);
 		if (!(obj instanceof WebElement)) {
-			throw new NoSuchElementException("Cannot find element by calling JavaScript command: " + script);
+			String errMsg = (script.isEmpty()) ? "Cannot find element by calling shadow path: " + shadowPath
+					: "Cannot find element by calling JavaScript command: " + script;
+			throw new NoSuchElementException(errMsg);
 		}
 		return (WebElement) obj;
 	}
