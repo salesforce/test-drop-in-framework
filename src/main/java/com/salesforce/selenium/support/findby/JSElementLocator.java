@@ -49,7 +49,7 @@ public class JSElementLocator implements ElementLocator {
 	 * If no object of type {@link WebElement} is found, this method throws an exception.
 	 * <p>
 	 * The shadow path information will be converted into an equivalent JavaScript command
-	 * by calling {@link ShadowPathHelper#getShadowQueryString(String)}.
+	 * by calling {@link ShadowPathHelper#shadowPath2Script(String)}.
 	 * <p>
 	 * If the JavaScript command does not start with {@code return document.querySelector}
 	 * this method throws an exception.
@@ -78,7 +78,7 @@ public class JSElementLocator implements ElementLocator {
 		String command = script;
 		if (script.isEmpty()) {
 			// user did not set "script" attribute but "shadowPath"; convert it to proper JavaScript
-			command = ShadowPathHelper.getShadowQueryString(shadowPath);
+			command = ShadowPathHelper.shadowPath2Script(shadowPath);
 		} else {
 			if (!script.startsWith("return document.querySelector")) {
 				// user did set "script" attribute but it's not the supported command

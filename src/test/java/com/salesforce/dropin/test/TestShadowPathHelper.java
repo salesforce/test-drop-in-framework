@@ -33,7 +33,7 @@ public class TestShadowPathHelper {
 							+ ".shadowRoot.querySelectorAll('lightning-icon')[1]"
 							+ ".shadowRoot.querySelector('lightning-primitive-icon')";
 	
-		Assert.assertEquals(ShadowPathHelper.getShadowQueryString(shadowPath), queryString);
+		Assert.assertEquals(ShadowPathHelper.shadowPath2Script(shadowPath), queryString);
 	}
 
 	@Test
@@ -41,7 +41,7 @@ public class TestShadowPathHelper {
 		String shadowPath = "one-record-home-flexipage2";
 		String queryString = "return document.querySelector('one-record-home-flexipage2')";
 	
-		Assert.assertEquals(ShadowPathHelper.getShadowQueryString(shadowPath), queryString);
+		Assert.assertEquals(ShadowPathHelper.shadowPath2Script(shadowPath), queryString);
 	}
 
 	@Test
@@ -49,6 +49,6 @@ public class TestShadowPathHelper {
 		String shadowPath = "";
 		String queryString = "";
 	
-		Assert.assertEquals(ShadowPathHelper.getShadowQueryString(shadowPath), queryString);
+		Assert.assertEquals(ShadowPathHelper.shadowPath2Script(shadowPath), queryString);
 	}
 }

@@ -14,7 +14,23 @@ package com.salesforce.selenium.support.findby;
  * @since 2.1
  */
 public class ShadowPathHelper {
-	public static String getShadowQueryString(String shadowPath) {
+	/**
+	 * Convert a shadowPath to proper JavaScript code.
+	 * <p>
+	 * A valid shadow path has the format:<p>{@code tag-name ["=>" tag-name]*}
+	 * <p>
+	 * Example:<p>
+	 * {@code flexipage-aura-wrapper[0] => lightning-icon[1] => lightning-primitive-icon}
+	 * <p>
+	 * This gets converted into this JavaScript code:<p>
+	 * {@code return document.querySelectorAll('flexipage-aura-wrapper')[0].shadowRoot.querySelectorAll('lightning-icon')[1].shadowRoot.querySelector('lightning-primitive-icon');}
+	 * <p>
+	 * which can then be send to {@link org.openqa.selenium.JavascriptExecutor#executeScript(String)}.
+	 * 
+	 * @param shadowPath
+	 * @return JavaScript code or empty string
+	 */
+	public static String shadowPath2Script(String shadowPath) {
 		if (shadowPath == null || shadowPath.isEmpty())
 			return "";
 
