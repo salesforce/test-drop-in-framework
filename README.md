@@ -1,9 +1,9 @@
 # test-drop-in-framework
 
-This repository contains two major deliverables:
+This repository contains these major deliverables:
 a) the Test Drop-in Framework,
 b) a WebDriver implementation offering enhanced logging capabilities, and
-b) the @FindByJS annotation support
+c) the @FindByJS annotation support
 
 ## Test Drop-in Framework
 The ContextProvider helps the owner of a test project and her partner teams, be

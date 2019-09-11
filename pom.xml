@@ -10,15 +10,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.salesforce.cqe</groupId>
 	<artifactId>test-drop-in-framework</artifactId>
-	<version>2.0.12-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<name>Test Drop-in Framework</name>
 	<description>Test Drop-in Framework for Selenium WebDriver 3.x.
 	
-Provides a thin abstraction layer between the test environment and the test class plus its helpers.
+This repository contains these major deliverables:
+a) the Test Drop-in Framework,
+b) a WebDriver implementation offering enhanced logging capabilities, and
+c) the @FindByJS annotation support
 
-This makes the test code independent of the test environment, thus allowing exchange of tests between organizations or even companies.
+Provides a thin abstraction layer between the test environment and the test class plus its helpers. This makes the test code independent of the test environment, thus allowing exchange of tests between organizations or even companies.
 
-Further it comes with an event firing WebDriver wrapper plus corresponding interface. This allows you to implement listeners to arbitrary WebDriver activities for various purposes such as logging.
+It comes with an event firing WebDriver wrapper plus corresponding interface. This allows you to implement listeners to arbitrary WebDriver activities for various purposes such as logging.
+
+Offers support of JavaScript commands to find elements in a way similar to @FindBy used on fields in Page Object classes.
 </description>
 	<packaging>jar</packaging>
 	<licenses>
@@ -191,11 +196,5 @@ Further it comes with an event firing WebDriver wrapper plus corresponding inter
 			<id>nexus</id>
 			<url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases</url>
 		</repository>
-<!-- 		
-		<snapshotRepository>
-			<id>nexus</id>
-			<url>https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
- -->
 	</distributionManagement>
 </project>
