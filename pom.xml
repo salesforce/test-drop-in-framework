@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.salesforce.cqe</groupId>
 	<artifactId>test-drop-in-framework</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.1-SNAPSHOT</version>
 	<name>Test Drop-in Framework</name>
 	<description>Test Drop-in Framework for Selenium WebDriver 3.x.
 	
@@ -188,7 +188,7 @@ Offers support of JavaScript commands to find elements in a way similar to @Find
 
 	<scm>
 		<developerConnection>scm:git:git@github.com:salesforce/test-drop-in-framework.git</developerConnection>
-		<tag>v3.0.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>
