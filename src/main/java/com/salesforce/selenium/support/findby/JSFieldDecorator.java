@@ -7,8 +7,11 @@
 package com.salesforce.selenium.support.findby;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.DefaultFieldDecorator;
+import org.openqa.selenium.support.pagefactory.ElementLocator;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 
 /**
@@ -26,6 +29,37 @@ public class JSFieldDecorator extends DefaultFieldDecorator {
 	 */
 	public JSFieldDecorator(ElementLocatorFactory factory) {
 		super(factory);
+	}
+
+	/**
+	 * Create proxy for field if it has the annotation {@link FindByJS}.
+	 * 
+	 * @param loader this class' loader
+	 * @param field class member to process
+	 * @return proxy for locator or NULL
+	 */
+	@Override
+	public Object decorate(ClassLoader loader, Field field) {
+		// only proceed if it is decorated by a @FindByJS
+		if (field.getAnnotation(FindByJS.class) == null)
+			return null;
+
+		if (!(WebElement.class.isAssignableFrom(field.getType()) || isDecoratableList(field))) {
+			return null;
+		}
+
+		ElementLocator locator = factory.createLocator(field);
+		if (locator == null) {
+			return null;
+		}
+
+		if (WebElement.class.isAssignableFrom(field.getType())) {
+			return proxyForLocator(loader, locator);
+		} else if (List.class.isAssignableFrom(field.getType())) {
+			return proxyForListLocator(loader, locator);
+		} else {
+			return null;
+		}
 	}
 
 	/**

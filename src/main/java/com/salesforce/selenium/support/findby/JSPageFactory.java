@@ -6,10 +6,13 @@
  */
 package com.salesforce.selenium.support.findby;
 
+import java.lang.reflect.Field;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
+import org.openqa.selenium.support.pagefactory.FieldDecorator;
 
 /**
  * Augments the {@link PageFactory} by supporting element annotation
@@ -46,6 +49,39 @@ public class JSPageFactory extends PageFactory {
 	 */
 	public static void initElementsJS(ElementLocatorFactory factory, Object page) {
 		final ElementLocatorFactory factoryRef = factory;
-		initElements(new JSFieldDecorator(factoryRef), page);
+		initElementsJS(new JSFieldDecorator(factoryRef), page);
 	}
+
+
+	/**
+	 * Similar to the other "initElements" methods, but takes an
+	 * {@link FieldDecorator} which is used for decorating each of the fields
+	 * if they are annotated by {@literal @FindByJS}.
+	 *
+	 * @param decorator the decorator to use
+	 * @param page      The object to decorate the fields of
+	 */
+	public static void initElementsJS(FieldDecorator decorator, Object page) {
+		Class<?> proxyIn = page.getClass();
+		while (proxyIn != Object.class) {
+			proxyFieldsJS(decorator, page, proxyIn);
+			proxyIn = proxyIn.getSuperclass();
+		}
+	}
+
+	private static void proxyFieldsJS(FieldDecorator decorator, Object page, Class<?> proxyIn) {
+		Field[] fields = proxyIn.getDeclaredFields();
+		for (Field field : fields) {
+			Object value = decorator.decorate(page.getClass().getClassLoader(), field);
+			if (value != null) {
+				// if we get here it means it has an annotation @FindByJS
+				try {
+					field.setAccessible(true);
+					field.set(page, value);
+				} catch (IllegalAccessException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+	  }
 }

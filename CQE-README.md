@@ -16,4 +16,4 @@
     Cleans up your local env
 
 Manual approach:
-mvn deploy:deploy-file -Dfile=target/test-drop-in-framework-2.0.8.jar -DrpositoryId=nexus -Durl=https://nexus.soma.salesforce.com/nexus/content/repositories/releases -DgroupId=com.salesforce.cqe -DartifactId=test-drop-in-framework -Dversion=2.0.8 -Dpackaging=jar
+mvn deploy:deploy-file -Dfile=target/test-drop-in-framework-2.0.8.jar -DrepositoryId=nexus -Durl=https://nexus.soma.salesforce.com/nexus/content/repositories/releases -DgroupId=com.salesforce.cqe -DartifactId=test-drop-in-framework -Dversion=2.0.8 -Dpackaging=jar
