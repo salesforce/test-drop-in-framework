@@ -192,9 +192,13 @@ Offers support of JavaScript commands to find elements in a way similar to @Find
 	</scm>
 
 	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
 		<repository>
-			<id>nexus</id>
-			<url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases</url>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
 </project>
