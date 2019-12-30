@@ -46,7 +46,6 @@ After:
 ```
 @FindByJS(script="return document.querySelector('foo-bar').expandShadow....querySelector('#bizz')")
 WebElement bizz;
-}
 ```
 
 Note:
@@ -60,9 +59,7 @@ You do not need to build this repository to use @FindByJS. Instead add this piec
 ```
 
 Please replace the version with the currently latest one by checking out 
-```
 https://repository.sonatype.org/#nexus-search;quick~test-drop-in
-```
 
 ### Developing extension
  1. When you update code, to see changes you will need to:
