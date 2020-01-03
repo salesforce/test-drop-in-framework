@@ -82,7 +82,7 @@ let generateShadowJSPath = function() {
     }
 
     /**
-     * Turn potential path into javascript selector.
+     * Turn potential path into JavaScript selector.
      * Use eval to select between multiple possible top-down paths.
      */
     function jsPathFromPath(path) {
