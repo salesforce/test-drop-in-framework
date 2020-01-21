@@ -23,6 +23,7 @@ import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,8 +33,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
@@ -42,14 +45,16 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WrapsDriver;
+import org.openqa.selenium.interactions.Coordinates;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.HasTouchScreen;
+import org.openqa.selenium.interactions.Interactive;
 import org.openqa.selenium.interactions.Keyboard;
+import org.openqa.selenium.interactions.Locatable;
 import org.openqa.selenium.interactions.Mouse;
+import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.interactions.TouchScreen;
-import org.openqa.selenium.interactions.internal.Coordinates;
-import org.openqa.selenium.interactions.internal.Locatable;
-import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.logging.Logs;
 
@@ -71,7 +76,8 @@ import com.salesforce.selenium.support.event.internal.EventFiringTouch;
  * @since 2.0.0
  */
 public class EventFiringWebDriver
-		implements WebDriver, JavascriptExecutor, TakesScreenshot, WrapsDriver, HasInputDevices, HasTouchScreen {
+		implements WebDriver, JavascriptExecutor, TakesScreenshot, WrapsDriver,
+				   HasInputDevices, HasTouchScreen, Interactive, HasCapabilities {
 
 	private final WebDriver driver;
 	private final WebDriverEventListener defaultEventListener;
@@ -483,6 +489,36 @@ public class EventFiringWebDriver
 			throw new UnsupportedOperationException(
 					"Underlying driver does not implement advanced user interactions yet.");
 		}
+	}
+
+	@Override
+	public void perform(Collection<Sequence> actions) {
+		if (driver instanceof Interactive) {
+			((Interactive) driver).perform(actions);
+			return;
+		}
+		throw new UnsupportedOperationException(
+				"Underlying driver does not implement advanced" + " user interactions yet.");
+
+	}
+
+	@Override
+	public void resetInputState() {
+		if (driver instanceof Interactive) {
+			((Interactive) driver).resetInputState();
+			return;
+		}
+		throw new UnsupportedOperationException(
+				"Underlying driver does not implement advanced" + " user interactions yet.");
+
+	}
+
+	@Override
+	public Capabilities getCapabilities() {
+		if (driver instanceof HasCapabilities) {
+			return ((HasCapabilities) driver).getCapabilities();
+		}
+		throw new UnsupportedOperationException("Underlying driver does not implement getting capabilities yet.");
 	}
 
 	/*---------------------------------------------------------------------------

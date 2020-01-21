@@ -17,9 +17,9 @@
 package com.salesforce.selenium.support.event.internal;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.interactions.Coordinates;
 import org.openqa.selenium.interactions.HasTouchScreen;
 import org.openqa.selenium.interactions.TouchScreen;
-import org.openqa.selenium.interactions.internal.Coordinates;
 
 import com.salesforce.selenium.support.event.WebDriverEventListener;
 
