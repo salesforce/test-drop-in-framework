@@ -24,6 +24,7 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -596,7 +597,7 @@ public interface WebDriverEventListener {
 	 * @param step
 	 *            step record
 	 */
-	void beforeGetSize(Step step);
+	void beforeGetSizeByWindow(Step step);
 
 	/**
 	 * Called after {@link WebDriver.Window#getSize() getSize()}.
@@ -606,7 +607,7 @@ public interface WebDriverEventListener {
 	 * @param targetSize
 	 *            returned window size on screen
 	 */
-	void afterGetSize(Step step, Dimension targetSize);
+	void afterGetSizeByWindow(Step step, Dimension targetSize);
 
 	/**
 	 * Called before {@link WebDriver.Window#maximize() Window.window()}.
@@ -913,6 +914,69 @@ public interface WebDriverEventListener {
 	void afterIsSelected(Step step, boolean isSelected, WebElement element);
 	
 	/**
+	 * Called before {@link WebElement#getLocation WebElement.getLocation()}.
+	 * @param step
+	 *            step record
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void beforeGetLocation(Step step, WebElement element);
+
+	/**
+	 * Called after {@link WebElement#getLocation WebElement.getLocation()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param point
+	 *            the retrieved point
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void afterGetLocation(Step step, Point point, WebElement element);
+	
+	/**
+	 * Called before {@link WebElement#getSize WebElement.getSize()}.
+	 * @param step
+	 *            step record
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void beforeGetSizeByElement(Step step, WebElement element);
+
+	/**
+	 * Called after {@link WebElement#getSize WebElement.getSize()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param point
+	 *            the retrieved dimension
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void afterGetSizeByElement(Step step, Dimension dimension, WebElement element);
+
+	/**
+	 * Called before {@link WebElement#getRect WebElement.getRect()}.
+	 * @param step
+	 *            step record
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void beforeGetRect(Step step, WebElement element);
+
+	/**
+	 * Called after {@link WebElement#getRect WebElement.getRect()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param point
+	 *            the retrieved rectangle
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void afterGetRect(Step step, Rectangle rectangle, WebElement element);
+
+	/**
 	 * Called before {@link WebElement#sendKeys WebElement.sendKeys(...)}.
 	 * @param step
 	 *            step record
@@ -921,7 +985,7 @@ public interface WebDriverEventListener {
 	 * @param keysToSend
 	 *            text to insert
 	 */
-	void beforeSendKeys(Step step, WebElement element, CharSequence... keysToSend);
+	void beforeSendKeysByElement(Step step, WebElement element, CharSequence... keysToSend);
 
 	/**
 	 * Called after {@link WebElement#sendKeys WebElement.sendKeys(...)}}. Not called, if an
@@ -933,7 +997,7 @@ public interface WebDriverEventListener {
 	 * @param keysToSend
 	 *            text to insert
 	 */
-	void afterSendKeys(Step step, WebElement element, CharSequence... keysToSend);
+	void afterSendKeysByElement(Step step, WebElement element, CharSequence... keysToSend);
 	
 	/**
 	 * Called before {@link WebElement#submit WebElement.submit()}.
@@ -953,6 +1017,63 @@ public interface WebDriverEventListener {
 	 *            the WebElement being used for the action
 	 */
 	void afterSubmit(Step step, WebElement element);
+
+	/**
+	 * Called before {@link Keyboard#sendKeys Keyboard.sendKeys(...)}.
+	 * @param step
+	 *            step record
+	 * @param keysToSend
+	 *            text to insert
+	 */
+	void beforeSendKeysByKeyboard(Step step, CharSequence... keysToSend);
+
+	/**
+	 * Called after {@link Keyboard#sendKeys Keyboard.sendKeys(...)}}. Not called, if an
+	 * exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param keysToSend
+	 *            text to insert
+	 */
+	void afterSendKeysByKeyboard(Step step, CharSequence... keysToSend);
+
+	/**
+	 * Called before {@link Keyboard#pressKey Keyboard.pressKey(...)}.
+	 * @param step
+	 *            step record
+	 * @param keyToPress
+	 *            key to press
+	 */
+	void beforePressKey(Step step, CharSequence... keyToPress);
+
+	/**
+	 * Called after {@link Keyboard#pressKey Keyboard.pressKey(...)}}. Not called, if an
+	 * exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param keyToPress
+	 *            key to press
+	 */
+	void afterPressKey(Step step, CharSequence... keyToPress);
+
+	/**
+	 * Called before {@link Keyboard#releaseKey Keyboard.releaseKey(...)}.
+	 * @param step
+	 *            step record
+	 * @param keyToRelease
+	 *            key to release
+	 */
+	void beforeReleaseKey(Step step, CharSequence... keyToPress);
+
+	/**
+	 * Called after {@link Keyboard#releaseKey Keyboard.releaseKey(...)}}. Not called, if an
+	 * exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param keyToRelease
+	 *            key to release
+	 */
+	void afterReleaseKey(Step step, CharSequence... keyToPress);
 
 	/**
 	 * Called whenever a command throws an exception.

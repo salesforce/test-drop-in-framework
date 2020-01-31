@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Step {
 	public enum Type { BeforeAction, AfterAction, BeforeGather, AfterGather, Exception }
 	// TODO add Alert
-	public enum WebDriverInterface { WebDriver, JavascriptExecutor, Navigation, TargetLocator, Timeouts, Window, WebElement }
+	public enum WebDriverInterface { WebDriver, JavascriptExecutor, Navigation, TargetLocator, Timeouts, Window, WebElement, Keyboard }
 	public enum Cmd {
 		// commands called directly from WebDriver object
 		close(WebDriverInterface.WebDriver, "close"),
@@ -67,10 +67,10 @@ public class Step {
 		// commands called directly from WebDriver.Window object
 		fullscreen(WebDriverInterface.Window, "fullscreen"),
 		getPosition(WebDriverInterface.Window, "getPosition"),
-		getSize(WebDriverInterface.Window, "getSize"),
+		getSizeByWindow(WebDriverInterface.Window, "getSize"),
 		maximize(WebDriverInterface.Window, "maximize"),
 		setPosition(WebDriverInterface.Window, "setPosition"),
-		setSize(WebDriverInterface.Window, "setSize"),
+		setSizeByWindow(WebDriverInterface.Window, "setSize"),
 		// commands called directly from WebElement object
 		clickByElement(WebDriverInterface.WebElement, "click"),
 		clear(WebDriverInterface.WebElement, "clear"),
@@ -83,8 +83,15 @@ public class Step {
 		isDisplayed(WebDriverInterface.WebElement, "isDisplayed"),
 		isEnabled(WebDriverInterface.WebElement, "isEnabled"),
 		isSelected(WebDriverInterface.WebElement, "isSelected"),
+		getLocation(WebDriverInterface.WebElement, "getLocation"),
+		getSizeByElement(WebDriverInterface.WebElement, "getSize"),
+		getRect(WebDriverInterface.WebElement, "getRect"),
 		sendKeysByElement(WebDriverInterface.WebElement, "sendKeys"),
-		submit(WebDriverInterface.WebElement, "submit");
+		submit(WebDriverInterface.WebElement, "submit"),
+		// commands called directly from Keyboard object
+		sendKeysByKeyboard(WebDriverInterface.Keyboard, "sendKeys"),
+		pressKey(WebDriverInterface.Keyboard, "pressKey"),
+		releaseKey(WebDriverInterface.Keyboard, "releaseKey");
 
 		private Cmd(WebDriverInterface wdIf, String shortCmdString) {
 			this.wdIf = wdIf;
@@ -132,6 +139,9 @@ public class Step {
 				break;
 			case WebElement:
 				value = fieldName + "." + shortCmd;
+				break;
+			case Keyboard:
+				value = fieldName + ".getKeyboard()." + shortCmd;
 				break;
 			}
 

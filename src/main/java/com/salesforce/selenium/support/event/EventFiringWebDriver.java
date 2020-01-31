@@ -60,7 +60,6 @@ import org.openqa.selenium.logging.Logs;
 
 import com.salesforce.selenium.support.event.Step.Cmd;
 import com.salesforce.selenium.support.event.Step.Type;
-import com.salesforce.selenium.support.event.internal.EventFiringKeyboard;
 import com.salesforce.selenium.support.event.internal.EventFiringMouse;
 import com.salesforce.selenium.support.event.internal.EventFiringTouch;
 
@@ -464,7 +463,7 @@ public class EventFiringWebDriver
 	@Override
 	public Keyboard getKeyboard() {
 		if (driver instanceof HasInputDevices) {
-			return new EventFiringKeyboard(driver, dispatcher);
+			return new EventFiringKeyboard();
 		} else {
 			throw new UnsupportedOperationException(
 					"Underlying driver does not implement advanced user interactions yet.");
@@ -754,24 +753,57 @@ public class EventFiringWebDriver
 			return isSelected;
 		}
 
-		// TODO add to WebDriverEventListener interface
 		@Override
 		public Point getLocation() {
+			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getLocation);
+			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
+			stepBefore.setElementLocator(Step.getLocatorFromWebElement(element));
+			dispatcher.beforeGetLocation(stepBefore, element);
+			currentStep = stepBefore;
+
 			Point point = element.getLocation();
+
+			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getLocation);
+			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
+			stepAfter.setReturnValue(point.toString());
+			stepAfter.setElementLocator(Step.getLocatorFromWebElement(element));
+			dispatcher.afterGetLocation(stepAfter, point, element);
 			return point;
 		}
 
-		// TODO add to WebDriverEventListener interface
 		@Override
 		public Dimension getSize() {
+			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getSizeByElement);
+			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
+			stepBefore.setElementLocator(Step.getLocatorFromWebElement(element));
+			dispatcher.beforeGetSizeByElement(stepBefore, element);
+			currentStep = stepBefore;
+
 			Dimension dimension = element.getSize();
+
+			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getSizeByElement);
+			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
+			stepAfter.setReturnValue(dimension.toString());
+			stepAfter.setElementLocator(Step.getLocatorFromWebElement(element));
+			dispatcher.afterGetSizeByElement(stepAfter, dimension, element);
 			return dimension;
 		}
 
-		// TODO add to WebDriverEventListener interface
 		@Override
 		public Rectangle getRect() {
+			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getRect);
+			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
+			stepBefore.setElementLocator(Step.getLocatorFromWebElement(element));
+			dispatcher.beforeGetRect(stepBefore, element);
+			currentStep = stepBefore;
+
 			Rectangle rect = element.getRect();
+
+			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getRect);
+			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
+			stepAfter.setReturnValue(rect.toString());
+			stepAfter.setElementLocator(Step.getLocatorFromWebElement(element));
+			dispatcher.afterGetRect(stepAfter, rect, element);
 			return rect;
 		}
 
@@ -787,7 +819,7 @@ public class EventFiringWebDriver
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
 			stepBefore.setParam2(buffer.toString());
 			stepBefore.setElementLocator(Step.getLocatorFromWebElement(element));
-			dispatcher.beforeSendKeys(stepBefore, element, keysToSend);
+			dispatcher.beforeSendKeysByElement(stepBefore, element, keysToSend);
 			currentStep = stepBefore;
 
 			element.sendKeys(keysToSend);
@@ -795,7 +827,7 @@ public class EventFiringWebDriver
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByElement);
 			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
 			stepAfter.setParam2(buffer.toString());
-			dispatcher.afterSendKeys(stepAfter, element, keysToSend);
+			dispatcher.afterSendKeysByElement(stepAfter, element, keysToSend);
 		}
 
 		@Override
@@ -1212,16 +1244,16 @@ public class EventFiringWebDriver
 
 		@Override
 		public Dimension getSize() {
-			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getSize);
-			dispatcher.beforeGetSize(stepBefore);
+			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getSizeByWindow);
+			dispatcher.beforeGetSizeByWindow(stepBefore);
 			currentStep = stepBefore;
 			
 			Dimension size = window.getSize();
 			
-			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getSize);
+			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getSizeByWindow);
 			stepAfter.setReturnValue(size.toString());
 			stepAfter.setReturnObject(size);
-			dispatcher.afterGetSize(stepAfter, size);
+			dispatcher.afterGetSizeByWindow(stepAfter, size);
 			return size;
 		}
 
@@ -1253,19 +1285,71 @@ public class EventFiringWebDriver
 
 		@Override
 		public void setSize(Dimension targetSize) {
-			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setSize);
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setSizeByWindow);
 			stepBefore.setParam1(targetSize.toString());
 			dispatcher.beforeSetSize(stepBefore, targetSize);
 			currentStep = stepBefore;
 
 			window.setSize(targetSize);
 
-			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.setSize);
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.setSizeByWindow);
 			stepAfter.setParam1(targetSize.toString());
 			dispatcher.afterSetSize(stepAfter, targetSize);
 		}
 	}
-	
+
+	/*---------------------------------------------------------------------------
+	 * Section for all commands called directly from Keyboard object.
+	 *---------------------------------------------------------------------------*/
+
+	private class EventFiringKeyboard implements Keyboard {
+		private final Keyboard keyboard;
+
+		private EventFiringKeyboard() {
+			this.keyboard = ((HasInputDevices) driver).getKeyboard();
+		}
+
+		@Override
+		public void sendKeys(CharSequence... keysToSend) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.sendKeysByKeyboard);
+			stepBefore.setParam1(keysToSend.toString());
+			dispatcher.beforeSendKeysByKeyboard(stepBefore, keysToSend);
+			currentStep = stepBefore;
+
+			keyboard.sendKeys(keysToSend);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByKeyboard);
+			stepAfter.setParam1(keysToSend.toString());
+			dispatcher.afterSendKeysByKeyboard(stepBefore, keysToSend);
+		}
+
+		@Override
+		public void pressKey(CharSequence keyToPress) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.pressKey);
+			stepBefore.setParam1(keyToPress.toString());
+			dispatcher.beforePressKey(stepBefore, keyToPress);
+
+			keyboard.pressKey(keyToPress);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.pressKey);
+			stepAfter.setParam1(keyToPress.toString());
+			dispatcher.afterPressKey(stepBefore, keyToPress);
+		}
+
+		@Override
+		public void releaseKey(CharSequence keyToRelease) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.releaseKey);
+			stepBefore.setParam1(keyToRelease.toString());
+			dispatcher.beforeReleaseKey(stepBefore, keyToRelease);
+
+			keyboard.releaseKey(keyToRelease);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.releaseKey);
+			stepAfter.setParam1(keyToRelease.toString());
+			dispatcher.afterReleaseKey(stepBefore, keyToRelease);
+		}
+	}
+
 	private void closeListeners() {
 		defaultEventListener.closeListener();
 		for (WebDriverEventListener eventListener : eventListeners) {

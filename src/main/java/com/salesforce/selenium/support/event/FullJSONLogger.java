@@ -16,6 +16,7 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -296,12 +297,12 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	}
 
 	@Override
-	public void beforeGetSize(Step step) {
+	public void beforeGetSizeByWindow(Step step) {
 		logEntries.add(step);
 	}
 
 	@Override
-	public void afterGetSize(Step step, Dimension targetSize) {
+	public void afterGetSizeByWindow(Step step, Dimension targetSize) {
 		logEntries.add(step);
 	}
 
@@ -450,12 +451,42 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	}
 
 	@Override
-	public void beforeSendKeys(Step step, WebElement element, CharSequence... keysToSend) {
+	public void beforeGetLocation(Step step, WebElement element) {
 		logEntries.add(step);
 	}
 
 	@Override
-	public void afterSendKeys(Step step, WebElement element, CharSequence... keysToSend) {
+	public void afterGetLocation(Step step, Point point, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetSizeByElement(Step step, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetSizeByElement(Step step, Dimension dimension, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetRect(Step step, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetRect(Step step, Rectangle rectangle, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeSendKeysByElement(Step step, WebElement element, CharSequence... keysToSend) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterSendKeysByElement(Step step, WebElement element, CharSequence... keysToSend) {
 		logEntries.add(step);
 	}
 
@@ -466,6 +497,36 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 
 	@Override
 	public void afterSubmit(Step step, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeSendKeysByKeyboard(Step step, CharSequence... keysToSend) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterSendKeysByKeyboard(Step step, CharSequence... keysToSend) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforePressKey(Step step, CharSequence... keyToPress) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterPressKey(Step step, CharSequence... keyToPress) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeReleaseKey(Step step, CharSequence... keyToPress) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterReleaseKey(Step step, CharSequence... keyToPress) {
 		logEntries.add(step);
 	}
 
