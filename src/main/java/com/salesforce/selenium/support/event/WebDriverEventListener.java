@@ -277,7 +277,8 @@ public interface WebDriverEventListener {
 	 *--------------------------------------------------------------------*/
 
 	/**
-	 * Called before {@link org.openqa.selenium.TakesScreenshot#getScreenshotAs(OutputType target) getScreenshotAs(OutputType<X> target)}.
+	 * Called before {@link org.openqa.selenium.TakesScreenshot#getScreenshotAs(OutputType target) getScreenshotAs(OutputType&lt;X&gt; target)}.
+	 * 
 	 * @param <X> 
 	 * 			  Return type for getScreenshotAs.
 	 * @param step
@@ -288,7 +289,7 @@ public interface WebDriverEventListener {
 	<X> void beforeGetScreenshotAs(Step step, OutputType<X> target);
 
 	/**
-	 * Called after {@link org.openqa.selenium.TakesScreenshot#getScreenshotAs(OutputType target) getScreenshotAs(OutputType<X> target)}.
+	 * Called after {@link org.openqa.selenium.TakesScreenshot#getScreenshotAs(OutputType target) getScreenshotAs(OutputType&lt;X&gt; target)}.
 	 * @param <X> 
 	 * 			  Return type for getScreenshotAs.
 	 * @param step
@@ -978,7 +979,7 @@ public interface WebDriverEventListener {
 	 * Not called, if an exception is thrown.
 	 * @param step
 	 *            step record
-	 * @param point
+	 * @param dimension
 	 *            the retrieved dimension
 	 * @param element
 	 *            the WebElement being used for the action
@@ -999,7 +1000,7 @@ public interface WebDriverEventListener {
 	 * Not called, if an exception is thrown.
 	 * @param step
 	 *            step record
-	 * @param point
+	 * @param rectangle
 	 *            the retrieved rectangle
 	 * @param element
 	 *            the WebElement being used for the action
@@ -1093,7 +1094,7 @@ public interface WebDriverEventListener {
 	 * @param keyToRelease
 	 *            key to release
 	 */
-	void beforeReleaseKey(Step step, CharSequence... keyToPress);
+	void beforeReleaseKey(Step step, CharSequence... keyToRelease);
 
 	/**
 	 * Called after {@link org.openqa.selenium.interactions.Keyboard#releaseKey Keyboard.releaseKey(...)}}. Not called, if an
@@ -1103,7 +1104,7 @@ public interface WebDriverEventListener {
 	 * @param keyToRelease
 	 *            key to release
 	 */
-	void afterReleaseKey(Step step, CharSequence... keyToPress);
+	void afterReleaseKey(Step step, CharSequence... keyToRelease);
 
 	/**
 	 * Called before {@link org.openqa.selenium.interactions.Mouse#click Mouse.click(...)}.
@@ -1206,6 +1207,10 @@ public interface WebDriverEventListener {
 	 *            step record
 	 * @param where
 	 *            coordinates where mouse is moved to
+	 * @param xOffset
+	 *            offset in x direction
+	 * @param yOffset
+	 *            offset in y direction
 	 */
 	void beforeMouseMove(Step step, Coordinates where, long xOffset, long yOffset);
 
