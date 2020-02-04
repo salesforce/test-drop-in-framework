@@ -60,8 +60,6 @@ import org.openqa.selenium.logging.Logs;
 
 import com.salesforce.selenium.support.event.Step.Cmd;
 import com.salesforce.selenium.support.event.Step.Type;
-import com.salesforce.selenium.support.event.internal.EventFiringMouse;
-import com.salesforce.selenium.support.event.internal.EventFiringTouch;
 
 /**
  * A wrapper around an arbitrary {@link WebDriver} instance which supports
@@ -435,9 +433,18 @@ public class EventFiringWebDriver
 	@Override
 	public <X> X getScreenshotAs(OutputType<X> target) throws WebDriverException {
 		if (driver instanceof TakesScreenshot) {
-			return ((TakesScreenshot) driver).getScreenshotAs(target);
-		}
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.getScreenshotAs);
+			stepBefore.setParam1(target.toString());
+			dispatcher.beforeGetScreenshotAs(stepBefore, target);
+			currentStep = stepBefore;
 
+			X result = ((TakesScreenshot) driver).getScreenshotAs(target);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.getScreenshotAs);
+			stepAfter.setParam1(target.toString());
+			dispatcher.afterGetScreenshotAs(stepAfter, target);
+			return result;
+		}
 		throw new UnsupportedOperationException("Underlying driver instance does not support taking screenshots");
 	}
 
@@ -473,7 +480,7 @@ public class EventFiringWebDriver
 	@Override
 	public Mouse getMouse() {
 		if (driver instanceof HasInputDevices) {
-			return new EventFiringMouse(driver, dispatcher);
+			return new EventFiringMouse();
 		} else {
 			throw new UnsupportedOperationException(
 					"Underlying driver does not implement advanced user interactions yet.");
@@ -483,7 +490,8 @@ public class EventFiringWebDriver
 	@Override
 	public TouchScreen getTouch() {
 		if (driver instanceof HasTouchScreen) {
-			return new EventFiringTouch(driver, dispatcher);
+			// We do not support calls to this interface and hence we simply pass on the instance
+			return ((HasTouchScreen) driver).getTouch();
 		} else {
 			throw new UnsupportedOperationException(
 					"Underlying driver does not implement advanced user interactions yet.");
@@ -1347,6 +1355,111 @@ public class EventFiringWebDriver
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.releaseKey);
 			stepAfter.setParam1(keyToRelease.toString());
 			dispatcher.afterReleaseKey(stepBefore, keyToRelease);
+		}
+	}
+
+	/*---------------------------------------------------------------------------
+	 * Section for all commands called directly from Keyboard object.
+	 *---------------------------------------------------------------------------*/
+
+	private class EventFiringMouse implements Mouse {
+		private final Mouse mouse;
+
+		private EventFiringMouse() {
+			this.mouse = ((HasInputDevices) driver).getMouse();
+		}
+
+		@Override
+		public void click(Coordinates where) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.clickByMouse);
+			stepBefore.setParam1(where.toString());
+			dispatcher.beforeClickByMouse(stepBefore, where);
+
+			mouse.click(where);
+			
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.clickByMouse);
+			stepAfter.setParam1(where.toString());
+			dispatcher.afterClickByMouse(stepBefore, where);
+		}
+
+		@Override
+		public void doubleClick(Coordinates where) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.doubleClick);
+			stepBefore.setParam1(where.toString());
+			dispatcher.beforeDoubleClick(stepBefore, where);
+
+			mouse.doubleClick(where);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber, Cmd.doubleClick);
+			stepAfter.setParam1(where.toString());
+			dispatcher.afterDoubleClick(stepAfter, where);
+		}
+
+		@Override
+		public void mouseDown(Coordinates where) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.mouseDown);
+			stepBefore.setParam1(where.toString());
+			dispatcher.beforeMouseDown(stepBefore, where);
+
+			mouse.mouseDown(where);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber, Cmd.mouseDown);
+			stepAfter.setParam1(where.toString());
+			dispatcher.afterMouseDown(stepAfter, where);
+		}
+
+		@Override
+		public void mouseUp(Coordinates where) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.mouseUp);
+			stepBefore.setParam1(where.toString());
+			dispatcher.beforeMouseUp(stepBefore, where);
+
+			mouse.mouseUp(where);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber, Cmd.mouseUp);
+			stepAfter.setParam1(where.toString());
+			dispatcher.afterMouseUp(stepAfter, where);
+		}
+
+		@Override
+		public void mouseMove(Coordinates where) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.mouseMove);
+			stepBefore.setParam1(where.toString());
+			dispatcher.beforeMouseMove(stepBefore, where);
+
+			mouse.mouseMove(where);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber, Cmd.mouseMove);
+			stepAfter.setParam1(where.toString());
+			dispatcher.afterMouseMove(stepAfter, where);
+		}
+
+		@Override
+		public void mouseMove(Coordinates where, long xOffset, long yOffset) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.mouseMoveWithOffset);
+			stepBefore.setParam1(where.toString());
+			stepBefore.setParam2(xOffset + ", " + yOffset);
+			dispatcher.beforeMouseMove(stepBefore, where, xOffset, yOffset);
+
+			mouse.mouseMove(where, xOffset, yOffset);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber, Cmd.mouseMoveWithOffset);
+			stepAfter.setParam1(where.toString());
+			stepAfter.setParam2(xOffset + ", " + yOffset);
+			dispatcher.afterMouseMove(stepAfter, where, xOffset, yOffset);
+		}
+
+		@Override
+		public void contextClick(Coordinates where) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.contextClick);
+			stepBefore.setParam1(where.toString());
+			dispatcher.beforeContextClick(stepBefore, where);
+
+			mouse.contextClick(where);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.contextClick);
+			stepAfter.setParam1(where.toString());
+			dispatcher.afterContextClick(stepBefore, where);
 		}
 	}
 

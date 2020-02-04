@@ -23,10 +23,12 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Coordinates;
 
 import com.salesforce.selenium.support.event.Step.Cmd;
 
@@ -268,6 +270,34 @@ public interface WebDriverEventListener {
 	 *            arguments for script
 	 */
 	void afterExecuteScript(Step step, String script, Object... args);
+
+	/*--------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver object
+	 * after casting to TakesScreenshot.
+	 *--------------------------------------------------------------------*/
+
+	/**
+	 * Called before {@link org.openqa.selenium.TakesScreenshot#getScreenshotAs(OutputType target) getScreenshotAs(OutputType<X> target)}.
+	 * @param <X> 
+	 * 			  Return type for getScreenshotAs.
+	 * @param step
+	 *            step record
+	 * @param target
+	 *            target type, @see OutputType
+	 */
+	<X> void beforeGetScreenshotAs(Step step, OutputType<X> target);
+
+	/**
+	 * Called after {@link org.openqa.selenium.TakesScreenshot#getScreenshotAs(OutputType target) getScreenshotAs(OutputType<X> target)}.
+	 * @param <X> 
+	 * 			  Return type for getScreenshotAs.
+	 * @param step
+	 *            step record
+	 * @param target
+	 *            target type, @see OutputType
+	 */
+	<X> void afterGetScreenshotAs(Step step, OutputType<X> target);
+	
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Navigation object.
@@ -1019,7 +1049,7 @@ public interface WebDriverEventListener {
 	void afterSubmit(Step step, WebElement element);
 
 	/**
-	 * Called before {@link Keyboard#sendKeys Keyboard.sendKeys(...)}.
+	 * Called before {@link org.openqa.selenium.interactions.Keyboard#sendKeys Keyboard.sendKeys(...)}.
 	 * @param step
 	 *            step record
 	 * @param keysToSend
@@ -1028,7 +1058,7 @@ public interface WebDriverEventListener {
 	void beforeSendKeysByKeyboard(Step step, CharSequence... keysToSend);
 
 	/**
-	 * Called after {@link Keyboard#sendKeys Keyboard.sendKeys(...)}}. Not called, if an
+	 * Called after {@link org.openqa.selenium.interactions.Keyboard#sendKeys Keyboard.sendKeys(...)}}. Not called, if an
 	 * exception is thrown.
 	 * @param step
 	 *            step record
@@ -1038,7 +1068,7 @@ public interface WebDriverEventListener {
 	void afterSendKeysByKeyboard(Step step, CharSequence... keysToSend);
 
 	/**
-	 * Called before {@link Keyboard#pressKey Keyboard.pressKey(...)}.
+	 * Called before {@link org.openqa.selenium.interactions.Keyboard#pressKey Keyboard.pressKey(...)}.
 	 * @param step
 	 *            step record
 	 * @param keyToPress
@@ -1047,7 +1077,7 @@ public interface WebDriverEventListener {
 	void beforePressKey(Step step, CharSequence... keyToPress);
 
 	/**
-	 * Called after {@link Keyboard#pressKey Keyboard.pressKey(...)}}. Not called, if an
+	 * Called after {@link org.openqa.selenium.interactions.Keyboard#pressKey Keyboard.pressKey(...)}}. Not called, if an
 	 * exception is thrown.
 	 * @param step
 	 *            step record
@@ -1057,7 +1087,7 @@ public interface WebDriverEventListener {
 	void afterPressKey(Step step, CharSequence... keyToPress);
 
 	/**
-	 * Called before {@link Keyboard#releaseKey Keyboard.releaseKey(...)}.
+	 * Called before {@link org.openqa.selenium.interactions.Keyboard#releaseKey Keyboard.releaseKey(...)}.
 	 * @param step
 	 *            step record
 	 * @param keyToRelease
@@ -1066,7 +1096,7 @@ public interface WebDriverEventListener {
 	void beforeReleaseKey(Step step, CharSequence... keyToPress);
 
 	/**
-	 * Called after {@link Keyboard#releaseKey Keyboard.releaseKey(...)}}. Not called, if an
+	 * Called after {@link org.openqa.selenium.interactions.Keyboard#releaseKey Keyboard.releaseKey(...)}}. Not called, if an
 	 * exception is thrown.
 	 * @param step
 	 *            step record
@@ -1074,6 +1104,143 @@ public interface WebDriverEventListener {
 	 *            key to release
 	 */
 	void afterReleaseKey(Step step, CharSequence... keyToPress);
+
+	/**
+	 * Called before {@link org.openqa.selenium.interactions.Mouse#click Mouse.click(...)}.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where click is performed
+	 */
+	void beforeClickByMouse(Step step, Coordinates where);
+
+	/**
+	 * Called after {@link org.openqa.selenium.interactions.Mouse#click Mouse.click(...)}}. Not called, if an
+	 * exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where click is performed
+	 */
+	void afterClickByMouse(Step step, Coordinates where);
+
+	/**
+	 * Called before {@link org.openqa.selenium.interactions.Mouse#doubleClick Mouse.doubleClick(...)}.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where double click is performed
+	 */
+	void beforeDoubleClick(Step step, Coordinates where);
+
+	/**
+	 * Called after {@link org.openqa.selenium.interactions.Mouse#doubleClick Mouse.doubleClick(...)}}. Not called, if an
+	 * exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where double click is performed
+	 */
+	void afterDoubleClick(Step step, Coordinates where);
+
+	/**
+	 * Called before {@link org.openqa.selenium.interactions.Mouse#mouseDown Mouse.mouseDown(...)}.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where mouse down is performed
+	 */
+	void beforeMouseDown(Step step, Coordinates where);
+
+	/**
+	 * Called after {@link org.openqa.selenium.interactions.Mouse#mouseDown Mouse.mouseDown(...)}}. Not called, if an
+	 * exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where mouse down is performed
+	 */
+	void afterMouseDown(Step step, Coordinates where);
+
+	/**
+	 * Called before {@link org.openqa.selenium.interactions.Mouse#mouseUp Mouse.mouseUp(...)}.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where mouse up is performed
+	 */
+	void beforeMouseUp(Step step, Coordinates where);
+
+	/**
+	 * Called after {@link org.openqa.selenium.interactions.Mouse#mouseUp Mouse.mouseUp(...)}}. Not called, if an
+	 * exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where mouse up is performed
+	 */
+	void afterMouseUp(Step step, Coordinates where);
+
+	/**
+	 * Called before {@link org.openqa.selenium.interactions.Mouse#mouseMove(Coordinates) Mouse.mouseMove(Coordinates where)}.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where mouse is moved to
+	 */
+	void beforeMouseMove(Step step, Coordinates where);
+
+	/**
+	 * Called after {@link org.openqa.selenium.interactions.Mouse#mouseMove(Coordinates) Mouse.mouseMove(Coordinates where)}}. Not called, if an
+	 * exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where mouse is moved to
+	 */
+	void afterMouseMove(Step step, Coordinates where);
+
+	/**
+	 * Called before {@link org.openqa.selenium.interactions.Mouse#mouseMove(Coordinates,long,long) Mouse.mouseMove(Coordinates where, longxOffset, long yOffset)}.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where mouse is moved to
+	 */
+	void beforeMouseMove(Step step, Coordinates where, long xOffset, long yOffset);
+
+	/**
+	 * Called before {@link org.openqa.selenium.interactions.Mouse#mouseMove(Coordinates,long,long) Mouse.mouseMove(Coordinates where, longxOffset, long yOffset)}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where mouse is moved to
+	 * @param xOffset
+	 *            offset in x direction
+	 * @param yOffset
+	 *            offset in y direction
+	 */
+	void afterMouseMove(Step step, Coordinates where, long xOffset, long yOffset);
+
+	/**
+	 * Called before {@link org.openqa.selenium.interactions.Mouse#contextClick Mouse.contextClick(...)}.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where context click is performed
+	 */
+	void beforeContextClick(Step step, Coordinates where);
+
+	/**
+	 * Called after {@link org.openqa.selenium.interactions.Mouse#contextClick Mouse.contextClick(...)}}. Not called, if an
+	 * exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param where
+	 *            coordinates where context click is performed
+	 */
+	void afterContextClick(Step step, Coordinates where);
 
 	/**
 	 * Called whenever a command throws an exception.

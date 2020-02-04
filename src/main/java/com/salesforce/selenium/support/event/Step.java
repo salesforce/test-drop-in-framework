@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Step {
 	public enum Type { BeforeAction, AfterAction, BeforeGather, AfterGather, Exception }
 	// TODO add Alert
-	public enum WebDriverInterface { WebDriver, JavascriptExecutor, Navigation, TargetLocator, Timeouts, Window, WebElement, Keyboard }
+	public enum WebDriverInterface { WebDriver, JavascriptExecutor, Navigation, TargetLocator, Timeouts, Window, WebElement, Keyboard, Mouse, TakesScreenshot }
 	public enum Cmd {
 		// commands called directly from WebDriver object
 		close(WebDriverInterface.WebDriver, "close"),
@@ -46,6 +46,8 @@ public class Step {
 		// commands called directly from WebDriver object after casting to JavascriptExecutor
 		executeAsyncScript(WebDriverInterface.JavascriptExecutor, "executeAsyncScript"),
 		executeScript(WebDriverInterface.JavascriptExecutor, "executeScript"),
+		// commands called directly from WebDriver object after casting to TakesScreenshot
+		getScreenshotAs(WebDriverInterface.TakesScreenshot, "getScreenshotAs"),
 		// commands called directly from WebDriver.Navigation object
 		back(WebDriverInterface.Navigation, "back"),
 		forward(WebDriverInterface.Navigation, "forward"),
@@ -91,7 +93,15 @@ public class Step {
 		// commands called directly from Keyboard object
 		sendKeysByKeyboard(WebDriverInterface.Keyboard, "sendKeys"),
 		pressKey(WebDriverInterface.Keyboard, "pressKey"),
-		releaseKey(WebDriverInterface.Keyboard, "releaseKey");
+		releaseKey(WebDriverInterface.Keyboard, "releaseKey"),
+		// commands called directly from Mouse object
+		clickByMouse(WebDriverInterface.Mouse, "click"),
+		doubleClick(WebDriverInterface.Mouse, "doubleClick"),
+		mouseDown(WebDriverInterface.Mouse, "mouseDown"),
+		mouseUp(WebDriverInterface.Mouse, "mouseUp"),
+		mouseMove(WebDriverInterface.Mouse, "mouseMove"),
+		mouseMoveWithOffset(WebDriverInterface.Mouse, "mouseMove"),
+		contextClick(WebDriverInterface.Mouse, "contextClick");
 
 		private Cmd(WebDriverInterface wdIf, String shortCmdString) {
 			this.wdIf = wdIf;
@@ -125,6 +135,9 @@ public class Step {
 			case JavascriptExecutor:
 				value = "(JavascriptExecutor) " + fieldName + "." + shortCmd;
 				break;
+			case TakesScreenshot:
+				value = "(TakesScreenshot) " + fieldName + "." + shortCmd;
+				break;
 			case Navigation:
 				value = fieldName + ".navigate()." + shortCmd;
 				break;
@@ -142,6 +155,9 @@ public class Step {
 				break;
 			case Keyboard:
 				value = fieldName + ".getKeyboard()." + shortCmd;
+				break;
+			case Mouse:
+				value = fieldName + ".getMouse()." + shortCmd;
 				break;
 			}
 

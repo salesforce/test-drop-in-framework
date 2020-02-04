@@ -11,13 +11,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Coordinates;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -141,6 +144,46 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 
 	@Override
 	public void afterQuit(Step step) {
+		logEntries.add(step);
+	}
+
+	/*--------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver object
+	 * after casting to JavascriptExecutor.
+	 *--------------------------------------------------------------------*/
+
+	@Override
+	public void beforeExecuteAsyncScript(Step step, String script, Object... args) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterExecuteAsyncScript(Step step, String script, Object... args) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeExecuteScript(Step step, String script, Object... args) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterExecuteScript(Step step, String script, Object... args) {
+		logEntries.add(step);
+	}
+
+	/*--------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver object
+	 * after casting to TakesScreenshot.
+	 *--------------------------------------------------------------------*/
+
+	@Override
+	public <X> void beforeGetScreenshotAs(Step step, OutputType<X> target) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public <X> void afterGetScreenshotAs(Step step, OutputType<X> target) {
 		logEntries.add(step);
 	}
 
@@ -269,6 +312,40 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 
 	@Override
 	public void afterWindow(Step step, String windowName) {
+		logEntries.add(step);
+	}
+
+	/*---------------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver.Timeouts object.
+	 *---------------------------------------------------------------------------*/
+
+	@Override
+	public void beforeImplicitlyWait(Step step, long time, TimeUnit unit) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterImplicitlyWait(Step step, long time, TimeUnit unit) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforePageLoadTimeout(Step step, long time, TimeUnit unit) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterPageLoadTimeout(Step step, long time, TimeUnit unit) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeSetScriptTimeout(Step step, long time, TimeUnit unit) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterSetScriptTimeout(Step step, long time, TimeUnit unit) {
 		logEntries.add(step);
 	}
 
@@ -527,6 +604,76 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 
 	@Override
 	public void afterReleaseKey(Step step, CharSequence... keyToPress) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeClickByMouse(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterClickByMouse(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeDoubleClick(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterDoubleClick(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeMouseDown(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterMouseDown(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeMouseUp(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterMouseUp(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeMouseMove(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterMouseMove(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeMouseMove(Step step, Coordinates where, long xOffset, long yOffset) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterMouseMove(Step step, Coordinates where, long xOffset, long yOffset) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeContextClick(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterContextClick(Step step, Coordinates where) {
 		logEntries.add(step);
 	}
 

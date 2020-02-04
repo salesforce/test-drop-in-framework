@@ -23,9 +23,11 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Coordinates;
 
 import com.salesforce.selenium.support.event.Step.Cmd;
 
@@ -147,6 +149,19 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 	public void afterExecuteScript(Step step, String script, Object... args) {
 	}
 
+	/*--------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver object
+	 * after casting to TakesScreenshot.
+	 *--------------------------------------------------------------------*/
+
+	@Override
+	public <X> void beforeGetScreenshotAs(Step step, OutputType<X> target) {
+	}
+
+	@Override
+	public <X> void afterGetScreenshotAs(Step step, OutputType<X> target) {
+	}
+
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Navigation object.
 	 *---------------------------------------------------------------------------*/
@@ -250,7 +265,6 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 	@Override
 	public void afterWindow(Step step, String windowName) {
 	}
-
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Timeouts object.
@@ -486,6 +500,62 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 
 	@Override
 	public void afterReleaseKey(Step step, CharSequence... keyToPress) {
+	}
+
+	@Override
+	public void beforeClickByMouse(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void afterClickByMouse(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void beforeDoubleClick(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void afterDoubleClick(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void beforeMouseDown(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void afterMouseDown(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void beforeMouseUp(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void afterMouseUp(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void beforeMouseMove(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void afterMouseMove(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void beforeMouseMove(Step step, Coordinates where, long xOffset, long yOffset) {
+	}
+
+	@Override
+	public void afterMouseMove(Step step, Coordinates where, long xOffset, long yOffset) {
+	}
+
+	@Override
+	public void beforeContextClick(Step step, Coordinates where) {
+	}
+
+	@Override
+	public void afterContextClick(Step step, Coordinates where) {
 	}
 
 	@Override
