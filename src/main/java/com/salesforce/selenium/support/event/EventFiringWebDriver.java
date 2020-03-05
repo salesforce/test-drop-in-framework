@@ -817,15 +817,11 @@ public class EventFiringWebDriver
 
 		@Override
 		public void sendKeys(CharSequence... keysToSend) {
-			StringBuffer buffer = new StringBuffer();
-			if ((keysToSend != null) && (keysToSend.length > 0)) {
-				for (int i = 0; i < keysToSend.length; i++) {
-					buffer.append(keysToSend[i]);
-				}
-			}
+			String param1 = Step.getLocatorFromWebElement(element);
+			String param2 = maskTextIfPassword(param1, keysToSend);
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.sendKeysByElement);
-			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
-			stepBefore.setParam2(buffer.toString());
+			stepBefore.setParam1(param1);
+			stepBefore.setParam2(param2);
 			stepBefore.setElementLocator(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeSendKeysByElement(stepBefore, element, keysToSend);
 			currentStep = stepBefore;
@@ -833,9 +829,23 @@ public class EventFiringWebDriver
 			element.sendKeys(keysToSend);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByElement);
-			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
-			stepAfter.setParam2(buffer.toString());
+			stepAfter.setParam1(param1);
+			stepAfter.setParam2(param2);
 			dispatcher.afterSendKeysByElement(stepAfter, element, keysToSend);
+		}
+
+		private String maskTextIfPassword(String param1, CharSequence... keysToSend) {
+			String param2 = "********";
+			if (!param1.toLowerCase().contains("password")) {
+				StringBuffer buffer = new StringBuffer();
+				if ((keysToSend != null) && (keysToSend.length > 0)) {
+					for (int i = 0; i < keysToSend.length; i++) {
+						buffer.append(keysToSend[i]);
+					}
+				}
+				param2 = buffer.toString();
+			}
+			return param2;
 		}
 
 		@Override
