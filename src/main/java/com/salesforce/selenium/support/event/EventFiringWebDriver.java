@@ -76,6 +76,11 @@ public class EventFiringWebDriver
 		implements WebDriver, JavascriptExecutor, TakesScreenshot, WrapsDriver,
 				   HasInputDevices, HasTouchScreen, Interactive, HasCapabilities {
 
+	private static final String BORDER_COLORING_ENABLED = "border.color.enabled";
+	private static final String BORDER_COLORING_PREFIX = "arguments[0].style.border='3px solid ";
+	private static final String BORDER_COLORING_POSTFIX = "'";
+	private static final String[] BORDER_COLORS = new String[] {"red", "orange", "yellow", "green",	"blue",	"purple", "magenta"};
+	
 	private final WebDriver driver;
 	private final WebDriverEventListener defaultEventListener;
 	private final List<WebDriverEventListener> eventListeners = new ArrayList<>();
@@ -97,6 +102,7 @@ public class EventFiringWebDriver
 
 	private Step currentStep = null;
 	private int stepNumber = 1;
+	private int border_color_index = 0;
 
 	public EventFiringWebDriver(final WebDriver driver, String testName) {
 		Class<?>[] allInterfaces = extractInterfaces(driver);
@@ -206,6 +212,7 @@ public class EventFiringWebDriver
 		stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElement));
 		stepAfter.setReturnObject(returnedElement);
 		dispatcher.afterFindElementByWebDriver(stepAfter, returnedElement, by);
+		highlightElement(returnedElement);
 		return createWebElement(returnedElement);
 	}
 
@@ -229,6 +236,7 @@ public class EventFiringWebDriver
 		List<WebElement> returnedAndWrappedElements = new ArrayList<>(returnedElements.size());
 		for (WebElement element : returnedElements) {
 			returnedAndWrappedElements.add(createWebElement(element));
+			highlightElement(element);
 		}
 		return returnedAndWrappedElements;
 	}
@@ -606,6 +614,7 @@ public class EventFiringWebDriver
 			stepAfter.setReturnObject(returnedElement);
 			stepAfter.setElementLocator(Step.getLocatorFromWebElement(element));
 			dispatcher.afterFindElementByElement(stepAfter, returnedElement, by, element);
+			highlightElement(element);
 			return createWebElement(returnedElement);
 		}
 
@@ -631,6 +640,7 @@ public class EventFiringWebDriver
 			List<WebElement> returnedAndWrappedElements = new ArrayList<>(returnedElements.size());
 			for (WebElement element : returnedElements) {
 				returnedAndWrappedElements.add(createWebElement(element));
+				highlightElement(element);
 			}
 			return returnedAndWrappedElements;
 		}
@@ -1478,5 +1488,20 @@ public class EventFiringWebDriver
 		for (WebDriverEventListener eventListener : eventListeners) {
 			eventListener.closeListener();
 		}
+	}
+
+	private void highlightElement(WebElement element) {
+		// only draw a border if the system property "border.color.enabled" is set to TRUE
+		if (!"true".equalsIgnoreCase(System.getProperty(BORDER_COLORING_ENABLED, "false")))
+			return;
+
+		// draw a border around the element
+	    if (driver instanceof JavascriptExecutor) {
+	    	// choose from seven border colors for each call
+			String color = BORDER_COLORS[border_color_index % BORDER_COLORS.length];
+			border_color_index = border_color_index + 1;
+			// decorate element with a border
+	        ((JavascriptExecutor)driver).executeScript(BORDER_COLORING_PREFIX + color + BORDER_COLORING_POSTFIX, element);
+	    }
 	}
 }
