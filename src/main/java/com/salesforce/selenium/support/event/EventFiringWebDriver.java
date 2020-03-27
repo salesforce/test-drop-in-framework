@@ -442,14 +442,15 @@ public class EventFiringWebDriver
 	public <X> X getScreenshotAs(OutputType<X> target) throws WebDriverException {
 		if (driver instanceof TakesScreenshot) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.getScreenshotAs);
-			stepBefore.setParam1(target.toString());
+			String targetString = (target != null) ? target.toString() : null;
+			stepBefore.setParam1(targetString);
 			dispatcher.beforeGetScreenshotAs(stepBefore, target);
 			currentStep = stepBefore;
 
 			X result = ((TakesScreenshot) driver).getScreenshotAs(target);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.getScreenshotAs);
-			stepAfter.setParam1(target.toString());
+			stepAfter.setParam1(targetString);
 			dispatcher.afterGetScreenshotAs(stepAfter, target);
 			return result;
 		}
@@ -1300,28 +1301,30 @@ public class EventFiringWebDriver
 		@Override
 		public void setPosition(Point targetPosition) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setPosition);
-			stepBefore.setParam1(targetPosition.toString());
+			String targetPositionString = (targetPosition != null) ? targetPosition.toString() : null;
+			stepBefore.setParam1(targetPositionString);
 			dispatcher.beforeSetPosition(stepBefore, targetPosition);
 			currentStep = stepBefore;
 
 			window.setPosition(targetPosition);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.setPosition);
-			stepAfter.setParam1(targetPosition.toString());
+			stepAfter.setParam1(targetPositionString);
 			dispatcher.afterSetPosition(stepAfter, targetPosition);
 		}
 
 		@Override
 		public void setSize(Dimension targetSize) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setSizeByWindow);
-			stepBefore.setParam1(targetSize.toString());
+			String targetSizeString = (targetSize != null) ? targetSize.toString() : null;
+			stepBefore.setParam1(targetSizeString);
 			dispatcher.beforeSetSize(stepBefore, targetSize);
 			currentStep = stepBefore;
 
 			window.setSize(targetSize);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.setSizeByWindow);
-			stepAfter.setParam1(targetSize.toString());
+			stepAfter.setParam1(targetSizeString);
 			dispatcher.afterSetSize(stepAfter, targetSize);
 		}
 	}
@@ -1340,40 +1343,43 @@ public class EventFiringWebDriver
 		@Override
 		public void sendKeys(CharSequence... keysToSend) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.sendKeysByKeyboard);
-			stepBefore.setParam1(keysToSend.toString());
+			String keysToSendString = (keysToSend != null) ? keysToSend.toString() : null;
+			stepBefore.setParam1(keysToSendString);
 			dispatcher.beforeSendKeysByKeyboard(stepBefore, keysToSend);
 			currentStep = stepBefore;
 
 			keyboard.sendKeys(keysToSend);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByKeyboard);
-			stepAfter.setParam1(keysToSend.toString());
+			stepAfter.setParam1(keysToSendString);
 			dispatcher.afterSendKeysByKeyboard(stepBefore, keysToSend);
 		}
 
 		@Override
 		public void pressKey(CharSequence keyToPress) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.pressKey);
-			stepBefore.setParam1(keyToPress.toString());
+			String keyToPressString = (keyToPress != null) ? keyToPress.toString() : null;
+			stepBefore.setParam1(keyToPressString);
 			dispatcher.beforePressKey(stepBefore, keyToPress);
 
 			keyboard.pressKey(keyToPress);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.pressKey);
-			stepAfter.setParam1(keyToPress.toString());
+			stepAfter.setParam1(keyToPressString);
 			dispatcher.afterPressKey(stepBefore, keyToPress);
 		}
 
 		@Override
 		public void releaseKey(CharSequence keyToRelease) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.releaseKey);
-			stepBefore.setParam1(keyToRelease.toString());
+			String keyToReleaseString = (keyToRelease != null) ? keyToRelease.toString() : null;
+			stepBefore.setParam1(keyToReleaseString);
 			dispatcher.beforeReleaseKey(stepBefore, keyToRelease);
 
 			keyboard.releaseKey(keyToRelease);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.releaseKey);
-			stepAfter.setParam1(keyToRelease.toString());
+			stepAfter.setParam1(keyToReleaseString);
 			dispatcher.afterReleaseKey(stepBefore, keyToRelease);
 		}
 	}
@@ -1392,79 +1398,85 @@ public class EventFiringWebDriver
 		@Override
 		public void click(Coordinates where) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.clickByMouse);
-			stepBefore.setParam1(where.toString());
+			String whereString = (where != null) ? where.toString() : null;
+			stepBefore.setParam1(whereString);
 			dispatcher.beforeClickByMouse(stepBefore, where);
 
 			mouse.click(where);
 			
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.clickByMouse);
-			stepAfter.setParam1(where.toString());
+			stepAfter.setParam1(whereString);
 			dispatcher.afterClickByMouse(stepBefore, where);
 		}
 
 		@Override
 		public void doubleClick(Coordinates where) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.doubleClick);
-			stepBefore.setParam1(where.toString());
+			String whereString = (where != null) ? where.toString() : null;
+			stepBefore.setParam1(whereString);
 			dispatcher.beforeDoubleClick(stepBefore, where);
 
 			mouse.doubleClick(where);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber, Cmd.doubleClick);
-			stepAfter.setParam1(where.toString());
+			stepAfter.setParam1(whereString);
 			dispatcher.afterDoubleClick(stepAfter, where);
 		}
 
 		@Override
 		public void mouseDown(Coordinates where) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.mouseDown);
-			stepBefore.setParam1(where.toString());
+			String whereString = (where != null) ? where.toString() : null;
+			stepBefore.setParam1(whereString);
 			dispatcher.beforeMouseDown(stepBefore, where);
 
 			mouse.mouseDown(where);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber, Cmd.mouseDown);
-			stepAfter.setParam1(where.toString());
+			stepAfter.setParam1(whereString);
 			dispatcher.afterMouseDown(stepAfter, where);
 		}
 
 		@Override
 		public void mouseUp(Coordinates where) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.mouseUp);
-			stepBefore.setParam1(where.toString());
+			String whereString = (where != null) ? where.toString() : null;
+			stepBefore.setParam1(whereString);
 			dispatcher.beforeMouseUp(stepBefore, where);
 
 			mouse.mouseUp(where);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber, Cmd.mouseUp);
-			stepAfter.setParam1(where.toString());
+			stepAfter.setParam1(whereString);
 			dispatcher.afterMouseUp(stepAfter, where);
 		}
 
 		@Override
 		public void mouseMove(Coordinates where) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.mouseMove);
-			stepBefore.setParam1(where.toString());
+			String whereString = (where != null) ? where.toString() : null;
+			stepBefore.setParam1(whereString);
 			dispatcher.beforeMouseMove(stepBefore, where);
 
 			mouse.mouseMove(where);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber, Cmd.mouseMove);
-			stepAfter.setParam1(where.toString());
+			stepAfter.setParam1(whereString);
 			dispatcher.afterMouseMove(stepAfter, where);
 		}
 
 		@Override
 		public void mouseMove(Coordinates where, long xOffset, long yOffset) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.mouseMoveWithOffset);
-			stepBefore.setParam1(where.toString());
+			String whereString = (where != null) ? where.toString() : null;
+			stepBefore.setParam1(whereString);
 			stepBefore.setParam2(xOffset + ", " + yOffset);
 			dispatcher.beforeMouseMove(stepBefore, where, xOffset, yOffset);
 
 			mouse.mouseMove(where, xOffset, yOffset);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber, Cmd.mouseMoveWithOffset);
-			stepAfter.setParam1(where.toString());
+			stepAfter.setParam1(whereString);
 			stepAfter.setParam2(xOffset + ", " + yOffset);
 			dispatcher.afterMouseMove(stepAfter, where, xOffset, yOffset);
 		}
@@ -1472,13 +1484,14 @@ public class EventFiringWebDriver
 		@Override
 		public void contextClick(Coordinates where) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.contextClick);
-			stepBefore.setParam1(where.toString());
+			String whereString = (where != null) ? where.toString() : null;
+			stepBefore.setParam1(whereString);
 			dispatcher.beforeContextClick(stepBefore, where);
 
 			mouse.contextClick(where);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.contextClick);
-			stepAfter.setParam1(where.toString());
+			stepAfter.setParam1(whereString);
 			dispatcher.afterContextClick(stepBefore, where);
 		}
 	}
