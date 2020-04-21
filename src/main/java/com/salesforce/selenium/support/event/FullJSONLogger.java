@@ -22,8 +22,8 @@ import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Coordinates;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.salesforce.selenium.support.event.Step.Cmd;
 
@@ -38,6 +38,7 @@ import com.salesforce.selenium.support.event.Step.Cmd;
  * @since 2.0.0
  */
 public class FullJSONLogger extends AbstractWebDriverEventListener {
+	private static final int BATCHSIZE = 1000;
 	private String fileName = null;
 	private List<Step> logEntries = new ArrayList<>();
 
@@ -693,29 +694,31 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
     	//Set pretty printing of json
     	objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-    	// convert List of Step objects to JSON
-    	String logEntriesToJson = null;
+		SequenceWriter seqWriter = null;
 		try {
-			logEntriesToJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(logEntries);
-		} catch (JsonProcessingException e1) {
-			System.err.println("Error while converting WebDriver log entries to JSON");
-			e1.printStackTrace();
-			return;
-		}
-
-		FileWriter fileWriter = null;
-
-		try {
-			fileWriter = new FileWriter(fileName);
-			fileWriter.write(logEntriesToJson);
+			seqWriter = objectMapper.writerWithDefaultPrettyPrinter().writeValuesAsArray(new FileWriter(fileName));
+			int numOfLogEntries = logEntries.size();
+			int numOfBatches = numOfLogEntries / BATCHSIZE;
+			int lowerIndex = 0;
+			int upperIndex = BATCHSIZE;
+			for (int batchNo = 0; batchNo < numOfBatches; batchNo++) {
+				List<Step> logEntriesBatch = logEntries.subList(lowerIndex, upperIndex);
+				seqWriter.writeAll(logEntriesBatch);
+				lowerIndex = lowerIndex + BATCHSIZE;
+				upperIndex = upperIndex + BATCHSIZE;
+			}
+			if (lowerIndex < numOfLogEntries) {
+				List<Step> logEntriesBatch = logEntries.subList(lowerIndex, numOfLogEntries);
+				seqWriter.writeAll(logEntriesBatch);
+			}
 			System.out.println("Done writing WebDriver log entries to " + fileName);
 		} catch (IOException e) {
 			System.err.println("Error while writing WebDriver log entries to " + fileName);
 			e.printStackTrace();
 		} finally {
 			try {
-				if (fileWriter != null)
-					fileWriter.close();
+				if (seqWriter != null)
+					seqWriter.close();
 			} catch (IOException ex) {
 				System.err.println("Error while trying to close file writer to " + fileName);
 				ex.printStackTrace();
