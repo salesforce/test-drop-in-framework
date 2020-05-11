@@ -16,6 +16,9 @@
 //under the License.
 package com.salesforce.selenium.support.event;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -76,10 +80,30 @@ public class EventFiringWebDriver
 		implements WebDriver, JavascriptExecutor, TakesScreenshot, WrapsDriver,
 				   HasInputDevices, HasTouchScreen, Interactive, HasCapabilities {
 
+	/**
+	 * Properties file name: {@value}
+	 * This file is expected to reside in the project's root directory.
+	 */
+	public static final String PROPERTIES_FILENAME = "eventfiringwebdriver.properties";
+	/**
+	 * Property key for locator of password field: {@value}
+	 * <p>
+	 * If this locator is found, the log files will only show '********' for the password
+	 * value. The matching expression is using
+	 * <code>
+	 * locator.toLowerCase().contains(passwordMaskValue)
+	 * </code>
+	 * <p>
+	 * If this key is not set, the default value is "password".
+	 */
+	public static final String CONFIG_PASSWORD_MASK = "password.mask";
+
 	private static final String BORDER_COLORING_ENABLED = "border.color.enabled";
 	private static final String BORDER_COLORING_PREFIX = "arguments[0].style.border='3px solid ";
 	private static final String BORDER_COLORING_POSTFIX = "'";
 	private static final String[] BORDER_COLORS = new String[] {"red", "orange", "yellow", "green",	"blue",	"purple", "magenta"};
+
+	private static Properties properties;
 	
 	private final WebDriver driver;
 	private final WebDriverEventListener defaultEventListener;
@@ -834,7 +858,7 @@ public class EventFiringWebDriver
 			stepBefore.setParam1(param1);
 			stepBefore.setParam2(param2);
 			stepBefore.setElementLocator(Step.getLocatorFromWebElement(element));
-			dispatcher.beforeSendKeysByElement(stepBefore, element, keysToSend);
+			dispatcher.beforeSendKeysByElement(stepBefore, element, param2);
 			currentStep = stepBefore;
 
 			element.sendKeys(keysToSend);
@@ -842,12 +866,12 @@ public class EventFiringWebDriver
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByElement);
 			stepAfter.setParam1(param1);
 			stepAfter.setParam2(param2);
-			dispatcher.afterSendKeysByElement(stepAfter, element, keysToSend);
+			dispatcher.afterSendKeysByElement(stepAfter, element, param2);
 		}
 
 		private String maskTextIfPassword(String param1, CharSequence... keysToSend) {
 			String param2 = "********";
-			if (!param1.toLowerCase().contains("password")) {
+			if (!param1.toLowerCase().contains(getProperty(CONFIG_PASSWORD_MASK, "password"))) {
 				StringBuffer buffer = new StringBuffer();
 				if ((keysToSend != null) && (keysToSend.length > 0)) {
 					for (int i = 0; i < keysToSend.length; i++) {
@@ -1516,5 +1540,23 @@ public class EventFiringWebDriver
 			// decorate element with a border
 	        ((JavascriptExecutor)driver).executeScript(BORDER_COLORING_PREFIX + color + BORDER_COLORING_POSTFIX, element);
 	    }
+	}
+
+	public static String getProperty(String key, String defaultValue) {
+		return getProperties().getProperty(key, defaultValue);
+	}
+	
+	private static Properties getProperties() {
+		if (properties != null)
+			return properties;
+		
+		Properties prop = new Properties();
+		try (InputStream input = new FileInputStream(PROPERTIES_FILENAME)) {
+			prop.load(input);
+		} catch (IOException ex) {
+			// Warn only one time that config file is not present (or corrupt?)
+			System.out.println("Unable to load config file " + PROPERTIES_FILENAME);
+		}
+		return prop;
 	}
 }
