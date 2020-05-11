@@ -91,12 +91,12 @@ public class EventFiringWebDriver
 	 * If this locator is found, the log files will only show '********' for the password
 	 * value. The matching expression is using
 	 * <code>
-	 * locator.toLowerCase().contains(passwordMaskValue)
+	 * locator.contains(passwordLocatorValue)
 	 * </code>
 	 * <p>
 	 * If this key is not set, the default value is "password".
 	 */
-	public static final String CONFIG_PASSWORD_MASK = "password.mask";
+	public static final String CONFIG_PASSWORD_MASK = "password.locator";
 
 	private static final String BORDER_COLORING_ENABLED = "border.color.enabled";
 	private static final String BORDER_COLORING_PREFIX = "arguments[0].style.border='3px solid ";
@@ -871,7 +871,7 @@ public class EventFiringWebDriver
 
 		private String maskTextIfPassword(String param1, CharSequence... keysToSend) {
 			String param2 = "********";
-			if (!param1.toLowerCase().contains(getProperty(CONFIG_PASSWORD_MASK, "password"))) {
+			if (!param1.contains(getProperty(CONFIG_PASSWORD_MASK, "password"))) {
 				StringBuffer buffer = new StringBuffer();
 				if ((keysToSend != null) && (keysToSend.length > 0)) {
 					for (int i = 0; i < keysToSend.length; i++) {

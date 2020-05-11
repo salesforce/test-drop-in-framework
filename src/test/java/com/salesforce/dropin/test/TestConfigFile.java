@@ -27,8 +27,10 @@ public class TestConfigFile {
 				"Wrong value retrievd from config file");
 		Assert.assertEquals(EventFiringWebDriver.getProperty("value2", "blah"), "Foo",
 				"Wrong value retrievd from config file");
-		Assert.assertEquals(EventFiringWebDriver.getProperty("some.other.key", "blah"), "blah",
+		Assert.assertEquals(EventFiringWebDriver.getProperty("nonexisting.key", "blah"), "blah",
 				"Wrong value retrievd from config file");
+		Assert.assertTrue("By.id(\"password\"".contains(EventFiringWebDriver.getProperty("value3", "blah")));
+		Assert.assertTrue("By.id(\"password\"".contains(EventFiringWebDriver.getProperty("value4", "blah")));
 	}
 
 	@BeforeClass
@@ -39,6 +41,8 @@ public class TestConfigFile {
 			// set the properties value
 			tempProps.setProperty("value1", "foo");
 			tempProps.setProperty("value2", "Foo");
+			tempProps.setProperty("value3", "By.id(\"password");
+			tempProps.setProperty("value4", "By.id(\"password\"");
 
 			// save properties to project root folder
 			tempProps.store(output, null);
