@@ -14,6 +14,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 /**
  * Records information on a given WebDriver command such as click() or getText().
@@ -181,6 +183,7 @@ public class Step {
 	private String returnValue;
 	@JsonIgnore
 	private Object returnObject;
+	@JsonProperty(access = Access.READ_ONLY)
 	private Throwable issue;
 	private String elementLocator;
 

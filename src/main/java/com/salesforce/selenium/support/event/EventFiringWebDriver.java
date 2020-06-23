@@ -252,7 +252,11 @@ public class EventFiringWebDriver
 		Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.findElementsByWebDriver);
 		stepAfter.setParam1(Step.getLocatorFromBy(by));
 		if (returnedElements.size() > 0) {
-			stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElements.get(0)));
+			if (returnedElements.size() == 1)
+				stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElements.get(0)));
+			else
+				stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElements.get(0)) + " and "
+						+ (returnedElements.size() - 1) + " more");				
 		}
 		stepAfter.setReturnObject(returnedElements);
 		dispatcher.afterFindElementsByWebDriver(stepAfter, returnedElements, by);
@@ -656,7 +660,11 @@ public class EventFiringWebDriver
 			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.findElementsByElement);
 			stepAfter.setParam1(Step.getLocatorFromBy(by));
 			if (returnedElements.size() > 0) {
-				stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElements.get(0)));
+				if (returnedElements.size() == 1)
+					stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElements.get(0)));
+				else
+					stepAfter.setReturnValue(Step.getLocatorFromWebElement(returnedElements.get(0)) + " and "
+							+ (returnedElements.size() - 1) + " more");				
 			}
 			stepAfter.setReturnObject(returnedElements);
 			stepAfter.setElementLocator(Step.getLocatorFromWebElement(element));

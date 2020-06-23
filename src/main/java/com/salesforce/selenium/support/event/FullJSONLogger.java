@@ -6,6 +6,7 @@
  */
 package com.salesforce.selenium.support.event;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Coordinates;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -724,5 +726,25 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 				ex.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Convenience method for reading one of the *.json files this logger class has previously
+	 * written to disk. It is then possible to process the information and convert into other
+	 * formats of your choice.
+	 * 
+	 * @param fileName relative or absolute path with file name
+	 * @return list of {@link Step} objects or null in case of de-serialization problems
+	 */
+	public static List<Step> readStepsFromFile(String fileName) {
+		List<Step> steps = null;
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			steps = objectMapper.readValue(new File(fileName), new TypeReference<List<Step>>() {});
+		} catch (IOException e) {
+			System.err.println("Error while reading WebDriver log entries from " + fileName);
+			e.printStackTrace();
+		}
+		return steps;
 	}
 }
