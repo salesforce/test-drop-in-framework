@@ -427,10 +427,20 @@ public class Step {
 		return sb.toString();
 	}
 
+	/**
+	 * Retrieve the locator information from By's toString() representation.
+	 * @param by instance of By
+	 * @return locator defined in By object
+	 */
 	public static String getLocatorFromBy(By by) {
 		return (by != null) ? getLocatorFromBy(by.toString()) : null;
 	}
 
+	/**
+	 * Retrieve the locator information from By's toString() representation.
+	 * @param locator toString() representation of a By object
+	 * @return locator defined in By object
+	 */
 	public static String getLocatorFromBy(String locator) {
 		if (locator == null)
 			return null;
@@ -452,5 +462,36 @@ public class Step {
 		// ".//*[@id='thePage:j_id39:searchblock:test:j_id45_lkwgt']/img"
 		sb.append(locator.substring(matcher.start(2), matcher.end(2))).append("\")");
 		return sb.toString();
+	}
+	
+	/**
+	 * Converts a given string into the appropriate By object.
+	 * @param param string containing a locator
+	 * @return By object or null in case parsing fails
+	 */
+	public static By getByFromString(String param) {
+		By locator = null;
+		if (param.startsWith("By.xpath")) {
+			locator = By.xpath(param.substring("By.xpath".length() + 2, param.length() - 2));
+		} else if (param.startsWith("By.cssSelector")) {
+			locator = By.cssSelector(param.substring("By.cssSelector".length() + 2, param.length() - 2));
+		} else if (param.startsWith("css selector")) {
+			locator = By.cssSelector(param.substring("css selector".length() + 2));
+		} else if (param.startsWith("By.id")) {
+			locator = By.id(param.substring("By.id".length() + 2, param.length() - 2));
+		} else if (param.startsWith("By.name")) {
+			locator = By.name(param.substring("By.name".length() + 2, param.length() - 2));
+		} else if (param.startsWith("By.tagName")) {
+			locator = By.tagName(param.substring("By.tagName".length() + 2, param.length() - 2));
+		} else if (param.startsWith("By.className")) {
+			locator = By.className(param.substring("By.className".length() + 2, param.length() - 2));
+		} else if (param.startsWith("By.linkText")) {
+			locator = By.linkText(param.substring("By.linkText".length() + 2, param.length() - 2));
+		} else if (param.startsWith("By.partialLinkText")) {
+			locator = By.partialLinkText(param.substring("By.partialLinkText".length() + 2, param.length() - 2));
+		} else {
+			System.err.print("Problem converting param into By: " + param);
+		}
+		return locator;
 	}
 }
