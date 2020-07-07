@@ -48,12 +48,13 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	 * Define the file name of the JSON file without the ".json" extension. It will be
 	 * written when the running test calls the {@link EventFiringWebDriver#quit()} command.
 	 * <p>
-	 * The file will be stored under the relative directory "./target".
+	 * The file will be stored under the relative directory
+	 * {@link WebDriverEventListener#TESTDROPIN_LOGFILES_DIR}.
 	 * 
 	 * @param testName name of the JSON file
 	 */
 	public FullJSONLogger(String testName) {
-		this.fileName = "target/" + convertTestname2FileName(testName) + ".json";
+		this.fileName = TESTDROPIN_LOGFILES_DIR + convertTestname2FileName(testName) + ".json";
 	}
 
 	/*--------------------------------------------------------------------
@@ -687,6 +688,9 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 
 	@Override
 	public void closeListener() {
+		// make sure the directory hosting the logfile exists
+		new File(TESTDROPIN_LOGFILES_DIR).mkdirs();
+
 		if (logEntries == null || logEntries.size() == 0) {
 			System.out.println("Warning: no performance log entries to write to " + fileName);
 			return;

@@ -43,6 +43,12 @@ import com.salesforce.selenium.support.event.Step.Cmd;
  * @since 2.0.0
  */
 public interface WebDriverEventListener {
+	/**
+	 * Location of logfiles produced by Test Drop-in Framework and
+	 * its dependent classes: {@value}
+	 */
+	final String TESTDROPIN_LOGFILES_DIR = "target/";
+
 	/*--------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver object.
 	 *--------------------------------------------------------------------*/
