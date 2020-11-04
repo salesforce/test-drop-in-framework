@@ -4,3 +4,5 @@
 /.project
 /test-output/
 /build.bat
+.idea/
+test-drop-in-framework.iml
