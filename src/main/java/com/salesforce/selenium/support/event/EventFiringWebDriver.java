@@ -211,7 +211,7 @@ public class EventFiringWebDriver
 	}
 
 	public void takeScreenshot() {
-		if(Boolean.parseBoolean(System.getProperty("takeScreenshotBeforeAndAfterActions", "false"))) {
+		if(Boolean.parseBoolean(System.getProperty("takeScreenshotBeforeActions", "false"))) {
 			try {
 				String saveDirectoryPath = System.getProperty("screenshotSaveLocation", "");
 				String fileNamePrefix = System.getProperty("screenshotNamePrefix", "");
@@ -422,6 +422,9 @@ public class EventFiringWebDriver
 			dispatcher.beforeExecuteScript(stepBefore, script, args);
 			currentStep = stepBefore;
 
+			if(script.contains("click"))
+				takeScreenshot();
+
 			Object[] usedArgs = unpackWrappedArgs(args);
 			Object result = ((JavascriptExecutor) driver).executeScript(script, usedArgs);
 
@@ -442,6 +445,9 @@ public class EventFiringWebDriver
 			// TODO handle args
 			dispatcher.beforeExecuteAsyncScript(stepBefore, script, args);
 			currentStep = stepBefore;
+
+			if(script.contains("click"))
+				takeScreenshot();
 
 			Object[] usedArgs = unpackWrappedArgs(args);
 			Object result = ((JavascriptExecutor) driver).executeAsyncScript(script, usedArgs);
@@ -627,7 +633,6 @@ public class EventFiringWebDriver
 
 			element.click();
 
-			takeScreenshot();
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.clickByElement);
 			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
 			stepAfter.setElementLocator(Step.getLocatorFromWebElement(element));
@@ -895,7 +900,6 @@ public class EventFiringWebDriver
 
 			element.sendKeys(keysToSend);
 
-			takeScreenshot();
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByElement);
 			stepAfter.setParam1(param1);
 			stepAfter.setParam2(param2);
@@ -927,7 +931,6 @@ public class EventFiringWebDriver
 
 			element.submit();
 
-			takeScreenshot();
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.submit);
 			stepAfter.setParam1(Step.getLocatorFromWebElement(element));
 			dispatcher.afterSubmit(stepAfter, element);
@@ -997,7 +1000,6 @@ public class EventFiringWebDriver
 
 			navigation.back();
 
-			takeScreenshot();
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.back);
 			dispatcher.afterBack(stepAfter);
 		}
@@ -1011,7 +1013,6 @@ public class EventFiringWebDriver
 
 			navigation.forward();
 
-			takeScreenshot();
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.forward);
 			dispatcher.afterForward(stepAfter);
 		}
@@ -1025,7 +1026,6 @@ public class EventFiringWebDriver
 
 			navigation.refresh();
 
-			takeScreenshot();
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.refresh);
 			dispatcher.afterRefresh(stepAfter);
 		}
@@ -1416,7 +1416,6 @@ public class EventFiringWebDriver
 
 			keyboard.sendKeys(keysToSend);
 
-			takeScreenshot();
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByKeyboard);
 			stepAfter.setParam1(keysToSendString);
 			dispatcher.afterSendKeysByKeyboard(stepBefore, keysToSend);
