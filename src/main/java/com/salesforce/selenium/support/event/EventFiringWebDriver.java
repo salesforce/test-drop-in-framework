@@ -16,6 +16,7 @@
 //under the License.
 package com.salesforce.selenium.support.event;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +37,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
@@ -207,6 +210,23 @@ public class EventFiringWebDriver
 		}
 	}
 
+	public void takeScreenshot() {
+		if(Boolean.parseBoolean(System.getProperty("takeScreenshotBeforeActions", "false"))) {
+			try {
+				String saveDirectoryPath = System.getProperty("screenshotSaveLocation", "");
+				String fileNamePrefix = System.getProperty("screenshotNamePrefix", "");
+				String fileNamePostfix = System.getProperty("screenshotNamePostfix", "");
+				if(saveDirectoryPath.isEmpty()) {
+					saveDirectoryPath = System.getProperty("user.dir") + File.separator + "screenshotHub";
+				}
+				FileUtils.copyFile(((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE), new File(saveDirectoryPath
+						+ File.separator + fileNamePrefix + new Timestamp(System.currentTimeMillis()) + fileNamePostfix + ".png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	/*--------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver object.
 	 *--------------------------------------------------------------------*/
@@ -216,6 +236,7 @@ public class EventFiringWebDriver
 		Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.close);
 		dispatcher.beforeClose(stepBefore);
 		currentStep = stepBefore;
+		takeScreenshot();
 
 		driver.close();
 		Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.close);
@@ -401,6 +422,9 @@ public class EventFiringWebDriver
 			dispatcher.beforeExecuteScript(stepBefore, script, args);
 			currentStep = stepBefore;
 
+			if(script.contains("click"))
+				takeScreenshot();
+
 			Object[] usedArgs = unpackWrappedArgs(args);
 			Object result = ((JavascriptExecutor) driver).executeScript(script, usedArgs);
 
@@ -421,6 +445,9 @@ public class EventFiringWebDriver
 			// TODO handle args
 			dispatcher.beforeExecuteAsyncScript(stepBefore, script, args);
 			currentStep = stepBefore;
+
+			if(script.contains("click"))
+				takeScreenshot();
 
 			Object[] usedArgs = unpackWrappedArgs(args);
 			Object result = ((JavascriptExecutor) driver).executeAsyncScript(script, usedArgs);
@@ -602,6 +629,7 @@ public class EventFiringWebDriver
 			currentStep = stepBefore;
 
 			dispatcher.beforeClick(stepBefore, element);
+			takeScreenshot();
 
 			element.click();
 
@@ -868,6 +896,7 @@ public class EventFiringWebDriver
 			stepBefore.setElementLocator(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeSendKeysByElement(stepBefore, element, param2);
 			currentStep = stepBefore;
+			takeScreenshot();
 
 			element.sendKeys(keysToSend);
 
@@ -898,6 +927,7 @@ public class EventFiringWebDriver
 			stepBefore.setElementLocator(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeSubmit(stepBefore, element);
 			currentStep = stepBefore;
+			takeScreenshot();
 
 			element.submit();
 
@@ -966,6 +996,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.back);
 			dispatcher.beforeBack(stepBefore);
 			currentStep = stepBefore;
+			takeScreenshot();
 
 			navigation.back();
 
@@ -978,6 +1009,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.forward);
 			dispatcher.beforeForward(stepBefore);
 			currentStep = stepBefore;
+			takeScreenshot();
 
 			navigation.forward();
 
@@ -990,6 +1022,7 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.refresh);
 			dispatcher.beforeRefresh(stepBefore);
 			currentStep = stepBefore;
+			takeScreenshot();
 
 			navigation.refresh();
 
@@ -1379,6 +1412,7 @@ public class EventFiringWebDriver
 			stepBefore.setParam1(keysToSendString);
 			dispatcher.beforeSendKeysByKeyboard(stepBefore, keysToSend);
 			currentStep = stepBefore;
+			takeScreenshot();
 
 			keyboard.sendKeys(keysToSend);
 
