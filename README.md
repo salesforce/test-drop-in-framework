@@ -191,4 +191,4 @@ five working days.
 1. Go to the Releases [section](https://github.com/salesforce/test-drop-in-framework/releases)
 2. Click on the "Draft a new release" button
 3. Enter the "tag version" and "Release title" value as "test-drop-in-framework-v\<new-version\>"
-4. Write one or more sentences about the changes pushed ([example](https://github.com/salesforce/test-drop-in-framework/releases/tag/test-drop-in-framework-v3.0.16)) and publish a release.
+4. Write one or more sentences about the changes pushed ([example](https://github.com/salesforce/test-drop-in-framework/releases/tag/test-drop-in-framework-v3.0.17)) and publish a release.
