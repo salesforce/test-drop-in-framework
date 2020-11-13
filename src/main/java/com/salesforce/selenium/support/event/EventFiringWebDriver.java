@@ -100,6 +100,42 @@ public class EventFiringWebDriver
 	 * If this key is not set, the default value is "password".
 	 */
 	public static final String CONFIG_PASSWORD_MASK = "password.locator";
+	
+	/**
+	 * Boolean property to enable the option of taking screenshots before certain actions like click() and sendKeys(): {@value}
+	 * This option will only get enabled if you set the value of this property to "true".
+	 * 
+	 * If enabled, this class will create screenshots in the sub-directory defined by {@link #SCREENSHOT_DEFAULT_DIR}.
+	 * Every screenshot's name will have this format: <pre>PREFIX + timestamp + POSTFIX + ".png"</pre>
+	 * 
+	 * You can define the prefix by setting the property {@link #PROPERTY_SCREENSHOT_PREFIX} and the
+	 * postfix by setting the property {@link #PROPERTY_SCREENSHOT_POSTFIX}.
+	 */
+	public static final String PROPERTY_SCREENSHOT_BEFORE_ACTIONS = "screenshot.beforeactions";
+
+	/**
+	 * Property to set the default screenshot sub-directory: {@value}
+	 */
+	public static final String PROPERTY_SCREENSHOT_DEFAULT_DIR = "screenshot.savelocation";
+
+	/**
+	 * Property to set the screenshot name prefix: {@value}
+	 * 
+	 * The default value is an empty string.
+	 */
+	public static final String PROPERTY_SCREENSHOT_PREFIX = "screenshot.name.prefix";
+
+	/**
+	 * Property to set the screenshot name postfix: {@value}
+	 * The default value is an empty string.
+	 */
+	public static final String PROPERTY_SCREENSHOT_POSTFIX = "screenshot.name.postfix";
+	
+	/**
+	 * Default screenshot sub-directory under "user.dir": {@value}
+	 * Can be overridden by setting system property {@link #PROPERTY_SCREENSHOT_DEFAULT_DIR}.
+	 */
+	public static final String SCREENSHOT_DEFAULT_DIR = "screenshot.hub";
 
 	private static final String BORDER_COLORING_ENABLED = "border.color.enabled";
 	private static final String BORDER_COLORING_PREFIX = "arguments[0].style.border='3px solid ";
@@ -207,23 +243,6 @@ public class EventFiringWebDriver
 			return ((WrapsDriver) driver).getWrappedDriver();
 		} else {
 			return driver;
-		}
-	}
-
-	public void takeScreenshot() {
-		if(Boolean.parseBoolean(System.getProperty("takeScreenshotBeforeActions", "false"))) {
-			try {
-				String saveDirectoryPath = System.getProperty("screenshotSaveLocation", "");
-				String fileNamePrefix = System.getProperty("screenshotNamePrefix", "");
-				String fileNamePostfix = System.getProperty("screenshotNamePostfix", "");
-				if(saveDirectoryPath.isEmpty()) {
-					saveDirectoryPath = System.getProperty("user.dir") + File.separator + "screenshotHub";
-				}
-				FileUtils.copyFile(((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE), new File(saveDirectoryPath
-						+ File.separator + fileNamePrefix + new Timestamp(System.currentTimeMillis()) + fileNamePostfix + ".png"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -422,7 +441,7 @@ public class EventFiringWebDriver
 			dispatcher.beforeExecuteScript(stepBefore, script, args);
 			currentStep = stepBefore;
 
-			if(script.contains("click"))
+			if(script.contains(".click"))
 				takeScreenshot();
 
 			Object[] usedArgs = unpackWrappedArgs(args);
@@ -446,7 +465,7 @@ public class EventFiringWebDriver
 			dispatcher.beforeExecuteAsyncScript(stepBefore, script, args);
 			currentStep = stepBefore;
 
-			if(script.contains("click"))
+			if(script.contains(".click"))
 				takeScreenshot();
 
 			Object[] usedArgs = unpackWrappedArgs(args);
@@ -1467,6 +1486,7 @@ public class EventFiringWebDriver
 			String whereString = (where != null) ? where.toString() : null;
 			stepBefore.setParam1(whereString);
 			dispatcher.beforeClickByMouse(stepBefore, where);
+			takeScreenshot();
 
 			mouse.click(where);
 			
@@ -1481,6 +1501,7 @@ public class EventFiringWebDriver
 			String whereString = (where != null) ? where.toString() : null;
 			stepBefore.setParam1(whereString);
 			dispatcher.beforeDoubleClick(stepBefore, where);
+			takeScreenshot();
 
 			mouse.doubleClick(where);
 
@@ -1600,5 +1621,19 @@ public class EventFiringWebDriver
 			System.out.println("Unable to load config file " + PROPERTIES_FILENAME);
 		}
 		return prop;
+	}
+
+	private void takeScreenshot() {
+		if (Boolean.parseBoolean(System.getProperty(PROPERTY_SCREENSHOT_BEFORE_ACTIONS, "false"))) {
+			try {
+				String saveDirectoryPath = System.getProperty(PROPERTY_SCREENSHOT_DEFAULT_DIR, System.getProperty("user.dir") + File.separator + PROPERTY_SCREENSHOT_DEFAULT_DIR);
+				String fileNamePrefix = System.getProperty(PROPERTY_SCREENSHOT_PREFIX, "");
+				String fileNamePostfix = System.getProperty(PROPERTY_SCREENSHOT_POSTFIX, "");
+				FileUtils.copyFile(((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE), new File(saveDirectoryPath
+						+ File.separator + fileNamePrefix + new Timestamp(System.currentTimeMillis()) + fileNamePostfix + ".png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
