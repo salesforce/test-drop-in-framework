@@ -1600,6 +1600,8 @@ public class EventFiringWebDriver
 		}
 		public void setData(String key, String value) {
 			Map<String, String> data = map.get();
+			if (data == null)
+				data = new HashMap<>();
 			data.put(key, value);
 		}
 		
