@@ -14,7 +14,7 @@ import org.openqa.selenium.WebDriver;
  * 
  */
 public abstract class AbstractBaseContext implements BaseContext {
-	private WebDriver webDriver;
+	private ThreadLocal<WebDriver> webDriver = new ThreadLocal<>();
 	
 	/**
 	 * Gets current WebDriver instance or NULL if it has not been
@@ -23,8 +23,8 @@ public abstract class AbstractBaseContext implements BaseContext {
 	 */
 	@Override
 	public WebDriver wd() {
-		assert webDriver != null : "Test context is not yet initialized";
-		return webDriver;
+		assert webDriver.get() != null : "Test context is not yet initialized";
+		return webDriver.get();
 	}
 
 	/**
@@ -36,6 +36,6 @@ public abstract class AbstractBaseContext implements BaseContext {
 	@Override
 	public void setWebDriver(WebDriver driver) {
 		assert driver != null : "Trying to cache NULL as current WebDriver instance";
-		webDriver = driver;
+		webDriver.set(driver);
 	}
 }

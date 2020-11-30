@@ -16,7 +16,6 @@
 //under the License.
 package com.salesforce.selenium.support.event;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +35,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
@@ -100,42 +97,6 @@ public class EventFiringWebDriver
 	 * If this key is not set, the default value is "password".
 	 */
 	public static final String CONFIG_PASSWORD_MASK = "password.locator";
-	
-	/**
-	 * Boolean property to enable the option of taking screenshots before certain actions like click() and sendKeys(): {@value}
-	 * This option will only get enabled if you set the value of this property to "true".
-	 * 
-	 * If enabled, this class will create screenshots in the sub-directory defined by {@link #SCREENSHOT_DEFAULT_DIR}.
-	 * Every screenshot's name will have this format: <pre>PREFIX + timestamp + POSTFIX + ".png"</pre>
-	 * 
-	 * You can define the prefix by setting the property {@link #PROPERTY_SCREENSHOT_PREFIX} and the
-	 * postfix by setting the property {@link #PROPERTY_SCREENSHOT_POSTFIX}.
-	 */
-	public static final String PROPERTY_SCREENSHOT_BEFORE_ACTIONS = "screenshot.beforeactions";
-
-	/**
-	 * Property to set the default screenshot sub-directory: {@value}
-	 */
-	public static final String PROPERTY_SCREENSHOT_DEFAULT_DIR = "screenshot.savelocation";
-
-	/**
-	 * Property to set the screenshot name prefix: {@value}
-	 * 
-	 * The default value is an empty string.
-	 */
-	public static final String PROPERTY_SCREENSHOT_PREFIX = "screenshot.name.prefix";
-
-	/**
-	 * Property to set the screenshot name postfix: {@value}
-	 * The default value is an empty string.
-	 */
-	public static final String PROPERTY_SCREENSHOT_POSTFIX = "screenshot.name.postfix";
-	
-	/**
-	 * Default screenshot sub-directory under "user.dir": {@value}
-	 * Can be overridden by setting system property {@link #PROPERTY_SCREENSHOT_DEFAULT_DIR}.
-	 */
-	public static final String SCREENSHOT_DEFAULT_DIR = "screenshot.hub";
 
 	private static final String BORDER_COLORING_ENABLED = "border.color.enabled";
 	private static final String BORDER_COLORING_PREFIX = "arguments[0].style.border='3px solid ";
@@ -168,6 +129,10 @@ public class EventFiringWebDriver
 	private int border_color_index = 0;
 
 	public EventFiringWebDriver(final WebDriver driver, String testName) {
+		this(driver, wrapTestName(testName));
+	}
+
+	public EventFiringWebDriver(final WebDriver driver, WebDriverConfigData data) {
 		Class<?>[] allInterfaces = extractInterfaces(driver);
 
 		this.driver = (WebDriver) Proxy.newProxyInstance(WebDriverEventListener.class.getClassLoader(), allInterfaces,
@@ -194,7 +159,7 @@ public class EventFiringWebDriver
 					}
 				});
 		// standard listener which writes all events to JSON files
-		defaultEventListener = new FullJSONLogger(testName);
+		defaultEventListener = new FullJSONLogger(data.getData("testName"));
 	}
 
 	private Class<?>[] extractInterfaces(Object object) {
@@ -255,7 +220,6 @@ public class EventFiringWebDriver
 		Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.close);
 		dispatcher.beforeClose(stepBefore);
 		currentStep = stepBefore;
-		takeScreenshot();
 
 		driver.close();
 		Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.close);
@@ -441,9 +405,6 @@ public class EventFiringWebDriver
 			dispatcher.beforeExecuteScript(stepBefore, script, args);
 			currentStep = stepBefore;
 
-			if(script.contains(".click"))
-				takeScreenshot();
-
 			Object[] usedArgs = unpackWrappedArgs(args);
 			Object result = ((JavascriptExecutor) driver).executeScript(script, usedArgs);
 
@@ -464,9 +425,6 @@ public class EventFiringWebDriver
 			// TODO handle args
 			dispatcher.beforeExecuteAsyncScript(stepBefore, script, args);
 			currentStep = stepBefore;
-
-			if(script.contains(".click"))
-				takeScreenshot();
 
 			Object[] usedArgs = unpackWrappedArgs(args);
 			Object result = ((JavascriptExecutor) driver).executeAsyncScript(script, usedArgs);
@@ -648,7 +606,6 @@ public class EventFiringWebDriver
 			currentStep = stepBefore;
 
 			dispatcher.beforeClick(stepBefore, element);
-			takeScreenshot();
 
 			element.click();
 
@@ -915,7 +872,6 @@ public class EventFiringWebDriver
 			stepBefore.setElementLocator(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeSendKeysByElement(stepBefore, element, param2);
 			currentStep = stepBefore;
-			takeScreenshot();
 
 			element.sendKeys(keysToSend);
 
@@ -946,7 +902,6 @@ public class EventFiringWebDriver
 			stepBefore.setElementLocator(Step.getLocatorFromWebElement(element));
 			dispatcher.beforeSubmit(stepBefore, element);
 			currentStep = stepBefore;
-			takeScreenshot();
 
 			element.submit();
 
@@ -1015,7 +970,6 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.back);
 			dispatcher.beforeBack(stepBefore);
 			currentStep = stepBefore;
-			takeScreenshot();
 
 			navigation.back();
 
@@ -1028,7 +982,6 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.forward);
 			dispatcher.beforeForward(stepBefore);
 			currentStep = stepBefore;
-			takeScreenshot();
 
 			navigation.forward();
 
@@ -1041,7 +994,6 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.refresh);
 			dispatcher.beforeRefresh(stepBefore);
 			currentStep = stepBefore;
-			takeScreenshot();
 
 			navigation.refresh();
 
@@ -1431,7 +1383,6 @@ public class EventFiringWebDriver
 			stepBefore.setParam1(keysToSendString);
 			dispatcher.beforeSendKeysByKeyboard(stepBefore, keysToSend);
 			currentStep = stepBefore;
-			takeScreenshot();
 
 			keyboard.sendKeys(keysToSend);
 
@@ -1486,7 +1437,6 @@ public class EventFiringWebDriver
 			String whereString = (where != null) ? where.toString() : null;
 			stepBefore.setParam1(whereString);
 			dispatcher.beforeClickByMouse(stepBefore, where);
-			takeScreenshot();
 
 			mouse.click(where);
 			
@@ -1501,7 +1451,6 @@ public class EventFiringWebDriver
 			String whereString = (where != null) ? where.toString() : null;
 			stepBefore.setParam1(whereString);
 			dispatcher.beforeDoubleClick(stepBefore, where);
-			takeScreenshot();
 
 			mouse.doubleClick(where);
 
@@ -1605,8 +1554,22 @@ public class EventFiringWebDriver
 	    }
 	}
 
+	/**
+	 * Gets the value of the given property by looking up system properties first
+	 * and then anything defined in the property file {@link #PROPERTIES_FILENAME}.
+	 * If there is still nothing found, it will return the default value.
+	 * 
+	 * This allows to define proper values in a file but to (occasionally) override
+	 * them by setting a system property.
+	 * 
+	 * @param key
+	 * @param defaultValue
+	 * @return value found or default value, if property is not defined in either system or
+	 * property file {@link #PROPERTIES_FILENAME}
+	 */
 	public static String getProperty(String key, String defaultValue) {
-		return getProperties().getProperty(key, defaultValue);
+		String value = System.getProperty(key);
+		return (value != null) ? value : getProperties().getProperty(key, defaultValue);
 	}
 	
 	private static Properties getProperties() {
@@ -1622,18 +1585,23 @@ public class EventFiringWebDriver
 		}
 		return prop;
 	}
-
-	private void takeScreenshot() {
-		if (Boolean.parseBoolean(System.getProperty(PROPERTY_SCREENSHOT_BEFORE_ACTIONS, "false"))) {
-			try {
-				String saveDirectoryPath = System.getProperty(PROPERTY_SCREENSHOT_DEFAULT_DIR, System.getProperty("user.dir") + File.separator + PROPERTY_SCREENSHOT_DEFAULT_DIR);
-				String fileNamePrefix = System.getProperty(PROPERTY_SCREENSHOT_PREFIX, "");
-				String fileNamePostfix = System.getProperty(PROPERTY_SCREENSHOT_POSTFIX, "");
-				FileUtils.copyFile(((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE), new File(saveDirectoryPath
-						+ File.separator + fileNamePrefix + new Timestamp(System.currentTimeMillis()) + fileNamePostfix + ".png"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	
+	private static WebDriverConfigData wrapTestName(String testName) {
+		WebDriverConfigData data = new WebDriverConfigData();
+		data.setData("testName", testName);
+		return data;
+	}
+	
+	public static class WebDriverConfigData {
+		private ThreadLocal<Map<String, String>> map = new ThreadLocal<>();
+		public String getData(String key) {
+			Map<String, String> data = map.get();
+			return data.get(key);
 		}
+		public void setData(String key, String value) {
+			Map<String, String> data = map.get();
+			data.put(key, value);
+		}
+		
 	}
 }
