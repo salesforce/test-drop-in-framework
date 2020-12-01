@@ -7,6 +7,7 @@
 package com.salesforce.dropin.test.defaultcontext;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.salesforce.dropin.common.BaseData;
 
@@ -15,7 +16,7 @@ import com.salesforce.dropin.common.BaseData;
  * @author gneumann
  */
 public class TestData implements BaseData<String> {
-	private static HashMap<String, String> map = new HashMap<>();
+	private static Map<String, String> map = new HashMap<>();
 
 	@Override
 	public String getData(String key) {

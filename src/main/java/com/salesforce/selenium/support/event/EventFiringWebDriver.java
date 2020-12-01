@@ -62,6 +62,7 @@ import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.logging.Logs;
 
+import com.salesforce.dropin.common.BaseData;
 import com.salesforce.selenium.support.event.Step.Cmd;
 import com.salesforce.selenium.support.event.Step.Type;
 
@@ -128,7 +129,7 @@ public class EventFiringWebDriver
 	private int stepNumber = 1;
 	private int border_color_index = 0;
 	
-	private final WebDriverConfigData data;
+	private final BaseData<String> data;
 
 	public EventFiringWebDriver(final WebDriver driver, String testName) {
 		data = new WebDriverConfigData();
@@ -216,7 +217,7 @@ public class EventFiringWebDriver
 	 * Gets the cached WebDriver configuration data.
 	 * @return data store (non-null)
 	 */
-	public WebDriverConfigData getDataStore() {
+	public BaseData<String> getDataStore() {
 		return data;
 	}
 
@@ -1599,11 +1600,12 @@ public class EventFiringWebDriver
 	 * Data store for WebDriver specific configuration information.
 	 * @author gneumann
 	 */
-	public static class WebDriverConfigData {
+	public static class WebDriverConfigData implements BaseData<String> {
 		/**
 		 * Key to get the current test name from cache.
 		 */
 		public static final String KEY_TESTNAME = "testName";
+
 		private final Map<String, String> map = new HashMap<>();
 
 		/**
@@ -1611,6 +1613,7 @@ public class EventFiringWebDriver
 		 * @param key
 		 * @return data if present or NULL
 		 */
+		@Override
 		public String getData(String key) {
 			return map.get(key);
 		}
@@ -1621,6 +1624,7 @@ public class EventFiringWebDriver
 		 * @param key
 		 * @param value
 		 */
+		@Override
 		public void setData(String key, String value) {
 			map.put(key, value);
 		}
