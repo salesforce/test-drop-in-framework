@@ -127,12 +127,13 @@ public class EventFiringWebDriver
 	private Step currentStep = null;
 	private int stepNumber = 1;
 	private int border_color_index = 0;
+	
+	private final WebDriverConfigData data;
 
 	public EventFiringWebDriver(final WebDriver driver, String testName) {
-		this(driver, wrapTestName(testName));
-	}
+		data = new WebDriverConfigData();
+		data.setData(WebDriverConfigData.KEY_TESTNAME, testName);
 
-	public EventFiringWebDriver(final WebDriver driver, WebDriverConfigData data) {
 		Class<?>[] allInterfaces = extractInterfaces(driver);
 
 		this.driver = (WebDriver) Proxy.newProxyInstance(WebDriverEventListener.class.getClassLoader(), allInterfaces,
@@ -209,6 +210,14 @@ public class EventFiringWebDriver
 		} else {
 			return driver;
 		}
+	}
+	
+	/**
+	 * Gets the cached WebDriver configuration data.
+	 * @return data store (non-null)
+	 */
+	public WebDriverConfigData getDataStore() {
+		return data;
 	}
 
 	/*--------------------------------------------------------------------
@@ -1586,24 +1595,34 @@ public class EventFiringWebDriver
 		return prop;
 	}
 	
-	private static WebDriverConfigData wrapTestName(String testName) {
-		WebDriverConfigData data = new WebDriverConfigData();
-		data.setData("testName", testName);
-		return data;
-	}
-	
+	/**
+	 * Data store for WebDriver specific configuration information.
+	 * @author gneumann
+	 */
 	public static class WebDriverConfigData {
-		private ThreadLocal<Map<String, String>> map = new ThreadLocal<>();
+		/**
+		 * Key to get the current test name from cache.
+		 */
+		public static final String KEY_TESTNAME = "testName";
+		private final Map<String, String> map = new HashMap<>();
+
+		/**
+		 * Gets the data stored for this particular key or NULL
+		 * @param key
+		 * @return data if present or NULL
+		 */
 		public String getData(String key) {
-			Map<String, String> data = map.get();
-			return data.get(key);
-		}
-		public void setData(String key, String value) {
-			Map<String, String> data = map.get();
-			if (data == null)
-				data = new HashMap<>();
-			data.put(key, value);
+			return map.get(key);
 		}
 		
+		/**
+		 * Sets the value for the given key in a map. NULL values are permitted, but
+		 * make no sense, of course.
+		 * @param key
+		 * @param value
+		 */
+		public void setData(String key, String value) {
+			map.put(key, value);
+		}
 	}
 }
