@@ -1572,8 +1572,8 @@ public class EventFiringWebDriver
 	 * This allows to define proper values in a file but to (occasionally) override
 	 * them by setting a system property.
 	 * 
-	 * @param key
-	 * @param defaultValue
+	 * @param key property key
+	 * @param defaultValue string value to return if property has not been set
 	 * @return value found or default value, if property is not defined in either system or
 	 * property file {@link #PROPERTIES_FILENAME}
 	 */
@@ -1610,7 +1610,7 @@ public class EventFiringWebDriver
 
 		/**
 		 * Gets the data stored for this particular key or NULL
-		 * @param key
+		 * @param key property key
 		 * @return data if present or NULL
 		 */
 		@Override
@@ -1621,8 +1621,8 @@ public class EventFiringWebDriver
 		/**
 		 * Sets the value for the given key in a map. NULL values are permitted, but
 		 * make no sense, of course.
-		 * @param key
-		 * @param value
+		 * @param key property key
+		 * @param value string value to set
 		 */
 		@Override
 		public void setData(String key, String value) {
