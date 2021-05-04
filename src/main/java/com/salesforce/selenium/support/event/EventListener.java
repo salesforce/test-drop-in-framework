@@ -42,7 +42,7 @@ import com.salesforce.selenium.support.event.Step.Cmd;
  * 
  * @since 2.0.0
  */
-public interface WebDriverEventListener {
+public interface EventListener {
 	/**
 	 * Location of logfiles produced by Test Drop-in Framework and
 	 * its dependent classes: {@value}

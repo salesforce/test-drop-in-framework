@@ -16,12 +16,13 @@ import org.openqa.selenium.WebElement;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.salesforce.drillbit.client.FullJSONLogger;
 
 /**
  * Records information on a given WebDriver command such as click() or getText().
  * 
  * The {@link EventFiringWebDriver} creates such a record before and after each command. The Step object
- * is then passed on to any listeners implementing the {@link WebDriverEventListener} interface.
+ * is then passed on to any listeners implementing the {@link EventListener} interface.
  * 
  * A special listener is {@link FullJSONLogger} which collects all Step objects and saves the collection
  * to a JSON file.

@@ -62,13 +62,14 @@ import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.logging.Logs;
 
+import com.salesforce.drillbit.client.FullJSONLogger;
 import com.salesforce.dropin.common.BaseData;
 import com.salesforce.selenium.support.event.Step.Cmd;
 import com.salesforce.selenium.support.event.Step.Type;
 
 /**
  * A wrapper around an arbitrary {@link WebDriver} instance which supports
- * registering of a {@link WebDriverEventListener}, e.g. for logging
+ * registering of a {@link EventListener}, e.g. for logging
  * purposes.
  * 
  * This is an extended version of org.openqa.selenium.support.events.EventFiringWebDriver. See
@@ -107,15 +108,15 @@ public class EventFiringWebDriver
 	private static Properties properties;
 	
 	private final WebDriver driver;
-	private final WebDriverEventListener defaultEventListener;
-	private final List<WebDriverEventListener> eventListeners = new ArrayList<>();
-	private final WebDriverEventListener dispatcher = (WebDriverEventListener) Proxy.newProxyInstance(
-			WebDriverEventListener.class.getClassLoader(), new Class[] { WebDriverEventListener.class },
+	private final EventListener defaultEventListener;
+	private final List<EventListener> eventListeners = new ArrayList<>();
+	private final EventListener dispatcher = (EventListener) Proxy.newProxyInstance(
+			EventListener.class.getClassLoader(), new Class[] { EventListener.class },
 			new InvocationHandler() {
 				public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 					try {
 						method.invoke(defaultEventListener, args);
-						for (WebDriverEventListener eventListener : eventListeners) {
+						for (EventListener eventListener : eventListeners) {
 							method.invoke(eventListener, args);
 						}
 						return null;
@@ -137,7 +138,7 @@ public class EventFiringWebDriver
 
 		Class<?>[] allInterfaces = extractInterfaces(driver);
 
-		this.driver = (WebDriver) Proxy.newProxyInstance(WebDriverEventListener.class.getClassLoader(), allInterfaces,
+		this.driver = (WebDriver) Proxy.newProxyInstance(EventListener.class.getClassLoader(), allInterfaces,
 				new InvocationHandler() {
 					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 						if ("getWrappedDriver".equals(method.getName())) {
@@ -161,7 +162,7 @@ public class EventFiringWebDriver
 					}
 				});
 		// standard listener which writes all events to JSON files
-		defaultEventListener = new FullJSONLogger(data.getData("testName"));
+		defaultEventListener = null; // new FullJSONLogger(data.getData("testName"));
 	}
 
 	private Class<?>[] extractInterfaces(Object object) {
@@ -190,7 +191,7 @@ public class EventFiringWebDriver
 	 *            the event listener to register
 	 * @return this for method chaining.
 	 */
-	public EventFiringWebDriver register(WebDriverEventListener eventListener) {
+	public EventFiringWebDriver register(EventListener eventListener) {
 		eventListeners.add(eventListener);
 		return this;
 	}
@@ -200,7 +201,7 @@ public class EventFiringWebDriver
 	 *            the event listener to unregister
 	 * @return this for method chaining.
 	 */
-	public EventFiringWebDriver unregister(WebDriverEventListener eventListener) {
+	public EventFiringWebDriver unregister(EventListener eventListener) {
 		eventListeners.remove(eventListener);
 		return this;
 	}
@@ -365,7 +366,7 @@ public class EventFiringWebDriver
 
 	/**
 	 * In addition to quitting the wrapped WebDriver instance, this call also will call
-	 * {@link WebDriverEventListener#closeListener()} on all registered listeners.
+	 * {@link EventListener#closeListener()} on all registered listeners.
 	 * 
 	 * @see WebDriver#quit()
 	 */
@@ -589,7 +590,7 @@ public class EventFiringWebDriver
 		private final WebElement underlyingElement;
 
 		private EventFiringWebElement(final WebElement element) {
-			this.element = (WebElement) Proxy.newProxyInstance(WebDriverEventListener.class.getClassLoader(),
+			this.element = (WebElement) Proxy.newProxyInstance(EventListener.class.getClassLoader(),
 					extractInterfaces(element), new InvocationHandler() {
 						public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 							if (method.getName().equals("getWrappedElement")) {
@@ -1544,7 +1545,7 @@ public class EventFiringWebDriver
 
 	private void closeListeners() {
 		defaultEventListener.closeListener();
-		for (WebDriverEventListener eventListener : eventListeners) {
+		for (EventListener eventListener : eventListeners) {
 			eventListener.closeListener();
 		}
 	}

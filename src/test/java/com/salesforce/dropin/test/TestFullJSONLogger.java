@@ -8,7 +8,7 @@ package com.salesforce.dropin.test;
 
 import org.testng.annotations.Test;
 
-import com.salesforce.selenium.support.event.FullJSONLogger;
+import com.salesforce.drillbit.client.FullJSONLogger;
 import com.salesforce.selenium.support.event.Step;
 import com.salesforce.selenium.support.event.Step.Cmd;
 import com.salesforce.selenium.support.event.Step.Type;

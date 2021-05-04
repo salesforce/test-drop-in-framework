@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license. 
  * For full license text, see LICENSE.txt file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
  */
-package com.salesforce.selenium.support.event;
+package com.salesforce.drillbit.client;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,6 +27,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.salesforce.selenium.support.event.AbstractWebDriverEventListener;
+import com.salesforce.selenium.support.event.EventFiringWebDriver;
+import com.salesforce.selenium.support.event.Step;
+import com.salesforce.selenium.support.event.EventListener;
 import com.salesforce.selenium.support.event.Step.Cmd;
 
 /**
@@ -49,12 +53,10 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	 * written when the running test calls the {@link EventFiringWebDriver#quit()} command.
 	 * <p>
 	 * The file will be stored under the relative directory
-	 * {@link WebDriverEventListener#TESTDROPIN_LOGFILES_DIR}.
-	 * 
-	 * @param testName name of the JSON file
+	 * {@link EventListener#TESTDROPIN_LOGFILES_DIR}.
 	 */
-	public FullJSONLogger(String testName) {
-		this.fileName = TESTDROPIN_LOGFILES_DIR + convertTestname2FileName(testName) + ".json";
+	FullJSONLogger() {
+		this.fileName = TESTDROPIN_LOGFILES_DIR + convertTestname2FileName(LibraryManager.getTestCaseName()) + ".json";
 	}
 
 	/*--------------------------------------------------------------------
