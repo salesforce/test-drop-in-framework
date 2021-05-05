@@ -201,7 +201,7 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 		LocalLogs clientLogs = LocalLogs.getHandlerBasedLoggerInstance(LoggingHandler.getInstance(), logTypesToInclude);
 		localLogs = LocalLogs.getCombinedLogsHolder(clientLogs, performanceLogger);
 		remoteLogs = new RemoteLogs(executeMethod, localLogs);
-		eventDispatcher = new EventDispatcher();
+		eventDispatcher = EventDispatcher.getInstance();
 	}
 
 	/**
@@ -1032,15 +1032,22 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 		}
 
 		public void dismiss() {
+			eventDispatcher.beforeDismiss();
 			execute(DriverCommand.DISMISS_ALERT);
+			eventDispatcher.afterDismiss();
 		}
 
 		public void accept() {
+			eventDispatcher.beforeAccept();
 			execute(DriverCommand.ACCEPT_ALERT);
+			eventDispatcher.afterAccept();
 		}
 
 		public String getText() {
-			return (String) execute(DriverCommand.GET_ALERT_TEXT).getValue();
+			eventDispatcher.beforeGetTextByAlert();
+			String text = (String) execute(DriverCommand.GET_ALERT_TEXT).getValue();
+			eventDispatcher.afterGetTextByAlert(text);
+			return text;
 		}
 
 		/**
@@ -1052,7 +1059,9 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 			if (keysToSend == null) {
 				throw new IllegalArgumentException("Keys to send should be a not null CharSequence");
 			}
+			eventDispatcher.beforeSendKeysByAlert(keysToSend);
 			execute(DriverCommand.SET_ALERT_VALUE, ImmutableMap.of("text", keysToSend));
+			eventDispatcher.afterSendKeysByAlert(keysToSend);
 		}
 	}
 

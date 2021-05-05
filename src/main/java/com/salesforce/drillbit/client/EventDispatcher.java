@@ -47,14 +47,20 @@ public class EventDispatcher {	/**
 	 */
 	public static final String CONFIG_PASSWORD_MASK = "password.locator";
 
+	private static EventDispatcher instance = null;
 	private static Properties properties;
 
 	private final List<EventListener> eventListeners = new ArrayList<>();
 	private Step currentStep = null;
 	private int stepNumber = 0;
 
+	public static EventDispatcher getInstance() {
+		if (instance == null)
+			instance = new EventDispatcher();
+		return instance;
+	}
 	
-	public EventDispatcher() {
+	private EventDispatcher() {
 		eventListeners.add(new FullJSONLogger());
 	}
 
@@ -658,89 +664,178 @@ public class EventDispatcher {	/**
 	}
 
 	public void beforeFrameByIndex(int frameIndex) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.frameByIndex);
+		step.setParam1("" + frameIndex);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeFrameByIndex(step, frameIndex);
 	}
 
 	public void afterFrameByIndex(int frameIndex) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.frameByIndex);
+		step.setParam1("" + frameIndex);
+		for (EventListener listener : eventListeners)
+			listener.afterFrameByIndex(step, frameIndex);
 	}
 
 	public void beforeFrameByName(String frameName) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.frameByName);
+		step.setParam1(frameName);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeFrameByName(step, frameName);
 	}
 
 	public void afterFrameByName(String frameName) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.frameByName);
+		step.setParam1(frameName);
+		for (EventListener listener : eventListeners)
+			listener.afterFrameByName(step, frameName);
 	}
 
 	public void beforeFrameByElement(WebElement frameElement) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.frameByElement);
+		step.setParam1(Step.getLocatorFromWebElement(frameElement));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeFrameByElement(step, frameElement);
 	}
 
 	public void afterFrameByElement(WebElement frameElement) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.frameByElement);
+		step.setParam1(Step.getLocatorFromWebElement(frameElement));
+		for (EventListener listener : eventListeners)
+			listener.afterFrameByElement(step, frameElement);
 	}
 
 	public void beforeParentFrame() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.parentFrame);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeParentFrame(step);
 	}
 
 	public void afterParentFrame() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.parentFrame);
+		for (EventListener listener : eventListeners)
+			listener.afterParentFrame(step);
 	}
 
-	public void beforeWindow(String windowName) {
-		// TODO Auto-generated method stub
-		
+	public void beforeWindow(String windowHandleOrName) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.window);
+		step.setParam1(windowHandleOrName);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeWindow(step, windowHandleOrName);
 	}
 
-	public void afterWindow(String windowName) {
-		// TODO Auto-generated method stub
-		
+	public void afterWindow(String windowHandleOrName) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.window);
+		step.setParam1(windowHandleOrName);
+		for (EventListener listener : eventListeners)
+			listener.afterWindow(step, windowHandleOrName);
 	}
 
 	public void beforeDefaultContent() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.defaultContent);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeDefaultContent(step);
 	}
 
 	public void afterDefaultContent() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.defaultContent);
+		for (EventListener listener : eventListeners)
+			listener.afterDefaultContent(step);
 	}
 	
 	public void beforeActiveElement() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.activeElement);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeActiveElement(step);
 	}
 
 	public void afterActiveElement(WebElement activeElement) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.activeElement);
+		step.setReturnValue(Step.getLocatorFromWebElement(activeElement));
+		step.setReturnObject(activeElement);
+		for (EventListener listener : eventListeners)
+			listener.afterActiveElement(step, activeElement);
 	}
 
 	public void beforeAlert() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.alert);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeAlert(step);
 	}
 
 	public void afterAlert(Alert alert) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.alert);
+		step.setReturnObject(alert);
+		for (EventListener listener : eventListeners)
+			listener.afterAlert(step, alert);
 	}
 
-	// dismiss
-	// accept
-	// getTextByAlert
-	// sendKeysByAlert
+	/* End of methods provided by RemoteTargetLocator */
+
+	/* Begin of methods provided by RemoteAlert class */
+
+	public void beforeDismiss() {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.dismiss);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeDismiss(step);
+	}
+
+	public void afterDismiss() {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.dismiss);
+		for (EventListener listener : eventListeners)
+			listener.afterDismiss(step);
+	}
+
+	public void beforeAccept() {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.accept);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeAccept(step);
+	}
+
+	public void afterAccept() {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.accept);
+		for (EventListener listener : eventListeners)
+			listener.afterAccept(step);
+	}
+
+	public void beforeGetTextByAlert() {
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getTextByAlert);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetTextByAlert(step);
+	}
+
+	public void afterGetTextByAlert(String text) {
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getTextByAlert);
+		step.setReturnValue(text);
+		for (EventListener listener : eventListeners)
+			listener.afterGetTextByAlert(step, text);
+	}
+
+	public void beforeSendKeysByAlert(String keysToSend) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.sendKeysByAlert);
+		step.setParam1(keysToSend);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeSendKeysByAlert(step, keysToSend);
+	}
+
+	public void afterSendKeysByAlert(String keysToSend) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.accept);
+		step.setParam1(keysToSend);
+		for (EventListener listener : eventListeners)
+			listener.afterSendKeysByAlert(step, keysToSend);
+	}
 
 	/* End of methods provided by RemoteWebDriver and its inner classes */
 
@@ -907,15 +1002,12 @@ public class EventDispatcher {	/**
 	}
 
 	// getCoordinates
-
-	public <X> void beforeGetScreenshotAsByElement(OutputType<X> target) {
+	public void beforeGetCoordinates() {
 		// TODO Auto-generated method stub
-		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.get);
-		step.setParam1(url);
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.getC);
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeGet(step, url);
-		
 	}
 
 	public <X> void afterGetScreenshotAsByElement(OutputType<X> target) {
@@ -932,33 +1024,45 @@ public class EventDispatcher {	/**
 	/* Begin of methods provided by RemoteKeyboard class */
 
 	public void beforeSendKeysByKeyboard(CharSequence... keysToSend) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.sendKeysByKeyboard);
+		step.setParam1(keysToSend.toString());
+		for (EventListener listener : eventListeners)
+			listener.beforeSendKeysByKeyboard(step, keysToSend);
 	}
 
 	public void afterSendKeysByKeyboard(CharSequence... keysToSend) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByKeyboard);
+		step.setParam1(keysToSend.toString());
+		for (EventListener listener : eventListeners)
+			listener.afterSendKeysByKeyboard(step, keysToSend);
 	}
 
 	public void beforePressKey(CharSequence... keyToPress) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.pressKey);
+		step.setParam1(keyToPress.toString());
+		for (EventListener listener : eventListeners)
+			listener.beforePressKey(step, keyToPress);
 	}
 
 	public void afterPressKey(CharSequence... keyToPress) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.pressKey);
+		step.setParam1(keyToPress.toString());
+		for (EventListener listener : eventListeners)
+			listener.afterPressKey(step, keyToPress);
 	}
 
 	public void beforeReleaseKey(CharSequence... keyToRelease) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.releaseKey);
+		step.setParam1(keyToRelease.toString());
+		for (EventListener listener : eventListeners)
+			listener.beforeReleaseKey(step, keyToRelease);
 	}
 
 	public void afterReleaseKey(CharSequence... keyToRelease) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.releaseKey);
+		step.setParam1(keyToRelease.toString());
+		for (EventListener listener : eventListeners)
+			listener.afterReleaseKey(step, keyToRelease);
 	}
 	
 	/* End of methods provided by RemoteKeyboard class */
@@ -966,73 +1070,110 @@ public class EventDispatcher {	/**
 	/* Begin of methods provided by RemoteMouse class */
 
 	public void beforeClickByMouse(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.clickByMouse);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeClickByMouse(step, where);
 	}
 
 	public void afterClickByMouse(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.clickByMouse);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		for (EventListener listener : eventListeners)
+			listener.afterClickByMouse(step, where);
 	}
 
 	public void beforeContextClick(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.contextClick);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeContextClick(step, where);
 	}
 
 	public void afterContextClick(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.contextClick);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		for (EventListener listener : eventListeners)
+			listener.afterContextClick(step, where);
 	}
 
 	public void beforeDoubleClick(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.doubleClick);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeDoubleClick(step, where);
 	}
 
 	public void afterDoubleClick(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.doubleClick);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		for (EventListener listener : eventListeners)
+			listener.afterDoubleClick(step, where);
 	}
 
 	public void beforeMouseDown(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.mouseDown);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeMouseDown(step, where);
 	}
 
 	public void afterMouseDown(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.mouseDown);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		for (EventListener listener : eventListeners)
+			listener.afterMouseDown(step, where);
 	}
 
 	public void beforeMouseUp(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.mouseUp);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeMouseUp(step, where);
 	}
 
 	public void afterMouseUp(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.mouseUp);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		for (EventListener listener : eventListeners)
+			listener.afterMouseUp(step, where);
 	}
 
 	public void beforeMouseMove(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.mouseMove);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeMouseMove(step, where);
 	}
 
 	public void afterMouseMove(Coordinates where) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.mouseMove);
+		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		for (EventListener listener : eventListeners)
+			listener.afterMouseMove(step, where);
 	}
 
 	public void beforeMouseMove(Coordinates where, long xOffset, long yOffset) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.mouseMoveWithOffset);
+		step.setParam1(String.format("x:%d,y:%d on screen, x:%d,y:%d", where.onScreen().x, where.onScreen().y, xOffset,
+				yOffset));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeMouseMove(step, where, xOffset, yOffset);
 	}
 
 	public void afterMouseMove(Coordinates where, long xOffset, long yOffset) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.mouseMoveWithOffset);
+		step.setParam1(String.format("x:%d,y:%d on screen, x:%d,y:%d", where.onScreen().x, where.onScreen().y, xOffset,
+				yOffset));
+		for (EventListener listener : eventListeners)
+			listener.afterMouseMove(step, where, xOffset, yOffset);
 	}
 
 	public void onException(Cmd cmd, Throwable throwable) {

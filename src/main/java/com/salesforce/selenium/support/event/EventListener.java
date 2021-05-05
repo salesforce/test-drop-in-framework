@@ -611,6 +611,83 @@ public interface EventListener {
 	void afterToUrl(Step step, URL url);
 
 	/*---------------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver.Alert object.
+	 *---------------------------------------------------------------------------*/
+
+	/**
+	 * Called before {@link Alert#dismiss switchTo().alert().dismiss()}.
+	 * @param step
+	 *            step record
+	 */
+	void beforeDismiss(Step step);
+
+	/**
+	 * Called after {@link Alert#dismiss switchTo().alert().dismiss()}.
+	 * Not called, if an exception is thrown.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void afterDismiss(Step step);
+
+	/**
+	 * Called before {@link Alert#accept switchTo().alert().accept()}.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void beforeAccept(Step step);
+
+	/**
+	 * Called after {@link Alert#accept switchTo().alert().accept()}. 
+	 * Not called, if an exception is thrown.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void afterAccept(Step step);
+
+	/**
+	 * Called before {@link Alert#getTextByAlert switchTo().alert().getTextByAlert()}.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void beforeGetTextByAlert(Step step);
+
+	/**
+	 * Called after {@link Alert#getTextByAlert switchTo().alert().getTextByAlert()}.
+	 * Not called, if an exception is thrown.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param text
+	 *            text shown in alert
+	 */
+	void afterGetTextByAlert(Step step, String text);
+
+	/**
+	 * Called before {@link Alert#sendKeysByAlert(String) switchTo().alert().sendKeysByAlert(String keysToSend)}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param keysToSend
+	 *            keys to enter
+	 */
+	void beforeSendKeysByAlert(Step step, String keysToSend);
+
+	/**
+	 * Called after {@link Alert#sendKeysByAlert(String) switchTo().alert().sendKeysByAlert(String keysToSend)}.
+	 * Not called, if an exception is thrown.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param keysToSend
+	 *            keys to enter
+	 */
+	void afterSendKeysByAlert(Step step, String keysToSend);
+
+	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.TargetLocator object.
 	 *---------------------------------------------------------------------------*/
 

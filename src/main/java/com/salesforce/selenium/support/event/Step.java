@@ -33,7 +33,7 @@ import com.salesforce.drillbit.client.FullJSONLogger;
 public class Step {
 	public enum Type { BeforeAction, AfterAction, BeforeGather, AfterGather, Exception }
 	// TODO add Alert
-	public enum WebDriverInterface { WebDriver, JavascriptExecutor, Options, ImeHandler, Navigation, TargetLocator, Timeouts, Window, WebElement, Keyboard, Mouse, TakesScreenshot }
+	public enum WebDriverInterface { WebDriver, JavascriptExecutor, Options, ImeHandler, Navigation, TargetLocator, Timeouts, Window, Alert, WebElement, Keyboard, Mouse, TakesScreenshot }
 	public enum Cmd {
 		// commands called directly from WebDriver object
 		close(WebDriverInterface.WebDriver, "close"),
@@ -90,6 +90,11 @@ public class Step {
 		maximize(WebDriverInterface.Window, "maximize"),
 		setPosition(WebDriverInterface.Window, "setPosition"),
 		setSizeByWindow(WebDriverInterface.Window, "setSize"),
+		// commands called directly from Alert object
+		dismiss(WebDriverInterface.Window, "dismiss"),
+		accept(WebDriverInterface.Window, "accept"),
+		getTextByAlert(WebDriverInterface.Window, "getText"),
+		sendKeysByAlert(WebDriverInterface.Window, "sendKeys"),
 		// commands called directly from WebElement object
 		clickByElement(WebDriverInterface.WebElement, "click"),
 		clear(WebDriverInterface.WebElement, "clear"),
@@ -172,6 +177,9 @@ public class Step {
 				break;
 			case Window:
 				value = fieldName + ".manage().window()." + shortCmd;
+				break;
+			case Alert:
+				value = fieldName + ".switchTo().alert()." + shortCmd;
 				break;
 			case WebElement:
 				value = fieldName + "." + shortCmd;
