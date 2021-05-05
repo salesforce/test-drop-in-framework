@@ -108,6 +108,7 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 	private static final String BORDER_COLORING_POSTFIX = "'";
 	private static final String[] BORDER_COLORS = new String[] { "red", "orange", "yellow", "green", "blue", "purple",
 			"magenta" };
+	private static final String IGNORE_COMMAND_TAG = "drillbit";
 	private int border_color_index = 0;
 
 	private EventDispatcher eventDispatcher;
@@ -324,15 +325,19 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 		Object result = response.getValue();
 		if (result instanceof String) {
 			String base64EncodedPng = (String) result;
-			return outputType.convertFromBase64Png(base64EncodedPng);
+			X screenshot = outputType.convertFromBase64Png(base64EncodedPng);
+			eventDispatcher.afterGetScreenshotAs(outputType, screenshot);
+			return screenshot;
 		} else if (result instanceof byte[]) {
 			String base64EncodedPng = new String((byte[]) result);
-			return outputType.convertFromBase64Png(base64EncodedPng);
+			X screenshot = outputType.convertFromBase64Png(base64EncodedPng);
+			eventDispatcher.afterGetScreenshotAs(outputType, screenshot);
+			return screenshot;
 		} else {
+			eventDispatcher.afterGetScreenshotAs(outputType, null);
 			throw new RuntimeException(String.format("Unexpected result for %s command: %s", DriverCommand.SCREENSHOT,
 					result == null ? "null" : result.getClass().getName() + " instance"));
 		}
-		// TODO eventDispatcher.after
 	}
 
 	public List<WebElement> findElements(By by) {
@@ -537,8 +542,17 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 		List<Object> convertedArgs = Stream.of(args).map(new WebElementToJsonConverter()).collect(Collectors.toList());
 
 		Map<String, ?> params = ImmutableMap.of("script", script, "args", convertedArgs);
+		
+		boolean sendToEventDispatcher = !script.startsWith(IGNORE_COMMAND_TAG);
+		if (!sendToEventDispatcher)
+			script = script.substring(IGNORE_COMMAND_TAG.length());
 
-		return execute(DriverCommand.EXECUTE_SCRIPT, params).getValue();
+		if (sendToEventDispatcher)
+			eventDispatcher.beforeExecuteScript(script, params);
+		Object result = execute(DriverCommand.EXECUTE_SCRIPT, params).getValue();
+		if (sendToEventDispatcher)
+			eventDispatcher.afterExecuteScript(script, params, result);
+		return result;
 	}
 
 	public Object executeAsyncScript(String script, Object... args) {
@@ -554,7 +568,16 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 
 		Map<String, ?> params = ImmutableMap.of("script", script, "args", convertedArgs);
 
-		return execute(DriverCommand.EXECUTE_ASYNC_SCRIPT, params).getValue();
+		boolean sendToEventDispatcher = !script.startsWith(IGNORE_COMMAND_TAG);
+		if (!sendToEventDispatcher)
+			script = script.substring(IGNORE_COMMAND_TAG.length());
+
+		if (sendToEventDispatcher)
+			eventDispatcher.beforeExecuteAsyncScript(script, params);
+		Object result = execute(DriverCommand.EXECUTE_ASYNC_SCRIPT, params).getValue();
+		if (sendToEventDispatcher)
+			eventDispatcher.afterExecuteAsyncScript(script, params, result);
+		return result;
 	}
 
 	private boolean isJavascriptEnabled() {
@@ -725,23 +748,38 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 
 		public void addCookie(Cookie cookie) {
 			cookie.validate();
+			eventDispatcher.beforeAddCookie(cookie);
 			execute(DriverCommand.ADD_COOKIE, ImmutableMap.of("cookie", cookie));
+			eventDispatcher.afterAddCookie(cookie);
 		}
 
 		public void deleteCookieNamed(String name) {
+			eventDispatcher.beforeDeleteCookieNamed(name);
 			execute(DriverCommand.DELETE_COOKIE, ImmutableMap.of("name", name));
+			eventDispatcher.afterDeleteCookieNamed(name);
 		}
 
 		public void deleteCookie(Cookie cookie) {
+			eventDispatcher.beforeDeleteCookie(cookie);
 			deleteCookieNamed(cookie.getName());
+			eventDispatcher.afterDeleteCookie(cookie);
 		}
 
 		public void deleteAllCookies() {
+			eventDispatcher.beforeDeleteAllCookies();
 			execute(DriverCommand.DELETE_ALL_COOKIES);
+			eventDispatcher.afterDeleteAllCookies();
+		}
+
+		public Set<Cookie> getCookies() {
+			eventDispatcher.beforeGetCookies();
+			Set<Cookie> toReturn = innerGetCookies();
+			eventDispatcher.afterGetCookies(toReturn);
+			return toReturn;
 		}
 
 		@SuppressWarnings({ "unchecked" })
-		public Set<Cookie> getCookies() {
+		private Set<Cookie> innerGetCookies() {
 			Object returned = execute(DriverCommand.GET_ALL_COOKIES).getValue();
 
 			Set<Cookie> toReturn = new HashSet<>();
@@ -766,12 +804,15 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 		}
 
 		public Cookie getCookieNamed(String name) {
-			Set<Cookie> allCookies = getCookies();
+			eventDispatcher.beforeGetCookieNamed(name);
+			Set<Cookie> allCookies = innerGetCookies();
 			for (Cookie cookie : allCookies) {
 				if (cookie.getName().equals(name)) {
+					eventDispatcher.afterGetCookieNamed(name, cookie);
 					return cookie;
 				}
 			}
+			eventDispatcher.afterGetCookieNamed(name, null);
 			return null;
 		}
 
@@ -818,20 +859,26 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 		protected class RemoteTimeouts implements Timeouts {
 
 			public Timeouts implicitlyWait(long time, TimeUnit unit) {
+				eventDispatcher.beforeImplicitlyWait(time, unit);
 				execute(DriverCommand.SET_TIMEOUT,
 						ImmutableMap.of("implicit", TimeUnit.MILLISECONDS.convert(time, unit)));
+				eventDispatcher.afterImplicitlyWait(time, unit);
 				return this;
 			}
 
 			public Timeouts setScriptTimeout(long time, TimeUnit unit) {
+				eventDispatcher.beforeSetScriptTimeout(time, unit);
 				execute(DriverCommand.SET_TIMEOUT,
 						ImmutableMap.of("script", TimeUnit.MILLISECONDS.convert(time, unit)));
+				eventDispatcher.afterSetScriptTimeout(time, unit);
 				return this;
 			}
 
 			public Timeouts pageLoadTimeout(long time, TimeUnit unit) {
+				eventDispatcher.beforePageLoadTimeout(time, unit);
 				execute(DriverCommand.SET_TIMEOUT,
 						ImmutableMap.of("pageLoad", TimeUnit.MILLISECONDS.convert(time, unit)));
+				eventDispatcher.afterPageLoadTimeout(time, unit);
 				return this;
 			}
 		} // timeouts class.
@@ -840,13 +887,17 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 		protected class RemoteWindow implements Window {
 
 			public void setSize(Dimension targetSize) {
+				eventDispatcher.beforeSetSizeByWindow(targetSize);
 				execute(DriverCommand.SET_CURRENT_WINDOW_SIZE,
 						ImmutableMap.of("width", targetSize.width, "height", targetSize.height));
+				eventDispatcher.afterSetSizeByWindow(targetSize);
 			}
 
 			public void setPosition(Point targetPosition) {
+				eventDispatcher.beforeSetPosition(targetPosition);
 				execute(DriverCommand.SET_CURRENT_WINDOW_POSITION,
 						ImmutableMap.of("x", targetPosition.x, "y", targetPosition.y));
+				eventDispatcher.afterSetPosition(targetPosition);
 			}
 
 			@SuppressWarnings({ "unchecked" })
@@ -1038,7 +1089,8 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 			String color = BORDER_COLORS[border_color_index % BORDER_COLORS.length];
 			border_color_index = border_color_index + 1;
 			// decorate element with a border
-	        ((JavascriptExecutor)this).executeScript(BORDER_COLORING_PREFIX + color + BORDER_COLORING_POSTFIX, element);
+			((JavascriptExecutor) this).executeScript(
+					IGNORE_COMMAND_TAG + BORDER_COLORING_PREFIX + color + BORDER_COLORING_POSTFIX, element);
 	    }
 	}
 

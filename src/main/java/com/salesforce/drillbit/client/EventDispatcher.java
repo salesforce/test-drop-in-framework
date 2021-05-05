@@ -6,12 +6,14 @@ package com.salesforce.drillbit.client;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
@@ -49,7 +51,7 @@ public class EventDispatcher {	/**
 
 	private final List<EventListener> eventListeners = new ArrayList<>();
 	private Step currentStep = null;
-	private int stepNumber = 1;
+	private int stepNumber = 0;
 
 	
 	public EventDispatcher() {
@@ -76,7 +78,6 @@ public class EventDispatcher {	/**
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeGetTitle(step);
-		
 	}
 
 	public void afterGetTitle(String title) {
@@ -84,7 +85,6 @@ public class EventDispatcher {	/**
 		step.setReturnValue(title);
 		for (EventListener listener : eventListeners)
 			listener.afterGetTitle(step, title);
-		
 	}
 
 	public void beforeGetCurrentUrl() {
@@ -95,29 +95,26 @@ public class EventDispatcher {	/**
 	}
 
 	public void afterGetCurrentUrl(String url) {
-		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.get);
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.get);
 		step.setReturnValue(url);
 		for (EventListener listener : eventListeners)
 			listener.afterGetCurrentUrl(step, url);
 	}
 
 	public <X> void beforeGetScreenshotAs(OutputType<X> target) {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.get);
-		step.setParam1(url);
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getScreenshotAs);
+		step.setParam1(target.toString());
 		currentStep = step;
 		for (EventListener listener : eventListeners)
-			listener.beforeGet(step, url);
-		
+			listener.beforeGetScreenshotAs(step, target);
 	}
 
-	public <X> void afterGetScreenshotAs(OutputType<X> target) {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.get);
-		step.setParam1(url);
+	public <X> void afterGetScreenshotAs(OutputType<X> target, X screenshot) {
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getScreenshotAs);
+		step.setParam1(target.toString());
+		step.setReturnObject(screenshot);
 		for (EventListener listener : eventListeners)
-			listener.afterGet(step, url);
-		
+			listener.afterGetScreenshotAs(step, target, screenshot);
 	}
 
 	public void beforeFindElementsByWebDriver(By by) {
@@ -171,7 +168,7 @@ public class EventDispatcher {	/**
 		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getPageSource);
 		step.setReturnValue(source);
 		for (EventListener listener : eventListeners)
-			listener.afterGet(step, source);		
+			listener.afterGetPageSource(step, source);		
 	}
 
 	public void beforeClose() {
@@ -202,21 +199,17 @@ public class EventDispatcher {	/**
 	}
 
 	public void beforeGetWindowHandles() {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.get);
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getWindowHandles);
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeGetWindowHandles(step);
-		
 	}
 
 	public void afterGetWindowHandles(Set<String> handles) {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.get);
-		step.setReturnValue(url);
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getWindowHandles);
+		step.setReturnObject(handles);
 		for (EventListener listener : eventListeners)
-			listener.afterGet(step, url);
-		
+			listener.afterGetWindowHandles(step, handles);
 	}
 
 	public void beforeGetWindowHandle() {
@@ -224,7 +217,6 @@ public class EventDispatcher {	/**
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeGetWindowHandle(step);
-		
 	}
 
 	public void afterGetWindowHandle(String handle) {
@@ -232,216 +224,437 @@ public class EventDispatcher {	/**
 		step.setReturnValue(handle);
 		for (EventListener listener : eventListeners)
 			listener.afterGetWindowHandle(step, handle);
-		
 	}
 
-	public void beforeExecuteScript(String script, Object... args) {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.get);
-		step.setParam1(url);
+	public void beforeExecuteScript(String script, Map<String, ?> params) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.executeScript);
+		step.setParam1(script);
+		if (!params.isEmpty()) {
+			Set<String> arguments = params.keySet();
+			StringBuilder b = new StringBuilder();
+			for (String arg : arguments)
+				b.append(arg).append(",");
+			String param2 = b.toString();
+			// drop the trailing ','
+			step.setParam2(param2.substring(0, param2.length()-1));
+		}
 		currentStep = step;
 		for (EventListener listener : eventListeners)
-			listener.beforeGet(step, url);
-		
+			listener.beforeExecuteScript(step, script, params);
 	}
 
-	public void afterExecuteScript(String script, Object... args) {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.get);
-		step.setParam1(url);
+	public void afterExecuteScript(String script, Map<String, ?> params, Object result) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.executeScript);
+		step.setParam1(script);
+		if (!params.isEmpty()) {
+			Set<String> arguments = params.keySet();
+			StringBuilder b = new StringBuilder();
+			for (String arg : arguments)
+				b.append(arg).append(",");
+			String param2 = b.toString();
+			// drop the trailing ','
+			step.setParam2(param2.substring(0, param2.length()-1));
+		}
+		step.setReturnObject(result);
 		for (EventListener listener : eventListeners)
-			listener.afterGet(step, url);
-		
+			listener.afterExecuteScript(step, script, params, result);
 	}
 
-	public void beforeExecuteAsyncScript(String script, Object... args) {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.get);
-		step.setParam1(url);
+	public void beforeExecuteAsyncScript(String script, Map<String, ?> params) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.executeAsyncScript);
+		step.setParam1(script);
+		if (!params.isEmpty()) {
+			Set<String> arguments = params.keySet();
+			StringBuilder b = new StringBuilder();
+			for (String arg : arguments)
+				b.append(arg).append(",");
+			String param2 = b.toString();
+			// drop the trailing ','
+			step.setParam2(param2.substring(0, param2.length()-1));
+		}
 		currentStep = step;
 		for (EventListener listener : eventListeners)
-			listener.beforeGet(step, url);
-		
+			listener.beforeExecuteAsyncScript(step, script, params);
 	}
 
-	public void afterExecuteAsyncScript(String script, Object... args) {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.get);
-		step.setParam1(url);
+	public void afterExecuteAsyncScript(String script, Map<String, ?> params, Object result) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.executeAsyncScript);
+		step.setParam1(script);
+		if (!params.isEmpty()) {
+			Set<String> arguments = params.keySet();
+			StringBuilder b = new StringBuilder();
+			for (String arg : arguments)
+				b.append(arg).append(",");
+			String param2 = b.toString();
+			// drop the trailing ','
+			step.setParam2(param2.substring(0, param2.length()-1));
+		}
+		step.setReturnObject(result);
 		for (EventListener listener : eventListeners)
-			listener.afterGet(step, url);
-		
+			listener.afterExecuteAsyncScript(step, script, params, result);
 	}
 
-	// addCookie
-	// deleteCookieNamed
-	// deleteCookie
-	// deleteAllCookies
-	// getCookies
-	// getCookieNamed
+	public void beforeAddCookie(Cookie cookie) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.addCookie);
+		step.setParam1(cookie.toString());
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeAddCookie(step, cookie);
+	}
 
-	// getAvailableEngines
-	// getActiveEngine
-	// isActivated
-	// deactivate
-	// activateEngine
+	public void afterAddCookie(Cookie cookie) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.addCookie);
+		step.setParam1(cookie.toString());
+		for (EventListener listener : eventListeners)
+			listener.afterAddCookie(step, cookie);
+	}
+
+	public void beforeDeleteCookieNamed(String name) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.deleteCookieNamed);
+		step.setParam1(name);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeDeleteCookieNamed(step, name);
+	}
+
+	public void afterDeleteCookieNamed(String name) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.deleteCookieNamed);
+		step.setParam1(name);
+		for (EventListener listener : eventListeners)
+			listener.afterDeleteCookieNamed(step, name);
+	}
+
+	public void beforeDeleteCookie(Cookie cookie) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.deleteCookie);
+		step.setParam1(cookie.toString());
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeDeleteCookie(step, cookie);
+	}
+
+	public void afterDeleteCookie(Cookie cookie) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.deleteCookie);
+		step.setParam1(cookie.toString());
+		for (EventListener listener : eventListeners)
+			listener.afterDeleteCookie(step, cookie);
+	}
+
+	public void beforeDeleteAllCookies() {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.deleteAllCookies);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeDeleteAllCookies(step);
+	}
+
+	public void afterDeleteAllCookies() {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.deleteAllCookies);
+		for (EventListener listener : eventListeners)
+			listener.afterDeleteAllCookies(step);
+	}
+
+	public void beforeGetCookies() {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.getCookies);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetCookies(step);
+	}
+
+	public void afterGetCookies(Set<Cookie> cookies) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.getCookies);
+		step.setReturnObject(cookies);
+		for (EventListener listener : eventListeners)
+			listener.afterGetCookies(step, cookies);
+	}
+
+	public void beforeGetCookieNamed(String name) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.getCookieNamed);
+		step.setParam1(name);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetCookieNamed(step, name);
+	}
+
+	public void afterGetCookieNamed(String name, Cookie cookie) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.getCookieNamed);
+		step.setParam1(name);
+		step.setReturnObject(cookie);
+		for (EventListener listener : eventListeners)
+			listener.afterGetCookieNamed(step, name, cookie);
+	}
+
+	public void beforeGetAvailableEngines() {
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getAvailableEngines);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetAvailableEngines(step);
+	}
+
+	public void afterGetAvailableEngines(List<String> engines) {
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getAvailableEngines);
+		step.setReturnObject(engines);
+		for (EventListener listener : eventListeners)
+			listener.afterGetAvailableEngines(step, engines);
+	}
+
+	public void beforeGetActiveEngine() {
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getActiveEngine);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetActiveEngine(step);
+	}
+
+	public void afterGetActiveEngine(String engine) {
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getActiveEngine);
+		step.setReturnValue(engine);
+		for (EventListener listener : eventListeners)
+			listener.afterGetActiveEngine(step, engine);
+	}
+
+	public void beforeIsActivated() {
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.isActivated);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeIsActivated(step);
+	}
+
+	public void afterIsActivated(boolean isActivated) {
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.isActivated);
+		step.setReturnValue(Boolean.toString(isActivated));
+		for (EventListener listener : eventListeners)
+			listener.afterIsActivated(step, isActivated);
+	}
+
+	public void beforeDeactivate() {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.deactivate);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeDeactivate(step);
+	}
+
+	public void afterDeactivate() {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.deactivate);
+		for (EventListener listener : eventListeners)
+			listener.afterDeactivate(step);
+	}
+
+	public void beforeActivateEngine(String engine) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.activateEngine);
+		step.setParam1(engine);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeActivateEngine(step, engine);
+	}
+
+	public void afterActivateEngine(String engine) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.activateEngine);
+		step.setParam1(engine);
+		for (EventListener listener : eventListeners)
+			listener.afterActivateEngine(step, engine);
+	}
 
 	public void beforeImplicitlyWait(long time, TimeUnit unit) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.implicitlyWait);
+		step.setParam1(Long.toString(time));
+		step.setParam2(unit.name());
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeImplicitlyWait(step, time, unit);
 	}
 
 	public void afterImplicitlyWait(long time, TimeUnit unit) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.implicitlyWait);
+		step.setParam1(Long.toString(time));
+		step.setParam2(unit.name());
+		for (EventListener listener : eventListeners)
+			listener.afterImplicitlyWait(step, time, unit);
 	}
 
 	public void beforeSetScriptTimeout(long time, TimeUnit unit) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.setScriptTimeout);
+		step.setParam1(Long.toString(time));
+		step.setParam2(unit.name());
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeSetScriptTimeout(step, time, unit);
 	}
 
 	public void afterSetScriptTimeout(long time, TimeUnit unit) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.setScriptTimeout);
+		step.setParam1(Long.toString(time));
+		step.setParam2(unit.name());
+		for (EventListener listener : eventListeners)
+			listener.afterSetScriptTimeout(step, time, unit);
 	}
 
 	public void beforePageLoadTimeout(long time, TimeUnit unit) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.pageLoadTimeout);
+		step.setParam1(Long.toString(time));
+		step.setParam2(unit.name());
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforePageLoadTimeout(step, time, unit);
 	}
 
 	public void afterPageLoadTimeout(long time, TimeUnit unit) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.pageLoadTimeout);
+		step.setParam1(Long.toString(time));
+		step.setParam2(unit.name());
+		for (EventListener listener : eventListeners)
+			listener.afterPageLoadTimeout(step, time, unit);
 	}
 
-	public void beforeSetSize(Dimension targetSize) {
-		// TODO Auto-generated method stub
-		
+	public void beforeSetSizeByWindow(Dimension targetSize) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.setSizeByWindow);
+		step.setParam1(targetSize.getHeight() + "x" + targetSize.getWidth());
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeSetSizeByWindow(step, targetSize);
 	}
 
-	public void afterSetSize(Dimension targetSize) {
-		// TODO Auto-generated method stub
-		
+	public void afterSetSizeByWindow(Dimension targetSize) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.setSizeByWindow);
+		step.setParam1(targetSize.getHeight() + "x" + targetSize.getWidth());
+		for (EventListener listener : eventListeners)
+			listener.afterSetSizeByWindow(step, targetSize);
 	}
 
 	public void beforeSetPosition(Point targetPosition) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.setPosition);
+		step.setParam1("x:" + targetPosition.x + ",y:" + targetPosition.y);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeSetPosition(step, targetPosition);
 	}
 
 	public void afterSetPosition(Point targetPosition) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.setPosition);
+		step.setParam1("x:" + targetPosition.x + ",y:" + targetPosition.y);
+		for (EventListener listener : eventListeners)
+			listener.afterSetPosition(step, targetPosition);
 	}
 
 	public void beforeGetSizeByWindow() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getSizeByWindow);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetSizeByWindow(step);
 	}
 
 	public void afterGetSizeByWindow(Dimension targetSize) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getSizeByWindow);
+		step.setReturnObject(targetSize);
+		for (EventListener listener : eventListeners)
+			listener.afterGetSizeByWindow(step, targetSize);
 	}
 
 	public void beforeGetPosition() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getPosition);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetPosition(step);
 	}
 
 	public void afterGetPosition(Point targetPosition) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getPosition);
+		step.setReturnObject(targetPosition);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.afterGetPosition(step, targetPosition);
 	}
 
 	public void beforeMaximize() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.maximize);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeMaximize(step);
 	}
 
 	public void afterMaximize() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.maximize);
+		for (EventListener listener : eventListeners)
+			listener.afterMaximize(step);
 	}
 
 	public void beforeFullscreen() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.fullscreen);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeFullscreen(step);
 	}
 
 	public void afterFullscreen() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.fullscreen);
+		for (EventListener listener : eventListeners)
+			listener.afterFullscreen(step);
 	}
 
 	public void beforeBack() {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.get);
-		step.setParam1(url);
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.back);
 		currentStep = step;
 		for (EventListener listener : eventListeners)
-			listener.beforeGet(step, url);
-		
+			listener.beforeBack(step);
 	}
 
 	public void afterBack() {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.get);
-		step.setParam1(url);
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.back);
 		for (EventListener listener : eventListeners)
-			listener.afterGet(step, url);
-		
+			listener.afterBack(step);
 	}
 
 	public void beforeForward() {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.get);
-		step.setParam1(url);
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.forward);
 		currentStep = step;
 		for (EventListener listener : eventListeners)
-			listener.beforeGet(step, url);
-		
+			listener.beforeForward(step);
 	}
 
 	public void afterForward() {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.get);
-		step.setParam1(url);
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.forward);
 		for (EventListener listener : eventListeners)
-			listener.afterGet(step, url);
-		
+			listener.afterForward(step);
 	}
 
 	public void beforeTo(String url) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.to);
+		step.setParam1(url);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeTo(step, url);
 	}
 
 	public void afterTo(String url) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.to);
+		step.setParam1(url);
+		for (EventListener listener : eventListeners)
+			listener.afterTo(step, url);
 	}
 
 	public void beforeToUrl(URL url) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.toUrl);
+		step.setParam1(url.toString());
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeToUrl(step, url);
 	}
 
 	public void afterToUrl(URL url) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.toUrl);
+		step.setParam1(url.toString());
+		for (EventListener listener : eventListeners)
+			listener.afterToUrl(step, url);
 	}
 
 	public void beforeRefresh() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.refresh);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeRefresh(step);
 	}
 
 	public void afterRefresh() {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.refresh);
+		for (EventListener listener : eventListeners)
+			listener.afterRefresh(step);
 	}
 
 	public void beforeFrameByIndex(int frameIndex) {

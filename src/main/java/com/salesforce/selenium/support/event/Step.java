@@ -33,7 +33,7 @@ import com.salesforce.drillbit.client.FullJSONLogger;
 public class Step {
 	public enum Type { BeforeAction, AfterAction, BeforeGather, AfterGather, Exception }
 	// TODO add Alert
-	public enum WebDriverInterface { WebDriver, JavascriptExecutor, Navigation, TargetLocator, Timeouts, Window, WebElement, Keyboard, Mouse, TakesScreenshot }
+	public enum WebDriverInterface { WebDriver, JavascriptExecutor, Options, ImeHandler, Navigation, TargetLocator, Timeouts, Window, WebElement, Keyboard, Mouse, TakesScreenshot }
 	public enum Cmd {
 		// commands called directly from WebDriver object
 		close(WebDriverInterface.WebDriver, "close"),
@@ -51,11 +51,29 @@ public class Step {
 		executeScript(WebDriverInterface.JavascriptExecutor, "executeScript"),
 		// commands called directly from WebDriver object after casting to TakesScreenshot
 		getScreenshotAs(WebDriverInterface.TakesScreenshot, "getScreenshotAs"),
+		// commands called directly from WebDriver.Options object
+		addCookie(WebDriverInterface.Options, "addCookie"),
+		deleteCookieNamed(WebDriverInterface.Options, "deleteCookieNamed"),
+		deleteCookie(WebDriverInterface.Options, "deleteCookie"),
+		deleteAllCookies(WebDriverInterface.Options, "deleteAllCookies"),
+		getCookies(WebDriverInterface.Options, "getCookies"),
+		getCookieNamed(WebDriverInterface.Options, "getCookieNamed"),
+		// commands called directly from WebDriver.ImeHandler object
+		getAvailableEngines(WebDriverInterface.ImeHandler, "getAvailableEngines"),
+		getActiveEngine(WebDriverInterface.ImeHandler, "getActiveEngine"),
+		isActivated(WebDriverInterface.ImeHandler, "isActivated"),
+		deactivate(WebDriverInterface.ImeHandler, "deactivate"),
+		activateEngine(WebDriverInterface.ImeHandler, "activateEngine"),
+		// commands called directly from WebDriver.Timeouts object
+		implicitlyWait(WebDriverInterface.Timeouts, "implicitlyWait"),
+		pageLoadTimeout(WebDriverInterface.Timeouts, "pageLoadTimeout"),
+		setScriptTimeout(WebDriverInterface.Timeouts, "setScriptTimeout"),
 		// commands called directly from WebDriver.Navigation object
 		back(WebDriverInterface.Navigation, "back"),
 		forward(WebDriverInterface.Navigation, "forward"),
 		refresh(WebDriverInterface.Navigation, "refresh"),
 		to(WebDriverInterface.Navigation, "to"),
+		toUrl(WebDriverInterface.Navigation, "to"),
 		// commands called directly from WebDriver.TargetLocator object
 		activeElement(WebDriverInterface.TargetLocator, "activeElement"),
 		alert(WebDriverInterface.TargetLocator, "alert"),
@@ -65,10 +83,6 @@ public class Step {
 		frameByElement(WebDriverInterface.TargetLocator, "frame"),
 		parentFrame(WebDriverInterface.TargetLocator, "parentFrame"),
 		window(WebDriverInterface.TargetLocator, "window"),
-		// commands called directly from WebDriver.Timeouts object
-		implicitlyWait(WebDriverInterface.Timeouts, "implicitlyWait"),
-		pageLoadTimeout(WebDriverInterface.Timeouts, "pageLoadTimeout"),
-		setScriptTimeout(WebDriverInterface.Timeouts, "setScriptTimeout"),
 		// commands called directly from WebDriver.Window object
 		fullscreen(WebDriverInterface.Window, "fullscreen"),
 		getPosition(WebDriverInterface.Window, "getPosition"),
@@ -141,6 +155,12 @@ public class Step {
 			case TakesScreenshot:
 				value = "(TakesScreenshot) " + fieldName + "." + shortCmd;
 				break;
+			case Options:
+				value = fieldName + ".manage()." + shortCmd;
+				break;
+			case ImeHandler:
+				value = fieldName + ".manage().ime()." + shortCmd;
+				break;
 			case Navigation:
 				value = fieldName + ".navigate()." + shortCmd;
 				break;
@@ -148,7 +168,7 @@ public class Step {
 				value = fieldName + ".switchTo()." + shortCmd;
 				break;
 			case Timeouts:
-				value = fieldName + ".timeouts()." + shortCmd;
+				value = fieldName + ".manage().timeouts()." + shortCmd;
 				break;
 			case Window:
 				value = fieldName + ".manage().window()." + shortCmd;

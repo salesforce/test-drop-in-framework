@@ -410,12 +410,12 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	}
 
 	@Override
-	public void beforeSetSize(Step step, Dimension targetSize) {
+	public void beforeSetSizeByWindow(Step step, Dimension targetSize) {
 		logEntries.add(step);
 	}
 
 	@Override
-	public void afterSetSize(Step step, Dimension targetSize) {
+	public void afterSetSizeByWindow(Step step, Dimension targetSize) {
 		logEntries.add(step);
 	}
 

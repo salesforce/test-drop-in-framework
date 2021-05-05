@@ -16,12 +16,15 @@
 //under the License.
 package com.salesforce.selenium.support.event;
 
+import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
@@ -239,10 +242,10 @@ public interface EventListener {
 	 *            step record
 	 * @param script
 	 *            JavaScript script to execute
-	 * @param args
+	 * @param params
 	 *            arguments for script
 	 */
-	void beforeExecuteAsyncScript(Step step, String script, Object... args);
+	void beforeExecuteAsyncScript(Step step, String script, Map<String, ?> params);
 
 	/**
 	 * Called after {@link org.openqa.selenium.JavascriptExecutor#executeAsyncScript(String, Object...) executingAsyncScript(String, Object...)}.
@@ -250,10 +253,12 @@ public interface EventListener {
 	 *            step record
 	 * @param script
 	 *            JavaScript script executed
-	 * @param args
+	 * @param params
 	 *            arguments for script
+	 * @param object
+	 *            returned object
 	 */
-	void afterExecuteAsyncScript(Step step, String script, Object... args);
+	void afterExecuteAsyncScript(Step step, String script, Map<String, ?> params, Object result);
 
 	/**
 	 * Called before {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...) executingScript(String, Object...)}.
@@ -261,10 +266,10 @@ public interface EventListener {
 	 *            step record
 	 * @param script
 	 *            JavaScript script to execute
-	 * @param args
+	 * @param params
 	 *            arguments for script
 	 */
-	void beforeExecuteScript(Step step, String script, Object... args);
+	void beforeExecuteScript(Step step, String script, Map<String, ?> params);
 
 	/**
 	 * Called after {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...) executingScript(String, Object...)}.
@@ -272,11 +277,127 @@ public interface EventListener {
 	 *            step record
 	 * @param script
 	 *            JavaScript script executed
-	 * @param args
+	 * @param params
 	 *            arguments for script
+	 * @param object
+	 *            returned object
 	 */
-	void afterExecuteScript(Step step, String script, Object... args);
+	void afterExecuteScript(Step step, String script, Map<String, ?> params, Object result);
 
+	/*--------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver.Options object
+	 *--------------------------------------------------------------------*/
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.Options#addCookie(Cookie) addCookie(Cookie cookie)}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param cookie
+	 *            cookie to add
+	 */
+	void beforeAddCookie(Step step, Cookie cookie);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.Options#addCookie(Cookie) addCookie(Cookie cookie)}.
+	 * @param step
+	 *            step record
+	 * @param cookie
+	 *            cookie to add
+	 */
+	void afterAddCookie(Step step, Cookie cookie);
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.Options#deleteCookieNamed(String) deleteCookieNamed(String name)}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param name
+	 *            name of cookie to delete
+	 */
+	void beforeDeleteCookieNamed(Step step, String name);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.Options#deleteCookieNamed(String) deleteCookieNamed(String name)}.
+	 * @param step
+	 *            step record
+	 * @param name
+	 *            name of cookie to delete
+	 */
+	void afterDeleteCookieNamed(Step step, String name);
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.Options#deleteCookie(Cookie) deleteCookie(Cookie cookie)}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param cookie
+	 *            cookie to delete
+	 */
+	void beforeDeleteCookie(Step step, Cookie cookie);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.Options#deleteCookie(Cookie) deleteCookie(Cookie cookie)}.
+	 * @param step
+	 *            step record
+	 * @param cookie
+	 *            cookie to delete
+	 */
+	void afterDeleteCookie(Step step, Cookie cookie);
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.Options#deleteAllCookies() deleteAllCookies()}.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void beforeDeleteAllCookies(Step step);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.Options#deleteAllCookies() deleteAllCookies()}.
+	 * @param step
+	 *            step record
+	 */
+	void afterDeleteAllCookies(Step step);
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.Options#getCookies() getCookies()}.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void beforeGetCookies(Step step);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.Options#getCookies() getCookies()}.
+	 * @param step
+	 *            step record
+	 * @param cookies
+	 *            set of all cookies
+	 */
+	void afterGetCookies(Step step, Set<Cookie> cookies);
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.Options#addCookie(Cookie) getCookieNamed(String name)}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param name
+	 *            name of cookie to get
+	 */
+	void beforeGetCookieNamed(Step step, String name);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.Options#getCookieNamed(Cookie) getCookieNamed(String name)}.
+	 * @param step
+	 *            step record
+	 * @param name
+	 *            name of cookie to get
+	 * @param cookie
+	 *            returned cookie
+	 */
+	void afterGetCookieNamed(Step step, String name, Cookie cookie);
+	
 	/*--------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver object
 	 * after casting to TakesScreenshot.
@@ -285,8 +406,6 @@ public interface EventListener {
 	/**
 	 * Called before {@link org.openqa.selenium.TakesScreenshot#getScreenshotAs(OutputType target) getScreenshotAs(OutputType&lt;X&gt; target)}.
 	 * 
-	 * @param <X> 
-	 * 			  Return type for getScreenshotAs.
 	 * @param step
 	 *            step record
 	 * @param target
@@ -296,15 +415,108 @@ public interface EventListener {
 
 	/**
 	 * Called after {@link org.openqa.selenium.TakesScreenshot#getScreenshotAs(OutputType target) getScreenshotAs(OutputType&lt;X&gt; target)}.
-	 * @param <X> 
-	 * 			  Return type for getScreenshotAs.
 	 * @param step
 	 *            step record
 	 * @param target
 	 *            target type, @see OutputType
+	 * @param screenshot
+	 *            screenshot captured
 	 */
-	<X> void afterGetScreenshotAs(Step step, OutputType<X> target);
-	
+	<X> void afterGetScreenshotAs(Step step, OutputType<X> target, X screenshot);
+
+	/*--------------------------------------------------------------------
+	 * Section for all commands called directly from WebDriver.ImeHandler object
+	 *--------------------------------------------------------------------*/
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.ImeHandler#getAvailableEngines() getAvailableEngines()}.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void beforeGetAvailableEngines(Step step);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.ImeHandler#getAvailableEngines() getAvailableEngines()}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param engines
+	 *            list of names of available engines
+	 */
+	void afterGetAvailableEngines(Step step, List<String> engines);
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.ImeHandler#getActiveEngine() getActiveEngine()}.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void beforeGetActiveEngine(Step step);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.ImeHandler#getActiveEngine() getActiveEngine()}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param engine
+	 *            names of active engine
+	 */
+	void afterGetActiveEngine(Step step, String engine);
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.ImeHandler#isActivated() isActivated()}.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void beforeIsActivated(Step step);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.ImeHandler#isActivated() isActivated()}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param isActive
+	 *            state of activation of current engine
+	 */
+	void afterIsActivated(Step step, boolean isActive);
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.ImeHandler#deactivate() deactivate()}.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void beforeDeactivate(Step step);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.ImeHandler#deactivate() deactivate()}.
+	 * 
+	 * @param step
+	 *            step record
+	 */
+	void afterDeactivate(Step step);
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.ImeHandler#activateEngine(String) activateEngine(String engine)}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param engine
+	 *            name of engine to activate
+	 */
+	void beforeActivateEngine(Step step, String engine);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.ImeHandler#activateEngine(String) activateEngine(String engine)}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param engine
+	 *            name of engine to activate
+	 */
+	void afterActivateEngine(Step step, String engine);
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Navigation object.
@@ -364,7 +576,7 @@ public interface EventListener {
 	 * @param step
 	 *            step record
 	 * @param url
-	 *            URL
+	 *            string representation of URL
 	 */
 	void beforeTo(Step step, String url);
 
@@ -374,9 +586,29 @@ public interface EventListener {
 	 * @param step
 	 *            step record
 	 * @param url
-	 *            URL
+	 *            string representation of URL
 	 */
 	void afterTo(Step step, String url);
+
+	/**
+	 * Called before {@link org.openqa.selenium.WebDriver.Navigation#to
+	 * navigate().to(URL url)}.
+	 * @param step
+	 *            step record
+	 * @param url
+	 *            URL
+	 */
+	void beforeToUrl(Step step, URL url);
+
+	/**
+	 * Called after {@link org.openqa.selenium.WebDriver.Navigation#to
+	 * navigate().to(URL url)}. Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param url
+	 *            URL
+	 */
+	void afterToUrl(Step step, URL url);
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.TargetLocator object.
@@ -687,7 +919,7 @@ public interface EventListener {
 	 * @param targetSize
 	 *            window size on screen
 	 */
-	void beforeSetSize(Step step, Dimension targetSize);
+	void beforeSetSizeByWindow(Step step, Dimension targetSize);
 
 	/**
 	 * Called after {@link WebDriver.Window#setSize(Dimension) setSize(..)}.
@@ -697,7 +929,7 @@ public interface EventListener {
 	 * @param targetSize
 	 *            window size on screen
 	 */
-	void afterSetSize(Step step, Dimension targetSize);
+	void afterSetSizeByWindow(Step step, Dimension targetSize);
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebElement object.

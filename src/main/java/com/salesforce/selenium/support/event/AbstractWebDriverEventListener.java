@@ -339,11 +339,11 @@ public abstract class AbstractWebDriverEventListener implements EventListener {
 	}
 
 	@Override
-	public void beforeSetSize(Step step, Dimension targetSize) {
+	public void beforeSetSizeByWindow(Step step, Dimension targetSize) {
 	}
 
 	@Override
-	public void afterSetSize(Step step, Dimension targetSize) {
+	public void afterSetSizeByWindow(Step step, Dimension targetSize) {
 	}
 
 	/*---------------------------------------------------------------------------

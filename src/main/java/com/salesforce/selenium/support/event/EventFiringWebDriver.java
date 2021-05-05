@@ -480,11 +480,10 @@ public class EventFiringWebDriver
 		}
 	}
 
-	// TODO add to WebDriverEventListener interface
 	@Override
 	public <X> X getScreenshotAs(OutputType<X> target) throws WebDriverException {
 		if (driver instanceof TakesScreenshot) {
-			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.getScreenshotAs);
+			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getScreenshotAs);
 			String targetString = (target != null) ? target.toString() : null;
 			stepBefore.setParam1(targetString);
 			dispatcher.beforeGetScreenshotAs(stepBefore, target);
@@ -492,9 +491,9 @@ public class EventFiringWebDriver
 
 			X result = ((TakesScreenshot) driver).getScreenshotAs(target);
 
-			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.getScreenshotAs);
+			Step stepAfter = new Step(Type.AfterGather, stepNumber, Cmd.getScreenshotAs);
 			stepAfter.setParam1(targetString);
-			dispatcher.afterGetScreenshotAs(stepAfter, target);
+			dispatcher.afterGetScreenshotAs(stepAfter, target, result);
 			return result;
 		}
 		throw new UnsupportedOperationException("Underlying driver instance does not support taking screenshots");
@@ -1365,14 +1364,14 @@ public class EventFiringWebDriver
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setSizeByWindow);
 			String targetSizeString = (targetSize != null) ? targetSize.toString() : null;
 			stepBefore.setParam1(targetSizeString);
-			dispatcher.beforeSetSize(stepBefore, targetSize);
+			dispatcher.beforeSetSizeByWindow(stepBefore, targetSize);
 			currentStep = stepBefore;
 
 			window.setSize(targetSize);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.setSizeByWindow);
 			stepAfter.setParam1(targetSizeString);
-			dispatcher.afterSetSize(stepAfter, targetSize);
+			dispatcher.afterSetSizeByWindow(stepAfter, targetSize);
 		}
 	}
 
