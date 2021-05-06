@@ -101,7 +101,9 @@ public class Step {
 		findElementByElement(WebDriverInterface.WebElement, "findElement"),
 		findElementsByElement(WebDriverInterface.WebElement, "findElements"),
 		getAttribute(WebDriverInterface.WebElement, "getAttribute"),
+		getCoordinates(WebDriverInterface.WebElement, "getCoordinates"),
 		getCssValue(WebDriverInterface.WebElement, "getCssValue"),
+		getScreenshotAsByElement(WebDriverInterface.WebElement, "getScreenshotAs"),
 		getTagName(WebDriverInterface.WebElement, "getTagName"),
 		getText(WebDriverInterface.WebElement, "getText"),
 		isDisplayed(WebDriverInterface.WebElement, "isDisplayed"),
@@ -111,6 +113,7 @@ public class Step {
 		getSizeByElement(WebDriverInterface.WebElement, "getSize"),
 		getRect(WebDriverInterface.WebElement, "getRect"),
 		sendKeysByElement(WebDriverInterface.WebElement, "sendKeys"),
+		uploadFile(WebDriverInterface.WebElement, "sendKeys"),
 		submit(WebDriverInterface.WebElement, "submit"),
 		// commands called directly from Keyboard object
 		sendKeysByKeyboard(WebDriverInterface.Keyboard, "sendKeys"),

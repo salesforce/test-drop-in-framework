@@ -16,6 +16,7 @@
 //under the License.
 package com.salesforce.selenium.support.event;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -1323,6 +1324,52 @@ public interface EventListener {
 	void afterGetRect(Step step, Rectangle rectangle, WebElement element);
 
 	/**
+	 * Called before {@link WebElement#getCoordinates WebElement.getCoordinates()}.
+	 * @param step
+	 *            step record
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void beforeGetCoordinates(Step step, WebElement element);
+
+	/**
+	 * Called after {@link WebElement#getCoordinates WebElement.getCoordinates()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param coordinates
+	 *            the retrieved coordinates
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void afterGetCoordinates(Step step, Coordinates coordinates, WebElement element);
+
+	/**
+	 * Called before {@link WebElement#getScreenshotAs(OutputType target) getScreenshotAs(OutputType&lt;X&gt; target)}.
+	 * 
+	 * @param step
+	 *            step record
+	 * @param target
+	 *            target type, @see OutputType
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	<X> void beforeGetScreenshotAsByElement(Step step, OutputType<X> target, WebElement element);
+
+	/**
+	 * Called after {@link WebElement#getScreenshotAs(OutputType target) getScreenshotAs(OutputType&lt;X&gt; target)}.
+	 * @param step
+	 *            step record
+	 * @param target
+	 *            target type, @see OutputType
+	 * @param screenshot
+	 *            screenshot captured
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	<X> void afterGetScreenshotAsByElement(Step step, OutputType<X> target, X screenshot, WebElement element);
+
+	/**
 	 * Called before {@link WebElement#sendKeys WebElement.sendKeys(...)}.
 	 * @param step
 	 *            step record
@@ -1344,6 +1391,32 @@ public interface EventListener {
 	 *            text to insert
 	 */
 	void afterSendKeysByElement(Step step, WebElement element, CharSequence... keysToSend);
+
+	/**
+	 * Called before {@link WebElement#sendKeys WebElement.sendKeys(...)} if the keys to send
+	 * are the name of a local file.
+	 * @param step
+	 *            step record
+	 * @param element
+	 *            the WebElement being used for the action
+	 * @param localFile
+	 *            local file to upload
+	 */
+	void beforeUploadFile(Step step, WebElement element, File localFile);
+
+	/**
+	 * Called after {@link WebElement#sendKeys WebElement.sendKeys(...)}} if the keys to send
+	 * are the name of a local file. Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param element
+	 *            the WebElement being used for the action
+	 * @param localFile
+	 *            local file to upload
+	 * @param response
+	 *            response to file upload
+	 */
+	void afterUploadFile(Step step, WebElement element, File localFile, String response);
 	
 	/**
 	 * Called before {@link WebElement#submit WebElement.submit()}.

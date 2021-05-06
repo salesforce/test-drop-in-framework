@@ -111,7 +111,7 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 	private static final String IGNORE_COMMAND_TAG = "drillbit";
 	private int border_color_index = 0;
 
-	private EventDispatcher eventDispatcher;
+	private EventDispatcher eventDispatcher = EventDispatcher.getInstance();
 
 	private static final Logger logger = Logger.getLogger(RemoteWebDriver.class.getName());
 	private Level level = Level.FINE;
@@ -201,7 +201,6 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 		LocalLogs clientLogs = LocalLogs.getHandlerBasedLoggerInstance(LoggingHandler.getInstance(), logTypesToInclude);
 		localLogs = LocalLogs.getCombinedLogsHolder(clientLogs, performanceLogger);
 		remoteLogs = new RemoteLogs(executeMethod, localLogs);
-		eventDispatcher = EventDispatcher.getInstance();
 	}
 
 	/**
@@ -1092,7 +1091,7 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 	/*
 	 * Draw a border around the element if JavaScript is enabled
 	 */
-	private void highlightElement(WebElement element) {
+	void highlightElement(WebElement element) {
 	    if (isJavascriptEnabled()) {
 	    	// choose from seven border colors for each call
 			String color = BORDER_COLORS[border_color_index % BORDER_COLORS.length];

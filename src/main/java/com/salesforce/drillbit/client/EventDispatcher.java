@@ -3,11 +3,11 @@
  */
 package com.salesforce.drillbit.client;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -48,7 +48,6 @@ public class EventDispatcher {	/**
 	public static final String CONFIG_PASSWORD_MASK = "password.locator";
 
 	private static EventDispatcher instance = null;
-	private static Properties properties;
 
 	private final List<EventListener> eventListeners = new ArrayList<>();
 	private Step currentStep = null;
@@ -546,11 +545,12 @@ public class EventDispatcher {	/**
 			listener.beforeGetSizeByWindow(step);
 	}
 
-	public void afterGetSizeByWindow(Dimension targetSize) {
+	public void afterGetSizeByWindow(Dimension size) {
 		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getSizeByWindow);
-		step.setReturnObject(targetSize);
+		step.setReturnValue(String.format("h:%d,w:%d", size.height, size.width));
+		step.setReturnObject(size);
 		for (EventListener listener : eventListeners)
-			listener.afterGetSizeByWindow(step, targetSize);
+			listener.afterGetSizeByWindow(step, size);
 	}
 
 	public void beforeGetPosition() {
@@ -842,181 +842,328 @@ public class EventDispatcher {	/**
 	/* Begin of methods provided by RemoteWebElement class */
 	
 	public void beforeClick(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.clickByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeClick(step, element);
 	}
 
 	public void afterClick(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.clickByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		for (EventListener listener : eventListeners)
+			listener.afterClick(step, element);
 	}
 
 	public void beforeSubmit(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.submit);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeSubmit(step, element);
 	}
 
 	public void afterSubmit(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.submit);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		for (EventListener listener : eventListeners)
+			listener.afterSubmit(step, element);
 	}
 
 	public void beforeSendKeysByElement(WebElement element, CharSequence... keysToSend) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.sendKeysByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(charSequence2String(keysToSend));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeSendKeysByElement(step, element, keysToSend);
 	}
 
 	public void afterSendKeysByElement(WebElement element, CharSequence... keysToSend) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(charSequence2String(keysToSend));
+		for (EventListener listener : eventListeners)
+			listener.afterSendKeysByElement(step, element, keysToSend);
+	}
+
+	public void beforeUploadFile(WebElement element, File localFile) {
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.uploadFile);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(localFile.getPath());
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeUploadFile(step, element, localFile);
+	}
+
+	public void afterUploadFile(WebElement element, File localFile, String response) {
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.uploadFile);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(localFile.getPath());
+		for (EventListener listener : eventListeners)
+			listener.afterUploadFile(step, element, localFile, response);
 	}
 
 	public void beforeClear(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.clear);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeClear(step, element);
 	}
 
 	public void afterClear(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.clear);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		for (EventListener listener : eventListeners)
+			listener.afterClear(step, element);
 	}
 
 	public void beforeGetTagName(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getTagName);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetTagName(step, element);
 	}
 
 	public void afterGetTagName(String tagName, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getTagName);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setReturnValue(tagName);
+		for (EventListener listener : eventListeners)
+			listener.afterGetTagName(step, tagName, element);		
 	}
 
 	public void beforeGetAttribute(String name, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getAttribute);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(name);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetAttribute(step, name, element);
 	}
 
 	public void afterGetAttribute(String value, String name, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getAttribute);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(name);
+		step.setReturnValue(value);
+		for (EventListener listener : eventListeners)
+			listener.afterGetAttribute(step, value, name, element);		
 	}
 
 	public void beforeIsSelected(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.isSelected);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeIsSelected(step, element);
 	}
 
 	public void afterIsSelected(boolean isSelected, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.isSelected);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setReturnValue(Boolean.toString(isSelected));
+		for (EventListener listener : eventListeners)
+			listener.afterIsSelected(step, isSelected, element);		
 	}
 
 	public void beforeIsEnabled(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.isEnabled);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeIsEnabled(step, element);
 	}
 
 	public void afterIsEnabled(boolean isEnabled, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.isEnabled);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setReturnValue(Boolean.toString(isEnabled));
+		for (EventListener listener : eventListeners)
+			listener.afterIsEnabled(step, isEnabled, element);		
 	}
 
 	public void beforeGetText(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getText);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetText(step, element);
 	}
 
 	public void afterGetText(String text, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getText);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setReturnValue(text);
+		for (EventListener listener : eventListeners)
+			listener.afterGetText(step, text, element);		
 	}
 
 	public void beforeGetCssValue(String propertyName, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getCssValue);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(propertyName);
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetCssValue(step, propertyName, element);
 	}
 
 	public void afterGetCssValue(String propertyName, String value, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getCssValue);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(propertyName);
+		step.setReturnValue(value);
+		for (EventListener listener : eventListeners)
+			listener.afterGetCssValue(step, propertyName, value, element);		
 	}
 
 	public void beforeFindElementsByElement(By by, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.findElementsByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(Step.getLocatorFromBy(by));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeFindElementsByElement(step, by, element);
 	}
 
-	public void afterFindElementsByElement(List<WebElement> returnedElements, By by, WebElement element) {
-		// TODO Auto-generated method stub
-		
+	public void afterFindElementsByElement(List<WebElement> elements, By by, WebElement element) {
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.findElementsByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(Step.getLocatorFromBy(by));
+		if (elements.size() > 0) {
+			if (elements.size() == 1)
+				step.setReturnValue(Step.getLocatorFromWebElement(elements.get(0)));
+			else
+				step.setReturnValue(Step.getLocatorFromWebElement(elements.get(0)) + " and "
+						+ (elements.size() - 1) + " more");				
+		}
+		step.setReturnObject(elements);
+		for (EventListener listener : eventListeners)
+			listener.afterFindElementsByElement(step, elements, by, element);
 	}
 
 	public void beforeFindElementByElement(By by, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.findElementByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(Step.getLocatorFromBy(by));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeFindElementByElement(step, by, element);
 	}
 
 	public void afterFindElementByElement(WebElement returnedElement, By by, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.findElementByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(Step.getLocatorFromBy(by));
+		step.setReturnValue(Step.getLocatorFromWebElement(element));
+		step.setReturnObject(element);
+		for (EventListener listener : eventListeners)
+			listener.afterFindElementByElement(step, element, by, element);
 	}
 
 	public void beforeIsDisplayed(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.isDisplayed);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeIsDisplayed(step, element);
 	}
 
 	public void afterIsDisplayed(boolean isDisplayed, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.isDisplayed);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setReturnValue(Boolean.toString(isDisplayed));
+		for (EventListener listener : eventListeners)
+			listener.afterIsDisplayed(step, isDisplayed, element);		
 	}
 
 	public void beforeGetLocation(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getLocation);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetLocation(step, element);
 	}
 
 	public void afterGetLocation(Point point, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getLocation);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setReturnValue(String.format("x:%d,y:%d", point.x, point.y));
+		step.setReturnObject(point);
+		for (EventListener listener : eventListeners)
+			listener.afterGetLocation(step, point, element);		
 	}
 
 	public void beforeGetSizeByElement(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getSizeByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetSizeByElement(step, element);
 	}
 
-	public void afterGetSizeByElement(Dimension dimension, WebElement element) {
-		// TODO Auto-generated method stub
-		
+	public void afterGetSizeByElement(Dimension size, WebElement element) {
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getSizeByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setReturnValue(String.format("h:%d,w:%d", size.height, size.width));
+		step.setReturnObject(size);
+		for (EventListener listener : eventListeners)
+			listener.afterGetSizeByElement(step, size, element);		
 	}
 
 	public void beforeGetRect(WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getRect);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetRect(step, element);
 	}
 
 	public void afterGetRect(Rectangle rectangle, WebElement element) {
-		// TODO Auto-generated method stub
-		
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getRect);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setReturnValue(String.format("h:%d,w:%d", rectangle.height, rectangle.width));
+		step.setReturnObject(rectangle);
+		for (EventListener listener : eventListeners)
+			listener.afterGetRect(step, rectangle, element);		
 	}
 
-	// getCoordinates
-	public void beforeGetCoordinates() {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.getC);
+	public void beforeGetCoordinates(WebElement element) {
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getCoordinates);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
 		currentStep = step;
 		for (EventListener listener : eventListeners)
-			listener.beforeGet(step, url);
+			listener.beforeGetCoordinates(step, element);
 	}
 
-	public <X> void afterGetScreenshotAsByElement(OutputType<X> target) {
-		// TODO Auto-generated method stub
-		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.get);
-		step.setParam1(url);
+	public void afterGetCoordinates(Coordinates coordinates, WebElement element) {
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getCoordinates);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setReturnValue(String.format("x:%d,y:%d in view port", coordinates.inViewPort().x, coordinates.inViewPort().y));
+		step.setReturnObject(coordinates);
 		for (EventListener listener : eventListeners)
-			listener.afterGet(step, url);
-		
+			listener.afterGetCoordinates(step, coordinates, element);		
+	}
+
+	public <X> void beforeGetScreenshotAsByElement(OutputType<X> target, WebElement element) {
+		Step step = new Step(Type.BeforeGather, stepNumber, Cmd.getScreenshotAsByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(target.toString());
+		currentStep = step;
+		for (EventListener listener : eventListeners)
+			listener.beforeGetScreenshotAsByElement(step, target, element);
+	}
+
+	public <X> void afterGetScreenshotAsByElement(OutputType<X> target, X screenshot, WebElement element) {
+		Step step = new Step(Type.AfterGather, stepNumber, Cmd.getScreenshotAsByElement);
+		step.setElementLocator(Step.getLocatorFromWebElement(element));
+		step.setParam1(target.toString());
+		step.setReturnObject(screenshot);
+		for (EventListener listener : eventListeners)
+			listener.afterGetScreenshotAsByElement(step, target, screenshot, element);
 	}
 	
 	/* End of methods provided by RemoteWebElement class */
@@ -1025,42 +1172,42 @@ public class EventDispatcher {	/**
 
 	public void beforeSendKeysByKeyboard(CharSequence... keysToSend) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.sendKeysByKeyboard);
-		step.setParam1(keysToSend.toString());
+		step.setParam1(charSequence2String(keysToSend));
 		for (EventListener listener : eventListeners)
 			listener.beforeSendKeysByKeyboard(step, keysToSend);
 	}
 
 	public void afterSendKeysByKeyboard(CharSequence... keysToSend) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByKeyboard);
-		step.setParam1(keysToSend.toString());
+		step.setParam1(charSequence2String(keysToSend));
 		for (EventListener listener : eventListeners)
 			listener.afterSendKeysByKeyboard(step, keysToSend);
 	}
 
 	public void beforePressKey(CharSequence... keyToPress) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.pressKey);
-		step.setParam1(keyToPress.toString());
+		step.setParam1(charSequence2String(keyToPress));
 		for (EventListener listener : eventListeners)
 			listener.beforePressKey(step, keyToPress);
 	}
 
 	public void afterPressKey(CharSequence... keyToPress) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.pressKey);
-		step.setParam1(keyToPress.toString());
+		step.setParam1(charSequence2String(keyToPress));
 		for (EventListener listener : eventListeners)
 			listener.afterPressKey(step, keyToPress);
 	}
 
 	public void beforeReleaseKey(CharSequence... keyToRelease) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.releaseKey);
-		step.setParam1(keyToRelease.toString());
+		step.setParam1(charSequence2String(keyToRelease));
 		for (EventListener listener : eventListeners)
 			listener.beforeReleaseKey(step, keyToRelease);
 	}
 
 	public void afterReleaseKey(CharSequence... keyToRelease) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.releaseKey);
-		step.setParam1(keyToRelease.toString());
+		step.setParam1(charSequence2String(keyToRelease));
 		for (EventListener listener : eventListeners)
 			listener.afterReleaseKey(step, keyToRelease);
 	}
@@ -1071,7 +1218,7 @@ public class EventDispatcher {	/**
 
 	public void beforeClickByMouse(Coordinates where) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.clickByMouse);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeClickByMouse(step, where);
@@ -1079,14 +1226,14 @@ public class EventDispatcher {	/**
 
 	public void afterClickByMouse(Coordinates where) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.clickByMouse);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		for (EventListener listener : eventListeners)
 			listener.afterClickByMouse(step, where);
 	}
 
 	public void beforeContextClick(Coordinates where) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.contextClick);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeContextClick(step, where);
@@ -1094,14 +1241,14 @@ public class EventDispatcher {	/**
 
 	public void afterContextClick(Coordinates where) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.contextClick);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		for (EventListener listener : eventListeners)
 			listener.afterContextClick(step, where);
 	}
 
 	public void beforeDoubleClick(Coordinates where) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.doubleClick);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeDoubleClick(step, where);
@@ -1109,14 +1256,14 @@ public class EventDispatcher {	/**
 
 	public void afterDoubleClick(Coordinates where) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.doubleClick);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		for (EventListener listener : eventListeners)
 			listener.afterDoubleClick(step, where);
 	}
 
 	public void beforeMouseDown(Coordinates where) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.mouseDown);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeMouseDown(step, where);
@@ -1124,14 +1271,14 @@ public class EventDispatcher {	/**
 
 	public void afterMouseDown(Coordinates where) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.mouseDown);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		for (EventListener listener : eventListeners)
 			listener.afterMouseDown(step, where);
 	}
 
 	public void beforeMouseUp(Coordinates where) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.mouseUp);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeMouseUp(step, where);
@@ -1139,14 +1286,14 @@ public class EventDispatcher {	/**
 
 	public void afterMouseUp(Coordinates where) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.mouseUp);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		for (EventListener listener : eventListeners)
 			listener.afterMouseUp(step, where);
 	}
 
 	public void beforeMouseMove(Coordinates where) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.mouseMove);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeMouseMove(step, where);
@@ -1154,15 +1301,14 @@ public class EventDispatcher {	/**
 
 	public void afterMouseMove(Coordinates where) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.mouseMove);
-		step.setParam1(String.format("x:%d,y:%d on screen", where.onScreen().x, where.onScreen().y));
+		step.setParam1(String.format("x:%d,y:%d in view port", where.inViewPort().x, where.inViewPort().y));
 		for (EventListener listener : eventListeners)
 			listener.afterMouseMove(step, where);
 	}
 
 	public void beforeMouseMove(Coordinates where, long xOffset, long yOffset) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.mouseMoveWithOffset);
-		step.setParam1(String.format("x:%d,y:%d on screen, x:%d,y:%d", where.onScreen().x, where.onScreen().y, xOffset,
-				yOffset));
+		step.setParam1(String.format("x:%d,y:%d in view port, x:%d,y:%d offset", where.inViewPort().x, where.inViewPort().y, xOffset, yOffset));
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeMouseMove(step, where, xOffset, yOffset);
@@ -1170,8 +1316,7 @@ public class EventDispatcher {	/**
 
 	public void afterMouseMove(Coordinates where, long xOffset, long yOffset) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.mouseMoveWithOffset);
-		step.setParam1(String.format("x:%d,y:%d on screen, x:%d,y:%d", where.onScreen().x, where.onScreen().y, xOffset,
-				yOffset));
+		step.setParam1(String.format("x:%d,y:%d in view port, x:%d,y:%d offset", where.inViewPort().x, where.inViewPort().y, xOffset, yOffset));
 		for (EventListener listener : eventListeners)
 			listener.afterMouseMove(step, where, xOffset, yOffset);
 	}
@@ -1184,5 +1329,11 @@ public class EventDispatcher {	/**
 	private void closeListeners() {
 		for (EventListener listener : eventListeners)
 			listener.closeListener();
+	}
+	
+	private String charSequence2String(CharSequence... charSequence) {
+		final StringBuilder sb = new StringBuilder(charSequence.length);
+		sb.append(charSequence);
+		return sb.toString();
 	}
 }
