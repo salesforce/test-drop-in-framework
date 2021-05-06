@@ -16,12 +16,16 @@
 //under the License.
 package com.salesforce.selenium.support.event;
 
+import java.io.File;
+import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
@@ -42,7 +46,7 @@ import com.salesforce.selenium.support.event.Step.Cmd;
  * 
  * @since 2.0.0
  */
-public abstract class AbstractWebDriverEventListener implements EventListener {
+public abstract class AbstractEventListener implements EventListener {
 
 	/*--------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver object.
@@ -134,19 +138,19 @@ public abstract class AbstractWebDriverEventListener implements EventListener {
 	 *--------------------------------------------------------------------*/
 
 	@Override
-	public void beforeExecuteAsyncScript(Step step, String script, Object... args) {
+	public void beforeExecuteAsyncScript(Step step, String script, Map<String, ?> params) {
 	}
 
 	@Override
-	public void afterExecuteAsyncScript(Step step, String script, Object... args) {
+	public void afterExecuteAsyncScript(Step step, String script, Map<String, ?> params, Object result) {
 	}
 
 	@Override
-	public void beforeExecuteScript(Step step, String script, Object... args) {
+	public void beforeExecuteScript(Step step, String script, Map<String, ?> params) {
 	}
 
 	@Override
-	public void afterExecuteScript(Step step, String script, Object... args) {
+	public void afterExecuteScript(Step step, String script, Map<String, ?> params, Object result) {
 	}
 
 	/*--------------------------------------------------------------------
@@ -159,7 +163,7 @@ public abstract class AbstractWebDriverEventListener implements EventListener {
 	}
 
 	@Override
-	public <X> void afterGetScreenshotAs(Step step, OutputType<X> target) {
+	public <X> void afterGetScreenshotAs(Step step, OutputType<X> target, X screenshot) {
 	}
 
 	/*---------------------------------------------------------------------------
@@ -570,5 +574,157 @@ public abstract class AbstractWebDriverEventListener implements EventListener {
 	 */
 	public static String convertTestname2FileName(final String testName) {
 		return testName.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
+	}
+
+	@Override
+	public void beforeAddCookie(Step step, Cookie cookie) {
+	}
+
+	@Override
+	public void afterAddCookie(Step step, Cookie cookie) {
+	}
+
+	@Override
+	public void beforeDeleteCookieNamed(Step step, String name) {
+	}
+
+	@Override
+	public void afterDeleteCookieNamed(Step step, String name) {
+	}
+
+	@Override
+	public void beforeDeleteCookie(Step step, Cookie cookie) {
+	}
+
+	@Override
+	public void afterDeleteCookie(Step step, Cookie cookie) {
+	}
+
+	@Override
+	public void beforeDeleteAllCookies(Step step) {
+	}
+
+	@Override
+	public void afterDeleteAllCookies(Step step) {
+	}
+
+	@Override
+	public void beforeGetCookies(Step step) {
+	}
+
+	@Override
+	public void afterGetCookies(Step step, Set<Cookie> cookies) {
+	}
+
+	@Override
+	public void beforeGetCookieNamed(Step step, String name) {
+	}
+
+	@Override
+	public void afterGetCookieNamed(Step step, String name, Cookie cookie) {
+	}
+
+	@Override
+	public void beforeGetAvailableEngines(Step step) {
+	}
+
+	@Override
+	public void afterGetAvailableEngines(Step step, List<String> engines) {
+	}
+
+	@Override
+	public void beforeGetActiveEngine(Step step) {
+	}
+
+	@Override
+	public void afterGetActiveEngine(Step step, String engine) {
+	}
+
+	@Override
+	public void beforeIsActivated(Step step) {
+	}
+
+	@Override
+	public void afterIsActivated(Step step, boolean isActive) {
+	}
+
+	@Override
+	public void beforeDeactivate(Step step) {
+	}
+
+	@Override
+	public void afterDeactivate(Step step) {
+	}
+
+	@Override
+	public void beforeActivateEngine(Step step, String engine) {
+	}
+
+	@Override
+	public void afterActivateEngine(Step step, String engine) {
+	}
+
+	@Override
+	public void beforeToUrl(Step step, URL url) {
+	}
+
+	@Override
+	public void afterToUrl(Step step, URL url) {
+	}
+
+	@Override
+	public void beforeDismiss(Step step) {
+	}
+
+	@Override
+	public void afterDismiss(Step step) {
+	}
+
+	@Override
+	public void beforeAccept(Step step) {
+	}
+
+	@Override
+	public void afterAccept(Step step) {
+	}
+
+	@Override
+	public void beforeGetTextByAlert(Step step) {
+	}
+
+	@Override
+	public void afterGetTextByAlert(Step step, String text) {
+	}
+
+	@Override
+	public void beforeSendKeysByAlert(Step step, String keysToSend) {
+	}
+
+	@Override
+	public void afterSendKeysByAlert(Step step, String keysToSend) {
+	}
+
+	@Override
+	public void beforeGetCoordinates(Step step, WebElement element) {
+	}
+
+	@Override
+	public void afterGetCoordinates(Step step, Coordinates coordinates, WebElement element) {
+	}
+
+	@Override
+	public <X> void beforeGetScreenshotAsByElement(Step step, OutputType<X> target, WebElement element) {
+	}
+
+	@Override
+	public <X> void afterGetScreenshotAsByElement(Step step, OutputType<X> target, X screenshot, WebElement element) {
+	}
+
+	@Override
+	public void beforeUploadFile(Step step, WebElement element, File localFile) {
+	}
+
+	@Override
+	public void afterUploadFile(Step step, WebElement element, File localFile, String response) {
 	}
 }

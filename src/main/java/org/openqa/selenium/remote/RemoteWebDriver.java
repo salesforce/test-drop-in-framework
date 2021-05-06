@@ -634,6 +634,7 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 			Object value = getElementConverter().apply(response.getValue());
 			response.setValue(value);
 		} catch (WebDriverException e) {
+			eventDispatcher.onException(driverCommand, e);
 			throw e;
 		} catch (Exception e) {
 			log(sessionId, command.getName(), command, When.EXCEPTION);
@@ -668,6 +669,7 @@ public class RemoteWebDriver implements WebDriver, JavascriptExecutor, FindsById
 			if (getCapabilities() != null) {
 				ex.addInfo("Capabilities", getCapabilities().toString());
 			}
+			eventDispatcher.onException(driverCommand, ex);
 			throw ex;
 		}
 		return response;

@@ -874,7 +874,7 @@ public class EventDispatcher {	/**
 	public void beforeSendKeysByElement(WebElement element, CharSequence... keysToSend) {
 		Step step = new Step(Type.BeforeAction, stepNumber, Cmd.sendKeysByElement);
 		step.setElementLocator(Step.getLocatorFromWebElement(element));
-		step.setParam1(charSequence2String(keysToSend));
+		step.setParam1(maskTextIfPassword(step.getElementLocator(), keysToSend));
 		currentStep = step;
 		for (EventListener listener : eventListeners)
 			listener.beforeSendKeysByElement(step, element, keysToSend);
@@ -883,7 +883,7 @@ public class EventDispatcher {	/**
 	public void afterSendKeysByElement(WebElement element, CharSequence... keysToSend) {
 		Step step = new Step(Type.AfterAction, stepNumber++, Cmd.sendKeysByElement);
 		step.setElementLocator(Step.getLocatorFromWebElement(element));
-		step.setParam1(charSequence2String(keysToSend));
+		step.setParam1(maskTextIfPassword(step.getElementLocator(), keysToSend));
 		for (EventListener listener : eventListeners)
 			listener.afterSendKeysByElement(step, element, keysToSend);
 	}
@@ -1321,16 +1321,22 @@ public class EventDispatcher {	/**
 			listener.afterMouseMove(step, where, xOffset, yOffset);
 	}
 
-	public void onException(Cmd cmd, Throwable throwable) {
-		// TODO Auto-generated method stub
-		
+	public void onException(String cmd, Throwable throwable) {
+		Step step = new Step(Type.Exception, stepNumber, currentStep.getCmd());
+		step.setParam1(String.format("Exception Type: %s, message: %s", throwable.getClass().getName(), throwable.getMessage()));
+		for (EventListener listener : eventListeners)
+			listener.onException(step, currentStep.getCmd(), throwable);
 	}
 
 	private void closeListeners() {
 		for (EventListener listener : eventListeners)
 			listener.closeListener();
 	}
-	
+
+	private String maskTextIfPassword(String locator, CharSequence... charSequence) {
+		return (locator.contains("password")) ? "********" : charSequence2String(charSequence);
+	}
+
 	private String charSequence2String(CharSequence... charSequence) {
 		final StringBuilder sb = new StringBuilder(charSequence.length);
 		sb.append(charSequence);

@@ -9,13 +9,16 @@ package com.salesforce.drillbit.client;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
@@ -27,8 +30,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.salesforce.selenium.support.event.AbstractWebDriverEventListener;
-import com.salesforce.selenium.support.event.EventFiringWebDriver;
+import com.salesforce.selenium.support.event.AbstractEventListener;
 import com.salesforce.selenium.support.event.Step;
 import com.salesforce.selenium.support.event.EventListener;
 import com.salesforce.selenium.support.event.Step.Cmd;
@@ -43,7 +45,7 @@ import com.salesforce.selenium.support.event.Step.Cmd;
  * @author gneumann
  * @since 2.0.0
  */
-public class FullJSONLogger extends AbstractWebDriverEventListener {
+public class FullJSONLogger extends AbstractEventListener {
 	private static final int BATCHSIZE = 1000;
 	private String fileName = null;
 	private List<Step> logEntries = new ArrayList<>();
@@ -159,22 +161,22 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	 *--------------------------------------------------------------------*/
 
 	@Override
-	public void beforeExecuteAsyncScript(Step step, String script, Object... args) {
+	public void beforeExecuteAsyncScript(Step step, String script, Map<String, ?> params) {
 		logEntries.add(step);
 	}
 
 	@Override
-	public void afterExecuteAsyncScript(Step step, String script, Object... args) {
+	public void afterExecuteAsyncScript(Step step, String script, Map<String, ?> params, Object result) {
 		logEntries.add(step);
 	}
 
 	@Override
-	public void beforeExecuteScript(Step step, String script, Object... args) {
+	public void beforeExecuteScript(Step step, String script, Map<String, ?> params) {
 		logEntries.add(step);
 	}
 
 	@Override
-	public void afterExecuteScript(Step step, String script, Object... args) {
+	public void afterExecuteScript(Step step, String script, Map<String, ?> params, Object result) {
 		logEntries.add(step);
 	}
 
@@ -189,7 +191,7 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	}
 
 	@Override
-	public <X> void afterGetScreenshotAs(Step step, OutputType<X> target) {
+	public <X> void afterGetScreenshotAs(Step step, OutputType<X> target, X screenshot) {
 		logEntries.add(step);
 	}
 
@@ -680,6 +682,206 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 
 	@Override
 	public void afterContextClick(Step step, Coordinates where) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetPageSource(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetPageSource(Step step, String source) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeAddCookie(Step step, Cookie cookie) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterAddCookie(Step step, Cookie cookie) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeDeleteCookieNamed(Step step, String name) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterDeleteCookieNamed(Step step, String name) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeDeleteCookie(Step step, Cookie cookie) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterDeleteCookie(Step step, Cookie cookie) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeDeleteAllCookies(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterDeleteAllCookies(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetCookies(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetCookies(Step step, Set<Cookie> cookies) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetCookieNamed(Step step, String name) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetCookieNamed(Step step, String name, Cookie cookie) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetAvailableEngines(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetAvailableEngines(Step step, List<String> engines) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetActiveEngine(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetActiveEngine(Step step, String engine) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeIsActivated(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterIsActivated(Step step, boolean isActive) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeDeactivate(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterDeactivate(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeActivateEngine(Step step, String engine) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterActivateEngine(Step step, String engine) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeToUrl(Step step, URL url) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterToUrl(Step step, URL url) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeDismiss(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterDismiss(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeAccept(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterAccept(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetTextByAlert(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetTextByAlert(Step step, String text) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeSendKeysByAlert(Step step, String keysToSend) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterSendKeysByAlert(Step step, String keysToSend) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetCoordinates(Step step, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetCoordinates(Step step, Coordinates coordinates, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public <X> void beforeGetScreenshotAsByElement(Step step, OutputType<X> target, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public <X> void afterGetScreenshotAsByElement(Step step, OutputType<X> target, X screenshot, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeUploadFile(Step step, WebElement element, File localFile) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterUploadFile(Step step, WebElement element, File localFile, String response) {
 		logEntries.add(step);
 	}
 
