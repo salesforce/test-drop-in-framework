@@ -9,6 +9,7 @@ package com.salesforce.selenium.support.event;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +21,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Coordinates;
 
@@ -310,12 +312,12 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	}
 
 	@Override
-	public void beforeWindow(Step step, String windowName) {
+	public void beforeSwitchToWindow(Step step, String windowName, WebDriver driver) {
 		logEntries.add(step);
 	}
 
 	@Override
-	public void afterWindow(Step step, String windowName) {
+	public void afterSwitchToWindow(Step step, String windowName, WebDriver driver) {
 		logEntries.add(step);
 	}
 
@@ -334,6 +336,16 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	}
 
 	@Override
+	public void beforeImplicitlyWait(Step step, Duration duration) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterImplicitlyWait(Step step, Duration duration) {
+		logEntries.add(step);
+	}
+
+	@Override
 	public void beforePageLoadTimeout(Step step, long time, TimeUnit unit) {
 		logEntries.add(step);
 	}
@@ -344,12 +356,42 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	}
 
 	@Override
+	public void beforePageLoadTimeout(Step step, Duration duration) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterPageLoadTimeout(Step step, Duration duration) {
+		logEntries.add(step);
+	}
+
+	@Override
 	public void beforeSetScriptTimeout(Step step, long time, TimeUnit unit) {
 		logEntries.add(step);
 	}
 
 	@Override
 	public void afterSetScriptTimeout(Step step, long time, TimeUnit unit) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeSetScriptTimeout(Step step, Duration duration) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterSetScriptTimeout(Step step, Duration duration) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeScriptTimeout(Step step, Duration duration) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterScriptTimeout(Step step, Duration duration) {
 		logEntries.add(step);
 	}
 
@@ -394,6 +436,16 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 
 	@Override
 	public void afterMaximize(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeMinimize(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterMinimize(Step step) {
 		logEntries.add(step);
 	}
 

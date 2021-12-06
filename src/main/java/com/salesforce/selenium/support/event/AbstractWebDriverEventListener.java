@@ -16,6 +16,7 @@
 //under the License.
 package com.salesforce.selenium.support.event;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Coordinates;
 
@@ -259,11 +261,11 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 	}
 
 	@Override
-	public void beforeWindow(Step step, String windowName) {
+	public void beforeSwitchToWindow(Step step, String windowName, WebDriver driver) {
 	}
 
 	@Override
-	public void afterWindow(Step step, String windowName) {
+	public void afterSwitchToWindow(Step step, String windowName, WebDriver driver) {
 	}
 
 	/*---------------------------------------------------------------------------
@@ -279,6 +281,14 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 	}
 
 	@Override
+	public void beforeImplicitlyWait(Step step, Duration duration) {
+	}
+
+	@Override
+	public void afterImplicitlyWait(Step step, Duration duration) {
+	}
+
+	@Override
 	public void beforePageLoadTimeout(Step step, long time, TimeUnit unit) {
 	}
 
@@ -287,11 +297,35 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 	}
 
 	@Override
+	public void beforePageLoadTimeout(Step step, Duration duration) {
+	}
+
+	@Override
+	public void afterPageLoadTimeout(Step step, Duration duration) {
+	}
+
+	@Override
 	public void beforeSetScriptTimeout(Step step, long time, TimeUnit unit) {
 	}
 
 	@Override
 	public void afterSetScriptTimeout(Step step, long time, TimeUnit unit) {
+	}
+
+	@Override
+	public void beforeSetScriptTimeout(Step step, Duration duration) {
+	}
+
+	@Override
+	public void afterSetScriptTimeout(Step step, Duration duration) {
+	}
+
+	@Override
+	public void beforeScriptTimeout(Step step, Duration duration) {
+	}
+
+	@Override
+	public void afterScriptTimeout(Step step, Duration duration) {
 	}
 
 	/*---------------------------------------------------------------------------
@@ -328,6 +362,14 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 
 	@Override
 	public void afterMaximize(Step step) {
+	}
+
+	@Override
+	public void beforeMinimize(Step step) {
+	}
+
+	@Override
+	public void afterMinimize(Step step) {
 	}
 
 	@Override

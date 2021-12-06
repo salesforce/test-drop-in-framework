@@ -8,6 +8,7 @@ package com.salesforce.selenium.support.findby;
 
 import java.lang.reflect.Field;
 
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory;
@@ -25,18 +26,18 @@ public class JSPageFactory extends PageFactory {
 
 	/**
 	 * Augments
-	 * {@link PageFactory#initElements(org.openqa.selenium.WebDriver, Object)}
+	 * {@link PageFactory#initElements(org.openqa.selenium.SearchContext, Object)}
 	 * by also calling {@link #initElementsJS(ElementLocatorFactory, Object)},
 	 * thus enabling support for {@literal @FindByJS} annotations.
 	 *
-	 * @param driver The driver that will be used to look up the elements
+	 * @param searchContext The driver that will be used to look up the elements
 	 * @param page   The object with WebElement and List&lt;WebElement&gt; fields
 	 *               that should be proxied.
 	 */
-	public static void initElements(WebDriver driver, Object page) {
-	    final WebDriver driverRef = driver;
-	    initElements(new DefaultElementLocatorFactory(driverRef), page);
-	    initElementsJS(new JSElementLocatorFactory(driverRef), page);
+	public static void initElements(SearchContext searchContext, Object page) {
+	    final WebDriver webDriverRef = (WebDriver) searchContext;
+	    initElements(new DefaultElementLocatorFactory(searchContext), page);
+	    initElementsJS(new JSElementLocatorFactory(webDriverRef), page);
 	}
 
 	/**

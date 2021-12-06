@@ -16,6 +16,7 @@
 //under the License.
 package com.salesforce.selenium.support.event;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +29,7 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
 import org.openqa.selenium.interactions.Coordinates;
 
 import com.salesforce.selenium.support.event.Step.Cmd;
@@ -502,28 +504,36 @@ public interface WebDriverEventListener {
 	void afterParentFrame(Step step);
 
 	/**
-	 * Called before {@link WebDriver.TargetLocator#window(java.lang.String) TargetLocator.window(..)}.
+	 * This action will be performed each time before {@link WebDriver.TargetLocator#window(String)}
+	 * {@link WebDriver.TargetLocator#newWindow(org.openqa.selenium.WindowType) TargetLocator.newWindow(..)}.
+	 *
 	 * @param step
 	 *            step record
-	 * @param windowName
-	 *            name of window
+	 * @param windowName The name of the window or the handle as returned by
+	 *            {@link org.openqa.selenium.WebDriver#getWindowHandle()}
+	 *            or <code>null</code> if switching to a new window created by
+	 *            {@link org.openqa.selenium.WebDriver.TargetLocator#newWindow(WindowType)}
+	 * @param driver WebDriver
 	 */
-	void beforeWindow(Step step, String windowName);
-
+	void beforeSwitchToWindow(Step step, String windowName, WebDriver driver);
+	
 	/**
-	 * Called after {@link WebDriver.TargetLocator#window(java.lang.String) TargetLocator.window(..)}.
-	 * Not called, if an exception is thrown.
+	 * This action will be performed each time after {@link WebDriver.TargetLocator#window(String)}
+	 * {@link WebDriver.TargetLocator#newWindow(org.openqa.selenium.WindowType) TargetLocator.newWindow(..)}.
+	 *
 	 * @param step
 	 *            step record
-	 * @param windowName
-	 *            name of window
+	 * @param windowName The name of the window or the handle as returned by
+	 *            {@link org.openqa.selenium.WebDriver#getWindowHandle()}
+	 *            or <code>null</code> if switching to a new window created by
+	 *            {@link org.openqa.selenium.WebDriver.TargetLocator#newWindow(WindowType)}
+	 * @param driver WebDriver
 	 */
-	void afterWindow(Step step, String windowName);
+	void afterSwitchToWindow(Step step, String windowName, WebDriver driver);
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Timeouts object.
 	 *---------------------------------------------------------------------------*/
-
 	/**
 	 * Called before {@link WebDriver.Timeouts#implicitlyWait(long, java.util.concurrent.TimeUnit) Timeouts.implicitlyWait(..)}.
 	 * @param step
@@ -546,6 +556,25 @@ public interface WebDriverEventListener {
 	 *            time unit to use to convert the given time value
 	 */
 	void afterImplicitlyWait(Step step, long time, TimeUnit unit);
+
+	/**
+	 * Called before {@link WebDriver.Timeouts#implicitlyWait(Duration) Timeouts.implicitlyWait(..)}.
+	 * @param step
+	 *            step record
+	 * @param duration
+	 *            time to wait
+	 */
+	void beforeImplicitlyWait(Step step, Duration duration);
+
+	/**
+	 * Called after {@link WebDriver.Timeouts#implicitlyWait(Duration) Timeouts.implicitlyWait(..)}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param duration
+	 *            time to wait
+	 */
+	void afterImplicitlyWait(Step step, Duration duration);
 
 	/**
 	 * Called before {@link WebDriver.Timeouts#pageLoadTimeout(long, java.util.concurrent.TimeUnit) Timeouts.pageLoadTimeout(..)}.
@@ -571,6 +600,25 @@ public interface WebDriverEventListener {
 	void afterPageLoadTimeout(Step step, long time, TimeUnit unit);
 
 	/**
+	 * Called before {@link WebDriver.Timeouts#pageLoadTimeout(Duration) Timeouts.pageLoadTimeout(..)}.
+	 * @param step
+	 *            step record
+	 * @param duration
+	 *            time to wait
+	 */
+	void beforePageLoadTimeout(Step step, Duration duration);
+
+	/**
+	 * Called after {@link WebDriver.Timeouts#pageLoadTimeout(Duration) Timeouts.pageLoadTimeout(..)}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param duration
+	 *            time to wait
+	 */
+	void afterPageLoadTimeout(Step step, Duration duration);
+
+	/**
 	 * Called before {@link WebDriver.Timeouts#setScriptTimeout(long, java.util.concurrent.TimeUnit) Timeouts.setScriptTimeout(..)}.
 	 * @param step
 	 *            step record
@@ -592,6 +640,44 @@ public interface WebDriverEventListener {
 	 *            time unit to use to convert the given time value
 	 */
 	void afterSetScriptTimeout(Step step, long time, TimeUnit unit);
+
+	/**
+	 * Called before {@link WebDriver.Timeouts#setScriptTimeout(Duration) Timeouts.setScriptTimeout(..)}.
+	 * @param step
+	 *            step record
+	 * @param duration
+	 *            time to wait
+	 */
+	void beforeSetScriptTimeout(Step step, Duration duration);
+
+	/**
+	 * Called after {@link WebDriver.Timeouts#setScriptTimeout(Duration) Timeouts.setScriptTimeout(..)}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param duration
+	 *            time to wait
+	 */
+	void afterSetScriptTimeout(Step step, Duration duration);
+
+	/**
+	 * Called before {@link WebDriver.Timeouts#scriptTimeout(Duration) Timeouts.setScriptTimeout(..)}.
+	 * @param step
+	 *            step record
+	 * @param duration
+	 *            time to wait
+	 */
+	void beforeScriptTimeout(Step step, Duration duration);
+
+	/**
+	 * Called after {@link WebDriver.Timeouts#scriptTimeout(Duration) Timeouts.setScriptTimeout(..)}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param duration
+	 *            time to wait
+	 */
+	void afterScriptTimeout(Step step, Duration duration);
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Window object.
@@ -647,19 +733,35 @@ public interface WebDriverEventListener {
 	void afterGetSizeByWindow(Step step, Dimension targetSize);
 
 	/**
-	 * Called before {@link WebDriver.Window#maximize() Window.window()}.
+	 * Called before {@link WebDriver.Window#maximize() Window.maximize()}.
 	 * @param step
 	 *            step record
 	 */
 	void beforeMaximize(Step step);
 
 	/**
-	 * Called after {@link WebDriver.Window#maximize() Window.window()}.
+	 * Called after {@link WebDriver.Window#maximize() Window.maximize()}.
 	 * Not called, if an exception is thrown.
 	 * @param step
 	 *            step record
 	 */
 	void afterMaximize(Step step);
+
+
+	/**
+	 * Called before {@link WebDriver.Window#minimize() Window.minimize()}.
+	 * @param step
+	 *            step record
+	 */
+	void beforeMinimize(Step step);
+
+	/**
+	 * Called after {@link WebDriver.Window#minimize() Window.minimize()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 */
+	void afterMinimize(Step step);
 
 	/**
 	 * Called before {@link WebDriver.Window#setPosition(Point) setPosition(..)}.

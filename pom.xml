@@ -10,10 +10,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.salesforce.cqe</groupId>
 	<artifactId>test-drop-in-framework</artifactId>
-	<version>3.0.23-SNAPSHOT</version>
+	<version>4.1.0-SNAPSHOT</version>
 	<name>Test Drop-in Framework</name>
 	<url>https://github.com/salesforce/test-drop-in-framework</url>
-	<description>Test Drop-in Framework for Selenium WebDriver 3.x.
+	<description>Test Drop-in Framework for Selenium WebDriver 4.1.x
 	
 This repository contains these major deliverables:
 a) the Test Drop-in Framework,
@@ -40,7 +40,7 @@ Offers support of JavaScript commands to find elements in a way similar to @Find
 			<roles>
 				<role>Member</role>
 			</roles>
-			<email>cqe-us@salesforce.com</email>
+			<email>cte-tech@salesforce.com</email>
 			<organization>Salesforce</organization>
 		</developer>
 	</developers>
@@ -73,14 +73,14 @@ Offers support of JavaScript commands to find elements in a way similar to @Find
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
+				<version>3.0.0-M5</version>
 				<configuration>
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.0</version>
+				<version>3.8.1</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
@@ -89,7 +89,7 @@ Offers support of JavaScript commands to find elements in a way similar to @Find
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>3.2.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -102,7 +102,7 @@ Offers support of JavaScript commands to find elements in a way similar to @Find
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
+				<version>3.3.1</version>
 				<configuration>
 					<bottom>Copyright (c) 2019, Salesforce.com, Inc. All rights
 						reserved. Licensed under
@@ -158,7 +158,7 @@ Offers support of JavaScript commands to find elements in a way similar to @Find
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.6</version>
+				<version>3.0.1</version>
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
@@ -175,12 +175,12 @@ Offers support of JavaScript commands to find elements in a way similar to @Find
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>7.1.0</version>
+			<version>7.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>3.141.59</version>
+			<version>4.1.0</version>
 			<!-- explicitly exclude dependencies on JNA to avoid dependency on a different 
 				license type. -->
 			<exclusions>
@@ -198,22 +198,17 @@ Offers support of JavaScript commands to find elements in a way similar to @Find
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.12.1</version>
+			<version>2.13.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.12.1</version>
+			<version>2.13.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.12.1</version>
+			<version>2.13.0</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>commons-io</groupId> -->
-<!-- 			<artifactId>commons-io</artifactId> -->
-<!-- 			<version>2.8.0</version> -->
-<!-- 		</dependency> -->
 	</dependencies>
 </project>

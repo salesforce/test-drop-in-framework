@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,7 +51,9 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
 import org.openqa.selenium.WrapsDriver;
+import org.openqa.selenium.WrapsElement;
 import org.openqa.selenium.interactions.Coordinates;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.HasTouchScreen;
@@ -60,10 +63,9 @@ import org.openqa.selenium.interactions.Locatable;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.interactions.TouchScreen;
-import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.logging.Logs;
 
-import com.salesforce.dropin.common.BaseData;
+import com.salesforce.dropin.common.*;
 import com.salesforce.selenium.support.event.Step.Cmd;
 import com.salesforce.selenium.support.event.Step.Type;
 
@@ -1118,6 +1120,24 @@ public class EventFiringWebDriver
 		}
 
 		@Override
+		public Timeouts implicitlyWait(Duration duration) {
+//			implicitlyWait(duration.toMillis(), TimeUnit.MILLISECONDS);
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.implicitlyWait);
+			stepBefore.setParam1("" + duration.toString());
+			stepBefore.setParam2("" + duration.toMillis());
+			dispatcher.beforeImplicitlyWait(stepBefore, duration);
+			currentStep = stepBefore;
+
+			timeouts.implicitlyWait(duration);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.implicitlyWait);
+			stepAfter.setParam1("" + duration.toString());
+			stepAfter.setParam2("" + duration.toMillis());
+			dispatcher.afterImplicitlyWait(stepAfter, duration);
+			return this;
+		}
+
+		@Override
 		public Timeouts pageLoadTimeout(long time, TimeUnit unit) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.pageLoadTimeout);
 			stepBefore.setParam1("" + time);
@@ -1268,14 +1288,29 @@ public class EventFiringWebDriver
 		public WebDriver window(String windowName) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.window);
 			stepBefore.setParam1(windowName);
-			dispatcher.beforeWindow(stepBefore, windowName);
+			dispatcher.beforeSwitchToWindow(stepBefore, windowName, driver);
 			currentStep = stepBefore;
 
 			WebDriver windowDriver = targetLocator.window(windowName);
 
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.window);
 			stepAfter.setParam1(windowName);
-			dispatcher.afterWindow(stepAfter, windowName);
+			dispatcher.afterSwitchToWindow(stepAfter, windowName, driver);
+			return windowDriver;
+		}
+
+		@Override
+		public WebDriver newWindow(WindowType typeHint) {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.newWindow);
+			stepBefore.setParam1(typeHint.toString());
+			dispatcher.beforeSwitchToWindow(stepBefore, null, driver);
+			currentStep = stepBefore;
+
+			WebDriver windowDriver = targetLocator.newWindow(typeHint);
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.newWindow);
+			stepAfter.setParam1(typeHint.toString());
+			dispatcher.afterSwitchToWindow(stepAfter, null, driver);
 			return windowDriver;
 		}
 	}
@@ -1373,6 +1408,18 @@ public class EventFiringWebDriver
 			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.setSizeByWindow);
 			stepAfter.setParam1(targetSizeString);
 			dispatcher.afterSetSize(stepAfter, targetSize);
+		}
+
+		@Override
+		public void minimize() {
+			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.minimize);
+			dispatcher.beforeMinimize(stepBefore);
+			currentStep = stepBefore;
+
+			window.minimize();
+
+			Step stepAfter = new Step(Type.AfterAction, stepNumber++, Cmd.minimize);
+			dispatcher.afterMinimize(stepAfter);
 		}
 	}
 
