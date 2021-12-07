@@ -27,6 +27,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Coordinates;
@@ -289,6 +290,14 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 	}
 
 	@Override
+	public void beforeGetImplicitWaitTimeout(Step step) {
+	}
+
+	@Override
+	public void afterGetImplicitWaitTimeout(Step step, Duration timeout) {
+	}
+
+	@Override
 	public void beforePageLoadTimeout(Step step, long time, TimeUnit unit) {
 	}
 
@@ -302,6 +311,14 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 
 	@Override
 	public void afterPageLoadTimeout(Step step, Duration duration) {
+	}
+
+	@Override
+	public void beforeGetPageLoadTimeout(Step step) {
+	}
+
+	@Override
+	public void afterGetPageLoadTimeout(Step step, Duration timeout) {
 	}
 
 	@Override
@@ -326,6 +343,14 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 
 	@Override
 	public void afterScriptTimeout(Step step, Duration duration) {
+	}
+
+	@Override
+	public void beforeGetScriptTimeout(Step step) {
+	}
+
+	@Override
+	public void afterGetScriptTimeout(Step step, Duration timeout) {
 	}
 
 	/*---------------------------------------------------------------------------
@@ -425,11 +450,35 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 	}
 
 	@Override
+	public void beforeGetShadowRoot(Step step, WebElement element) {
+	}
+
+	@Override
+	public void afterGetShadowRoot(Step step, SearchContext searchContext, WebElement element) {
+	}
+
+	@Override
 	public void beforeGetAttribute(Step step, String name, WebElement element) {
 	}
 
 	@Override
 	public void afterGetAttribute(Step step, String value, String name, WebElement element) {
+	}
+
+	@Override
+	public void beforeGetAriaRole(Step step, WebElement element) {
+	}
+
+	@Override
+	public void afterGetAriaRole(Step step, String role, WebElement element) {
+	}
+
+	@Override
+	public void beforeGetAccessibleName(Step step, WebElement element) {
+	}
+
+	@Override
+	public void afterGetAccessibleName(Step step, String name, WebElement element) {
 	}
 
 	@Override
@@ -446,6 +495,22 @@ public abstract class AbstractWebDriverEventListener implements WebDriverEventLi
 
 	@Override
 	public void afterGetTagName(Step step, String tagName, WebElement element) {
+	}
+
+	@Override
+	public void beforeGetDomProperty(Step step, String name, WebElement element) {
+	}
+
+	@Override
+	public void afterGetDomProperty(Step step, String name, String value, WebElement element) {
+	}
+
+	@Override
+	public void beforeGetDomAttribute(Step step, String name, WebElement element) {
+	}
+
+	@Override
+	public void afterGetDomAttribute(Step step, String name, String value, WebElement element) {
 	}
 
 	@Override

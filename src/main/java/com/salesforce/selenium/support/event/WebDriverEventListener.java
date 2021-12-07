@@ -27,6 +27,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WindowType;
@@ -577,6 +578,23 @@ public interface WebDriverEventListener {
 	void afterImplicitlyWait(Step step, Duration duration);
 
 	/**
+	 * Called before {@link WebDriver.Timeouts#getImplicitWaitTimeout() Timeouts.getImplicitlyWaitTimeout()}.
+	 * @param step
+	 *            step record
+	 */
+	void beforeGetImplicitWaitTimeout(Step step);
+
+	/**
+	 * Called after {@link WebDriver.Timeouts#getImplicitWaitTimeout() Timeouts.getImplicitlyWaitTimeout()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param timeout
+	 *            time to wait
+	 */
+	void afterGetImplicitWaitTimeout(Step step, Duration timeout);
+
+	/**
 	 * Called before {@link WebDriver.Timeouts#pageLoadTimeout(long, java.util.concurrent.TimeUnit) Timeouts.pageLoadTimeout(..)}.
 	 * @param step
 	 *            step record
@@ -617,6 +635,23 @@ public interface WebDriverEventListener {
 	 *            time to wait
 	 */
 	void afterPageLoadTimeout(Step step, Duration duration);
+
+	/**
+	 * Called before {@link WebDriver.Timeouts#getPageLoadTimeout() Timeouts.getPageLoadTimeout()}.
+	 * @param step
+	 *            step record
+	 */
+	void beforeGetPageLoadTimeout(Step step);
+
+	/**
+	 * Called after {@link WebDriver.Timeouts#getPageLoadTimeout() Timeouts.getPageLoadTimeout()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param timeout
+	 *            the amount of time to wait for a page load to complete
+	 */
+	void afterGetPageLoadTimeout(Step step, Duration timeout);
 
 	/**
 	 * Called before {@link WebDriver.Timeouts#setScriptTimeout(long, java.util.concurrent.TimeUnit) Timeouts.setScriptTimeout(..)}.
@@ -661,7 +696,7 @@ public interface WebDriverEventListener {
 	void afterSetScriptTimeout(Step step, Duration duration);
 
 	/**
-	 * Called before {@link WebDriver.Timeouts#scriptTimeout(Duration) Timeouts.setScriptTimeout(..)}.
+	 * Called before {@link WebDriver.Timeouts#scriptTimeout(Duration) Timeouts.scriptTimeout(..)}.
 	 * @param step
 	 *            step record
 	 * @param duration
@@ -670,7 +705,7 @@ public interface WebDriverEventListener {
 	void beforeScriptTimeout(Step step, Duration duration);
 
 	/**
-	 * Called after {@link WebDriver.Timeouts#scriptTimeout(Duration) Timeouts.setScriptTimeout(..)}.
+	 * Called after {@link WebDriver.Timeouts#scriptTimeout(Duration) Timeouts.scriptTimeout(..)}.
 	 * Not called, if an exception is thrown.
 	 * @param step
 	 *            step record
@@ -678,6 +713,23 @@ public interface WebDriverEventListener {
 	 *            time to wait
 	 */
 	void afterScriptTimeout(Step step, Duration duration);
+
+	/**
+	 * Called before {@link WebDriver.Timeouts#getScriptTimeout() Timeouts.getScriptTimeout()}.
+	 * @param step
+	 *            step record
+	 */
+	void beforeGetScriptTimeout(Step step);
+
+	/**
+	 * Called after {@link WebDriver.Timeouts#getScriptTimeout() Timeouts.getScriptTimeout()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param timeout
+	 *            the amount of time to wait for a page load to complete
+	 */
+	void afterGetScriptTimeout(Step step, Duration timeout);
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Window object.
@@ -898,6 +950,27 @@ public interface WebDriverEventListener {
 	void afterFindElementsByElement(Step step, List<WebElement> returnedElements, By by, WebElement element);
 
 	/**
+	 * Called before {@link WebElement#getShadowRoot WebElement.getShadowRoot()}.
+	 * @param step
+	 *            step record
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void beforeGetShadowRoot(Step step, WebElement element);
+
+	/**
+	 * Called after {@link WebElement#getShadowRoot WebElement.getShadowRoot()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param searchContext
+	 *            the returned representation of an element's shadow root
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void afterGetShadowRoot(Step step, SearchContext searchContext, WebElement element);
+
+	/**
 	 * Called before {@link WebElement#getAttribute WebElement.getAttribute(...)}.
 	 * @param step
 	 *            step record
@@ -913,14 +986,56 @@ public interface WebDriverEventListener {
 	 * Not called, if an exception is thrown.
 	 * @param step
 	 *            step record
-	 * @param value
-	 *            value of the named attribute
 	 * @param name
 	 *            name of the attribute to get
+	 * @param value
+	 *            value of the named attribute
 	 * @param element
 	 *            the WebElement being used for the action
 	 */
-	void afterGetAttribute(Step step, String value, String name, WebElement element);
+	void afterGetAttribute(Step step, String name, String value, WebElement element);
+
+	/**
+	 * Called before {@link WebElement#getAriaRole WebElement.getAriaRole()}.
+	 * @param step
+	 *            step record
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void beforeGetAriaRole(Step step, WebElement element);
+
+	/**
+	 * Called after {@link WebElement#getAriaRole WebElement.getAriaRole()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param role
+	 *            the returned WAI-ARIA role of the element
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void afterGetAriaRole(Step step, String role, WebElement element);
+
+	/**
+	 * Called before {@link WebElement#getAccessibleName WebElement.getAccessibleName()}.
+	 * @param step
+	 *            step record
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void beforeGetAccessibleName(Step step, WebElement element);
+
+	/**
+	 * Called after {@link WebElement#getAccessibleName WebElement.getAccessibleName()}.
+	 * Not called, if an exception is thrown.
+	 * @param step
+	 *            step record
+	 * @param name
+	 *            the returned accessible name of the element
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void afterGetAccessibleName(Step step, String name, WebElement element);
 
 	/**
 	 * Called before {@link WebElement#getCssValue WebElement.getCssValue()}.
@@ -967,6 +1082,54 @@ public interface WebDriverEventListener {
 	 *            the WebElement being used for the action
 	 */
 	void afterGetTagName(Step step, String tagName, WebElement element);
+
+	/**
+	 * Called before {@link WebElement#getDomProperty(String) WebElement.getDomProperty(..)}.
+	 * @param step
+	 *            step record
+	 * @param name
+	 * 			  name of the DOM property to get the value of 
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void beforeGetDomProperty(Step step, String name, WebElement element);
+
+	/**
+	 * Called after {@link WebElement#getDomProperty(String) WebElement.getDomProperty(..)}.
+	 * @param step
+	 *            step record
+	 * @param name
+	 * 			  name of the DOM property to get the value of 
+	 * @param value
+	 *            the retrieved DOM property value
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void afterGetDomProperty(Step step, String name, String value, WebElement element);
+
+	/**
+	 * Called before {@link WebElement#getDomAttribute(String) WebElement.getDomAttribute(..)}.
+	 * @param step
+	 *            step record
+	 * @param name
+	 * 			  name of the element attribute to get the value of 
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void beforeGetDomAttribute(Step step, String name, WebElement element);
+
+	/**
+	 * Called after {@link WebElement#getDomAttribute(String) WebElement.getDomAttribute(..)}.
+	 * @param step
+	 *            step record
+	 * @param name
+	 * 			  name of the DOM property to get the value of 
+	 * @param value
+	 *            the retrieved element attribute value
+	 * @param element
+	 *            the WebElement being used for the action
+	 */
+	void afterGetDomAttribute(Step step, String name, String value, WebElement element);
 
 	/**
 	 * Called before {@link WebElement#getText WebElement.getText()}.

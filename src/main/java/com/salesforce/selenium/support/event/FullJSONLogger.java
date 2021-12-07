@@ -21,6 +21,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Coordinates;
@@ -346,6 +347,16 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	}
 
 	@Override
+	public void beforeGetImplicitWaitTimeout(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetImplicitWaitTimeout(Step step, Duration timeout) {
+		logEntries.add(step);
+	}
+
+	@Override
 	public void beforePageLoadTimeout(Step step, long time, TimeUnit unit) {
 		logEntries.add(step);
 	}
@@ -362,6 +373,16 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 
 	@Override
 	public void afterPageLoadTimeout(Step step, Duration duration) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetPageLoadTimeout(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetPageLoadTimeout(Step step, Duration timeout) {
 		logEntries.add(step);
 	}
 
@@ -392,6 +413,16 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 
 	@Override
 	public void afterScriptTimeout(Step step, Duration duration) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetScriptTimeout(Step step) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetScriptTimeout(Step step, Duration timeout) {
 		logEntries.add(step);
 	}
 
@@ -514,12 +545,42 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 	}
 
 	@Override
+	public void beforeGetShadowRoot(Step step, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetShadowRoot(Step step, SearchContext searchContext, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
 	public void beforeGetAttribute(Step step, String name, WebElement element) {
 		logEntries.add(step);
 	}
 
 	@Override
-	public void afterGetAttribute(Step step, String value, String name, WebElement element) {
+	public void afterGetAttribute(Step step, String name, String value, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetAriaRole(Step step, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetAriaRole(Step step, String role, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetAccessibleName(Step step, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetAccessibleName(Step step, String name, WebElement element) {
 		logEntries.add(step);
 	}
 
@@ -540,6 +601,26 @@ public class FullJSONLogger extends AbstractWebDriverEventListener {
 
 	@Override
 	public void afterGetTagName(Step step, String tagName, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetDomProperty(Step step, String name, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetDomProperty(Step step, String name, String value, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void beforeGetDomAttribute(Step step, String name, WebElement element) {
+		logEntries.add(step);
+	}
+
+	@Override
+	public void afterGetDomAttribute(Step step, String name, String value, WebElement element) {
 		logEntries.add(step);
 	}
 
