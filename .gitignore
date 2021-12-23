@@ -6,3 +6,4 @@
 /build.bat
 .idea/
 test-drop-in-framework.iml
+**/.DS_Store
