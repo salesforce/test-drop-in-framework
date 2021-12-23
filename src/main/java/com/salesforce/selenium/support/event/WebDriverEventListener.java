@@ -16,7 +16,6 @@
 //under the License.
 package com.salesforce.selenium.support.event;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -27,10 +26,8 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WindowType;
 import org.openqa.selenium.interactions.Coordinates;
 
 import com.salesforce.selenium.support.event.Step.Cmd;
@@ -505,36 +502,28 @@ public interface WebDriverEventListener {
 	void afterParentFrame(Step step);
 
 	/**
-	 * This action will be performed each time before {@link WebDriver.TargetLocator#window(String)}
-	 * {@link WebDriver.TargetLocator#newWindow(org.openqa.selenium.WindowType) TargetLocator.newWindow(..)}.
-	 *
+	 * Called before {@link WebDriver.TargetLocator#window(java.lang.String) TargetLocator.window(..)}.
 	 * @param step
 	 *            step record
-	 * @param windowName The name of the window or the handle as returned by
-	 *            {@link org.openqa.selenium.WebDriver#getWindowHandle()}
-	 *            or <code>null</code> if switching to a new window created by
-	 *            {@link org.openqa.selenium.WebDriver.TargetLocator#newWindow(WindowType)}
-	 * @param driver WebDriver
+	 * @param windowName
+	 *            name of window
 	 */
-	void beforeSwitchToWindow(Step step, String windowName, WebDriver driver);
-	
+	void beforeWindow(Step step, String windowName);
+
 	/**
-	 * This action will be performed each time after {@link WebDriver.TargetLocator#window(String)}
-	 * {@link WebDriver.TargetLocator#newWindow(org.openqa.selenium.WindowType) TargetLocator.newWindow(..)}.
-	 *
+	 * Called after {@link WebDriver.TargetLocator#window(java.lang.String) TargetLocator.window(..)}.
+	 * Not called, if an exception is thrown.
 	 * @param step
 	 *            step record
-	 * @param windowName The name of the window or the handle as returned by
-	 *            {@link org.openqa.selenium.WebDriver#getWindowHandle()}
-	 *            or <code>null</code> if switching to a new window created by
-	 *            {@link org.openqa.selenium.WebDriver.TargetLocator#newWindow(WindowType)}
-	 * @param driver WebDriver
+	 * @param windowName
+	 *            name of window
 	 */
-	void afterSwitchToWindow(Step step, String windowName, WebDriver driver);
+	void afterWindow(Step step, String windowName);
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Timeouts object.
 	 *---------------------------------------------------------------------------*/
+
 	/**
 	 * Called before {@link WebDriver.Timeouts#implicitlyWait(long, java.util.concurrent.TimeUnit) Timeouts.implicitlyWait(..)}.
 	 * @param step
@@ -557,42 +546,6 @@ public interface WebDriverEventListener {
 	 *            time unit to use to convert the given time value
 	 */
 	void afterImplicitlyWait(Step step, long time, TimeUnit unit);
-
-	/**
-	 * Called before {@link WebDriver.Timeouts#implicitlyWait(Duration) Timeouts.implicitlyWait(..)}.
-	 * @param step
-	 *            step record
-	 * @param duration
-	 *            time to wait
-	 */
-	void beforeImplicitlyWait(Step step, Duration duration);
-
-	/**
-	 * Called after {@link WebDriver.Timeouts#implicitlyWait(Duration) Timeouts.implicitlyWait(..)}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 * @param duration
-	 *            time to wait
-	 */
-	void afterImplicitlyWait(Step step, Duration duration);
-
-	/**
-	 * Called before {@link WebDriver.Timeouts#getImplicitWaitTimeout() Timeouts.getImplicitlyWaitTimeout()}.
-	 * @param step
-	 *            step record
-	 */
-	void beforeGetImplicitWaitTimeout(Step step);
-
-	/**
-	 * Called after {@link WebDriver.Timeouts#getImplicitWaitTimeout() Timeouts.getImplicitlyWaitTimeout()}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 * @param timeout
-	 *            time to wait
-	 */
-	void afterGetImplicitWaitTimeout(Step step, Duration timeout);
 
 	/**
 	 * Called before {@link WebDriver.Timeouts#pageLoadTimeout(long, java.util.concurrent.TimeUnit) Timeouts.pageLoadTimeout(..)}.
@@ -618,42 +571,6 @@ public interface WebDriverEventListener {
 	void afterPageLoadTimeout(Step step, long time, TimeUnit unit);
 
 	/**
-	 * Called before {@link WebDriver.Timeouts#pageLoadTimeout(Duration) Timeouts.pageLoadTimeout(..)}.
-	 * @param step
-	 *            step record
-	 * @param duration
-	 *            time to wait
-	 */
-	void beforePageLoadTimeout(Step step, Duration duration);
-
-	/**
-	 * Called after {@link WebDriver.Timeouts#pageLoadTimeout(Duration) Timeouts.pageLoadTimeout(..)}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 * @param duration
-	 *            time to wait
-	 */
-	void afterPageLoadTimeout(Step step, Duration duration);
-
-	/**
-	 * Called before {@link WebDriver.Timeouts#getPageLoadTimeout() Timeouts.getPageLoadTimeout()}.
-	 * @param step
-	 *            step record
-	 */
-	void beforeGetPageLoadTimeout(Step step);
-
-	/**
-	 * Called after {@link WebDriver.Timeouts#getPageLoadTimeout() Timeouts.getPageLoadTimeout()}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 * @param timeout
-	 *            the amount of time to wait for a page load to complete
-	 */
-	void afterGetPageLoadTimeout(Step step, Duration timeout);
-
-	/**
 	 * Called before {@link WebDriver.Timeouts#setScriptTimeout(long, java.util.concurrent.TimeUnit) Timeouts.setScriptTimeout(..)}.
 	 * @param step
 	 *            step record
@@ -675,61 +592,6 @@ public interface WebDriverEventListener {
 	 *            time unit to use to convert the given time value
 	 */
 	void afterSetScriptTimeout(Step step, long time, TimeUnit unit);
-
-	/**
-	 * Called before {@link WebDriver.Timeouts#setScriptTimeout(Duration) Timeouts.setScriptTimeout(..)}.
-	 * @param step
-	 *            step record
-	 * @param duration
-	 *            time to wait
-	 */
-	void beforeSetScriptTimeout(Step step, Duration duration);
-
-	/**
-	 * Called after {@link WebDriver.Timeouts#setScriptTimeout(Duration) Timeouts.setScriptTimeout(..)}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 * @param duration
-	 *            time to wait
-	 */
-	void afterSetScriptTimeout(Step step, Duration duration);
-
-	/**
-	 * Called before {@link WebDriver.Timeouts#scriptTimeout(Duration) Timeouts.scriptTimeout(..)}.
-	 * @param step
-	 *            step record
-	 * @param duration
-	 *            time to wait
-	 */
-	void beforeScriptTimeout(Step step, Duration duration);
-
-	/**
-	 * Called after {@link WebDriver.Timeouts#scriptTimeout(Duration) Timeouts.scriptTimeout(..)}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 * @param duration
-	 *            time to wait
-	 */
-	void afterScriptTimeout(Step step, Duration duration);
-
-	/**
-	 * Called before {@link WebDriver.Timeouts#getScriptTimeout() Timeouts.getScriptTimeout()}.
-	 * @param step
-	 *            step record
-	 */
-	void beforeGetScriptTimeout(Step step);
-
-	/**
-	 * Called after {@link WebDriver.Timeouts#getScriptTimeout() Timeouts.getScriptTimeout()}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 * @param timeout
-	 *            the amount of time to wait for a page load to complete
-	 */
-	void afterGetScriptTimeout(Step step, Duration timeout);
 
 	/*---------------------------------------------------------------------------
 	 * Section for all commands called directly from WebDriver.Window object.
@@ -785,35 +647,19 @@ public interface WebDriverEventListener {
 	void afterGetSizeByWindow(Step step, Dimension targetSize);
 
 	/**
-	 * Called before {@link WebDriver.Window#maximize() Window.maximize()}.
+	 * Called before {@link WebDriver.Window#maximize() Window.window()}.
 	 * @param step
 	 *            step record
 	 */
 	void beforeMaximize(Step step);
 
 	/**
-	 * Called after {@link WebDriver.Window#maximize() Window.maximize()}.
+	 * Called after {@link WebDriver.Window#maximize() Window.window()}.
 	 * Not called, if an exception is thrown.
 	 * @param step
 	 *            step record
 	 */
 	void afterMaximize(Step step);
-
-
-	/**
-	 * Called before {@link WebDriver.Window#minimize() Window.minimize()}.
-	 * @param step
-	 *            step record
-	 */
-	void beforeMinimize(Step step);
-
-	/**
-	 * Called after {@link WebDriver.Window#minimize() Window.minimize()}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 */
-	void afterMinimize(Step step);
 
 	/**
 	 * Called before {@link WebDriver.Window#setPosition(Point) setPosition(..)}.
@@ -950,27 +796,6 @@ public interface WebDriverEventListener {
 	void afterFindElementsByElement(Step step, List<WebElement> returnedElements, By by, WebElement element);
 
 	/**
-	 * Called before {@link WebElement#getShadowRoot WebElement.getShadowRoot()}.
-	 * @param step
-	 *            step record
-	 * @param element
-	 *            the WebElement being used for the action
-	 */
-	void beforeGetShadowRoot(Step step, WebElement element);
-
-	/**
-	 * Called after {@link WebElement#getShadowRoot WebElement.getShadowRoot()}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 * @param searchContext
-	 *            the returned representation of an element's shadow root
-	 * @param element
-	 *            the WebElement being used for the action
-	 */
-	void afterGetShadowRoot(Step step, SearchContext searchContext, WebElement element);
-
-	/**
 	 * Called before {@link WebElement#getAttribute WebElement.getAttribute(...)}.
 	 * @param step
 	 *            step record
@@ -986,56 +811,14 @@ public interface WebDriverEventListener {
 	 * Not called, if an exception is thrown.
 	 * @param step
 	 *            step record
-	 * @param name
-	 *            name of the attribute to get
 	 * @param value
 	 *            value of the named attribute
-	 * @param element
-	 *            the WebElement being used for the action
-	 */
-	void afterGetAttribute(Step step, String name, String value, WebElement element);
-
-	/**
-	 * Called before {@link WebElement#getAriaRole WebElement.getAriaRole()}.
-	 * @param step
-	 *            step record
-	 * @param element
-	 *            the WebElement being used for the action
-	 */
-	void beforeGetAriaRole(Step step, WebElement element);
-
-	/**
-	 * Called after {@link WebElement#getAriaRole WebElement.getAriaRole()}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
-	 * @param role
-	 *            the returned WAI-ARIA role of the element
-	 * @param element
-	 *            the WebElement being used for the action
-	 */
-	void afterGetAriaRole(Step step, String role, WebElement element);
-
-	/**
-	 * Called before {@link WebElement#getAccessibleName WebElement.getAccessibleName()}.
-	 * @param step
-	 *            step record
-	 * @param element
-	 *            the WebElement being used for the action
-	 */
-	void beforeGetAccessibleName(Step step, WebElement element);
-
-	/**
-	 * Called after {@link WebElement#getAccessibleName WebElement.getAccessibleName()}.
-	 * Not called, if an exception is thrown.
-	 * @param step
-	 *            step record
 	 * @param name
-	 *            the returned accessible name of the element
+	 *            name of the attribute to get
 	 * @param element
 	 *            the WebElement being used for the action
 	 */
-	void afterGetAccessibleName(Step step, String name, WebElement element);
+	void afterGetAttribute(Step step, String value, String name, WebElement element);
 
 	/**
 	 * Called before {@link WebElement#getCssValue WebElement.getCssValue()}.
@@ -1082,54 +865,6 @@ public interface WebDriverEventListener {
 	 *            the WebElement being used for the action
 	 */
 	void afterGetTagName(Step step, String tagName, WebElement element);
-
-	/**
-	 * Called before {@link WebElement#getDomProperty(String) WebElement.getDomProperty(..)}.
-	 * @param step
-	 *            step record
-	 * @param name
-	 * 			  name of the DOM property to get the value of 
-	 * @param element
-	 *            the WebElement being used for the action
-	 */
-	void beforeGetDomProperty(Step step, String name, WebElement element);
-
-	/**
-	 * Called after {@link WebElement#getDomProperty(String) WebElement.getDomProperty(..)}.
-	 * @param step
-	 *            step record
-	 * @param name
-	 * 			  name of the DOM property to get the value of 
-	 * @param value
-	 *            the retrieved DOM property value
-	 * @param element
-	 *            the WebElement being used for the action
-	 */
-	void afterGetDomProperty(Step step, String name, String value, WebElement element);
-
-	/**
-	 * Called before {@link WebElement#getDomAttribute(String) WebElement.getDomAttribute(..)}.
-	 * @param step
-	 *            step record
-	 * @param name
-	 * 			  name of the element attribute to get the value of 
-	 * @param element
-	 *            the WebElement being used for the action
-	 */
-	void beforeGetDomAttribute(Step step, String name, WebElement element);
-
-	/**
-	 * Called after {@link WebElement#getDomAttribute(String) WebElement.getDomAttribute(..)}.
-	 * @param step
-	 *            step record
-	 * @param name
-	 * 			  name of the DOM property to get the value of 
-	 * @param value
-	 *            the retrieved element attribute value
-	 * @param element
-	 *            the WebElement being used for the action
-	 */
-	void afterGetDomAttribute(Step step, String name, String value, WebElement element);
 
 	/**
 	 * Called before {@link WebElement#getText WebElement.getText()}.
