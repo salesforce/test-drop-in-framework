@@ -6,8 +6,6 @@
  */
 package com.salesforce.dropin.common;
 
-import com.salesforce.dropin.common.BaseContext;
-
 /**
  * The ContextProvider helps the owner of the test project and partner teams,
  * be them either inside or outside the company, to run the very same tests

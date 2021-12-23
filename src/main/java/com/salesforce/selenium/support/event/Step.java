@@ -64,15 +64,18 @@ public class Step {
 		frameByElement(WebDriverInterface.TargetLocator, "frame"),
 		parentFrame(WebDriverInterface.TargetLocator, "parentFrame"),
 		window(WebDriverInterface.TargetLocator, "window"),
+		newWindow(WebDriverInterface.TargetLocator, "newWindow"),
 		// commands called directly from WebDriver.Timeouts object
 		implicitlyWait(WebDriverInterface.Timeouts, "implicitlyWait"),
 		pageLoadTimeout(WebDriverInterface.Timeouts, "pageLoadTimeout"),
 		setScriptTimeout(WebDriverInterface.Timeouts, "setScriptTimeout"),
+		scriptTimeout(WebDriverInterface.Timeouts, "scriptTimeout"),
 		// commands called directly from WebDriver.Window object
 		fullscreen(WebDriverInterface.Window, "fullscreen"),
 		getPosition(WebDriverInterface.Window, "getPosition"),
 		getSizeByWindow(WebDriverInterface.Window, "getSize"),
 		maximize(WebDriverInterface.Window, "maximize"),
+		minimize(WebDriverInterface.Window, "minimize"),
 		setPosition(WebDriverInterface.Window, "setPosition"),
 		setSizeByWindow(WebDriverInterface.Window, "setSize"),
 		// commands called directly from WebElement object
