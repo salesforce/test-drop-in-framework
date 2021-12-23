@@ -180,7 +180,7 @@ Offers support of JavaScript commands to find elements in a way similar to @Find
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>3.141.59</version>
+			<version>4.0.0</version>
 			<!-- explicitly exclude dependencies on JNA to avoid dependency on a different 
 				license type. -->
 			<exclusions>
