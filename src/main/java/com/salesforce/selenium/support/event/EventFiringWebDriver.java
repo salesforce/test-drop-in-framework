@@ -46,6 +46,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -750,6 +751,31 @@ public class EventFiringWebDriver
 		}
 
 		@Override
+		public String getDomProperty(String name) {
+			return element.getDomProperty(name);
+		}
+
+		@Override
+		public String getDomAttribute(String name) {
+			return element.getDomAttribute(name);
+		}
+
+		@Override
+		public String getAriaRole() {
+			return element.getAriaRole();
+		}
+
+		@Override
+		public String getAccessibleName() {
+			return element.getAccessibleName();
+		}
+
+		@Override
+		public SearchContext getShadowRoot() {
+			return element.getShadowRoot();
+		}
+
+		@Override
 		public String getText() {
 			Step stepBefore = new Step(Type.BeforeGather, stepNumber, Cmd.getText);
 			stepBefore.setParam1(Step.getLocatorFromWebElement(element));
@@ -1138,6 +1164,11 @@ public class EventFiringWebDriver
 		}
 
 		@Override
+		public Duration getImplicitWaitTimeout() {
+			return timeouts.getImplicitWaitTimeout();
+		}
+
+		@Override
 		public Timeouts pageLoadTimeout(long time, TimeUnit unit) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.pageLoadTimeout);
 			stepBefore.setParam1("" + time);
@@ -1155,6 +1186,11 @@ public class EventFiringWebDriver
 		}
 
 		@Override
+		public Duration getPageLoadTimeout() {
+			return timeouts.getPageLoadTimeout();
+		}
+
+		@Override
 		public Timeouts setScriptTimeout(long time, TimeUnit unit) {
 			Step stepBefore = new Step(Type.BeforeAction, stepNumber, Cmd.setScriptTimeout);
 			stepBefore.setParam1("" + time);
@@ -1168,6 +1204,11 @@ public class EventFiringWebDriver
 			stepAfter.setParam2("" + TimeUnit.MILLISECONDS.convert(time, unit));
 			dispatcher.afterSetScriptTimeout(stepAfter, time, unit);
 			return this;
+		}
+
+		@Override
+		public Duration getScriptTimeout() {
+			return timeouts.getScriptTimeout();
 		}
 	}
 
