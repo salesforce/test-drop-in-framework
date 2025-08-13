@@ -1,11 +1,13 @@
 Chrome Extension to generate CssSelector paths for elements encapsulated by our LWC components' Synthetic Shadow DOM.  
 Attempting to reproduce the functionality of Copy > Copy JS Path that Chrome provides for native Shadow DOM
 
+**Updated to Manifest V3**: This extension has been updated to comply with Chrome Extension Manifest V3 requirements, including removal of unsafe `eval()` usage and proper Content Security Policy.
+
  ### Load as Chrome extension by:
  1. Clone or download this repository from github.com  
  2. Go to chrome://extensions/ and toggle the "Developer mode" button.
  3. Click "Load Unpacked" and navigate to directory /lwc-shadowpath of this repository.
- 4. Inspect any element to open Element Inspector, and then open up the LWC ShadowRoot panel by clicking '>>' on the far right.
+ 4. Inspect any element to open Element Inspector, and then open up the LWC ShadowPath panel by clicking '>>' on the far right.
  5. Select the element that the obsolete Selenium selector used to select.
  6. Copy and paste from the panel's shadowpath field into the console to confirm that it is selecting the desired element (remove the extra surrounding double quotes after pasting).
  7. Copy and paste from the panel's java field into existing java test code to replace the obsolete Selenium selector.
@@ -60,6 +62,18 @@ You do not need to build this repository to use @FindByJS. Instead add this piec
 
 Please replace the version with the currently latest one by checking out 
 https://repository.sonatype.org/#nexus-search;quick~test-drop-in
+
+### Changelog
+
+#### Version 1.3.0 - Manifest V3 Compliance Update
+- **Updated to Manifest V3**: Migrated from deprecated Manifest V2 to Manifest V3
+- **Security Improvements**: Removed unsafe `eval()` usage and replaced with safe DOM traversal methods
+- **Content Security Policy**: Added proper CSP headers to devtools.html
+- **Permissions**: Added required permissions for Manifest V3 compliance (`scripting`, `<all_urls>`)
+- **Code Safety**: Replaced dynamic JavaScript evaluation with deterministic DOM selection logic
+- **HTML Structure**: Updated devtools.html with proper DOCTYPE and meta tags
+
+**Breaking Changes**: None for end users - the extension functionality remains the same while being compliant with current Chrome extension policies.
 
 ### Developing extension
  1. When you update code, to see changes you will need to:
