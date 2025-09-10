@@ -6,7 +6,7 @@ Attempting to reproduce the functionality of Copy > Copy JS Path that Chrome pro
  ### Load as Chrome extension by:
  1. Clone or download this repository from github.com  
  2. Go to chrome://extensions/ and toggle the "Developer mode" button.
- 3. Click "Load Unpacked" and navigate to directory /lwc-shadowpath of this repository.
+ 3. Click "Load Unpacked" and navigate to directory /lwc-shadowpath-builder of this repository.
  4. Inspect any element to open Element Inspector, and then open up the LWC ShadowPath panel by clicking '>>' on the far right.
  5. Select the element that the obsolete Selenium selector used to select.
  6. Copy and paste from the panel's shadowpath field into the console to confirm that it is selecting the desired element (remove the extra surrounding double quotes after pasting).
