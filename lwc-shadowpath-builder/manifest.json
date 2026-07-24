@@ -1,7 +1,8 @@
 {
-    "name": "LWC JS Path Generator",
-    "version": "1.2",
+    "name": "LWC ShadowPath Builder",
+    "version": "1.3.0",
     "description": "Generates JS selector path for LWC Synthetic ShadowDOMs.",
+    "manifest_version": 3,
     "devtools_page": "devtools.html",
     "icons": {
         "16":  "images/shadow16.png",
@@ -9,5 +10,10 @@
         "48":  "images/shadow48.png",
         "128": "images/shadow128.png"
     },
-    "manifest_version": 2
+    "permissions": [
+        "scripting"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ]
 }

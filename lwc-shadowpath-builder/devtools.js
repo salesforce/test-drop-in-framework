@@ -69,6 +69,36 @@ let generateShadowJSPath = function() {
         return "document" + expanded.join(".shadowRoot");
     }
 
+    function executeJSPath(jsPath) {
+        let currentElement = document;
+        
+        for (let i = 0; i < jsPath.length; i++) {
+            const [selector, index] = jsPath[i];
+            
+            if (index === 0) {
+                currentElement = currentElement.querySelector(selector);
+            } else if (index === '*') {
+                // Return all elements for this selector - used for finding possibilities
+                const elements = currentElement.querySelectorAll(selector);
+                return Array.from(elements);
+            } else {
+                const elements = currentElement.querySelectorAll(selector);
+                currentElement = elements[index];
+            }
+            
+            if (!currentElement) {
+                return null;
+            }
+            
+            // Move to shadow root if not the last element
+            if (i < jsPath.length - 1 && currentElement.shadowRoot) {
+                currentElement = currentElement.shadowRoot;
+            }
+        }
+        
+        return currentElement;
+    }
+
     function jsPathElementsToShadowPath(jsPath) {
         let selectors = [];
         jsPath.forEach(function(elem) {
@@ -83,32 +113,34 @@ let generateShadowJSPath = function() {
 
     /**
      * Turn potential path into JavaScript selector.
-     * Use eval to select between multiple possible top-down paths.
+     * Use safe DOM traversal instead of eval.
      */
     function jsPathFromPath(path) {
         if (!path || path.length === 0) return;
         let jsPath = [];
-        // let jsPath = "document";
+        
         for (let i = path.length - 1; i >= 0; i--) {
             const node = path[i];
             const selector = node.selector;
-            const query = jsPathElementsToQuerySelector(jsPath.concat([[selector, '*']]));
-            console.log(query);
-            // const test = query + ".querySelectorAll('" + selector + "')";
-            const possibilities = eval(query);
-            if (possibilities.length === 0) {
-                console.log("Error: Lost my way. No valid paths from " + query);
-                throw "Lost my way. No valid paths from " + query;
-            } else if (possibilities.length === 1) { // Selector gives an unique element
-                // jsPath += ".querySelector('" + selector + "')";
-                // jspathElements.push(".querySelector('" + selector + "')");
+            
+            // Execute the path built so far to get current context
+            const testPath = jsPath.concat([[selector, '*']]);
+            const possibilities = executeJSPath(testPath);
+            
+            if (!possibilities || (Array.isArray(possibilities) && possibilities.length === 0)) {
+                console.log("Error: Lost my way. No valid paths for selector: " + selector);
+                throw "Lost my way. No valid paths for selector: " + selector;
+            } else if (!Array.isArray(possibilities)) {
+                // Single element returned by querySelector
+                jsPath.push([selector, 0]);
+            } else if (possibilities.length === 1) {
+                // Single element in array from querySelectorAll
                 jsPath.push([selector, 0]);
             } else {
+                // Multiple elements, find the correct index
                 let found = false;
                 for (let p = 0; p < possibilities.length; p++) {
                     if (possibilities[p] === node.elem) {
-                        // jsPath += ".querySelectorAll('" + selector + "')[" + p + "]";
-                        //jspathElements.push(".querySelectorAll('" + selector + "')[" + p + "]");
                         jsPath.push([selector, p]);
                         found = true;
                         break;
@@ -119,10 +151,6 @@ let generateShadowJSPath = function() {
                     throw "Could not find way to " + selector;
                 }
             }
-            // We have not reached the element yet, so add shadowRoot.
-            // if (i !== 0) {
-            //     jsPath = jsPath + '.shadowRoot';
-            // }
         }
         return jsPath;
     }
@@ -144,7 +172,7 @@ let generateShadowJSPath = function() {
  * Inspired by: https://chromium.googlesource.com/chromium/src/+/master/chrome/common/extensions/docs/examples/api/devtools/panels/chrome-query
  */
 chrome.devtools.panels.elements.createSidebarPane(
-    "LWC JS Path",
+    "LWC ShadowPath",
     function(sidebar) {
         function updateElementProperties() {
             sidebar.setExpression("(" + generateShadowJSPath.toString() + ")()");
